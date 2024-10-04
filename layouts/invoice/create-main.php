@@ -390,20 +390,20 @@
                     '</tr>'
 
                 if (discount > 0) {
-                    // amount = amount - discount;
+                    amount = amount - discount;
                     text_html += '<tr>' +
                         '<td colspan="10"></td>' +
                         '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
-                        '<td class="text-center">' + numberWithCommas(amount - discount) + '</td>' +
+                        '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
                         '</tr>'
                 }
 
                 if (cot > 0) {
-                    // amount = amount - cot;
+                    amount = amount - cot;
                     text_html += '<tr>' +
                         '<td colspan="10"></td>' +
                         '<td class="text-center"><b>Cash on tour</b></td>' +
-                        '<td class="text-center">' + numberWithCommas(amount - cot) + '</td>' +
+                        '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
                         '</tr>'
                 }
 

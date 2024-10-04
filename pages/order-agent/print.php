@@ -62,8 +62,14 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
 ?>
 
     <div class="card-body pb-0 pt-0">
+        <div class="row">
+            <span class="col-6 brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
+            <span class="col-6 text-right" style="color: #000;">
+                โทร : 062-3322800 / 084-7443000 / 083-1757444 </br>
+                Email : Fantasticsimilantravel11@gmail.com
+            </span>
+        </div>
         <div class="text-center card-text">
-            <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
             <h4 class="font-weight-bolder">Re Confirm Agent</h4>
             <h5 class="font-weight-bolder"><?php echo date('j F Y', strtotime($travel_date)); ?></h5>
         </div>
@@ -80,7 +86,6 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
             <thead>
                 <tr>
                     <th class="text-center" width="5%">เวลารับ</th>
-                    <th class="text-center" width="5%">Driver</th>
                     <th width="14%">โปรแกรม</th>
                     <th width="15%">ชื่อลูกค้า</th>
                     <th class="text-center" width="7%">V/C</th>
@@ -111,7 +116,6 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                         $class_tr = ($a % 2 == 1) ? 'table-active' : ''; ?>
                         <tr class="<?php echo $class_tr; ?>">
                             <td class="text-center"><?php echo $start_pickup[$i] . ' - ' . $end_pickup[$i]; ?></td>
-                            <td class="text-center"><?php echo $car_name[$i]; ?></td>
                             <td><?php echo $product_name[$i]; ?></td>
                             <td><?php echo $cus_name[$i]; ?></td>
                             <td><?php echo !empty($voucher_no[$i]) ? $voucher_no[$i] : $book_full[$i]; ?></td>

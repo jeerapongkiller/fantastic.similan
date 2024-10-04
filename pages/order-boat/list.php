@@ -203,6 +203,30 @@ if (!empty($programed)) {
             </div>
         </div>
 
+        <div class="row">
+            <!-- Plan Card Manage Boat -->
+            <?php
+            if (!empty($mange['id'])) {
+                for ($i = 0; $i < count($mange['id']); $i++) {
+                    $cus_sum = (!empty($book['adult'][$mange['id'][$i]]) && !empty($book['child'][$mange['id'][$i]]) && !empty($book['infant'][$mange['id'][$i]]) && !empty($book['foc'][$mange['id'][$i]])) ? array_sum($book['adult'][$mange['id'][$i]]) + array_sum($book['child'][$mange['id'][$i]]) + array_sum($book['infant'][$mange['id'][$i]]) + array_sum($book['foc'][$mange['id'][$i]]) : 0;
+                    if ($cus_sum > 0) {
+            ?>
+                        <div class="col-lg-2 col-sm-3 col-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?></h2>
+                                        <h5 class="card-text"><?php echo $mange['boat_name'][$i]; ?></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            <?php }
+                }
+            } ?>
+            <!-- /Plan Card Manage Boat Ends -->
+        </div>
+
         <div class="content-body">
             <section id="sortable-lists">
                 <!-- bookings filter start -->

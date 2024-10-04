@@ -82,7 +82,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             <thead class="bg-light">
                 <tr>
                     <th width="7%">เวลารับ</th>
-                    <th width="5%">Driver</th>
                     <th width="14%">โปรแกรม</th>
                     <th width="15%">ชื่อลูกค้า</th>
                     <th width="5%">V/C</th>
@@ -113,7 +112,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                         $total_foc = $total_foc + $foc[$i]; ?>
                         <tr>
                             <td class="text-center"><?php echo $start_pickup[$i] . ' - ' . $end_pickup[$i]; ?></td>
-                            <td class="text-center"><?php echo $car_name[$i]; ?></td>
                             <td><?php echo $product_name[$i]; ?></td>
                             <td><?php echo $cus_name[$i]; ?></td>
                             <td><?php echo !empty($voucher_no[$i]) ? $voucher_no[$i] : $book_full[$i]; ?></td>

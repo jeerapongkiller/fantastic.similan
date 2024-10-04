@@ -45,6 +45,17 @@
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- END: Custom CSS-->
 
+    <style>
+        .table-black {
+            color: #FFFFFF;
+            background-color: #333;
+        }
+
+        .table-black-2 {
+            color: #FFFFFF;
+            background-color: #4f4e4e;
+        }
+    </style>
 </head>
 <!-- END: Head-->
 
@@ -106,42 +117,11 @@
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.invoice-list-table').DataTable({
-                "searching": false,
-                paging: false,
-                order: [
-                    [1, 'asc']
-                ],
-                dom: '<"d-flex justify-content-between align-items-center header-actions mx-1 row mt-75"' +
-                    '<"col-lg-12 col-xl-6" l>' +
-                    '<"col-lg-12 col-xl-6 pl-xl-75 pl-0"<"dt-action-buttons text-xl-right text-lg-left text-md-right text-left d-flex align-items-center justify-content-lg-end align-items-center flex-sm-nowrap flex-wrap mr-1"<"mr-1"f>B>>' +
-                    '>t' +
-                    '<"d-flex justify-content-between mx-2 row mb-1"' +
-                    '<"col-sm-12 col-md-6"i>' +
-                    '<"col-sm-12 col-md-6"p>' +
-                    '>',
-                columnDefs: [{
-                    targets: [0],
-                    orderable: false
-                }],
-                language: {
-                    sLengthMenu: 'Show _MENU_'
-                },
-                // Buttons with Dropdown
-                buttons: [],
-                language: {
-                    paginate: {
-                        // remove previous & next text from pagination
-                        previous: '&nbsp;',
-                        next: '&nbsp;'
-                    }
-                },
-            });
-
             var jqForm = $('#receipt-search-form'),
                 jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
+                range = $('.flatpickr-range'),
                 select = $('.select2');
 
             // select2
@@ -157,6 +137,22 @@
                         $(this).valid();
                     });
             });
+
+            // Range
+            if (range.length) {
+                range.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    mode: 'range',
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
+                });
+            }
 
             // Picker
             if (picker.length) {
@@ -187,71 +183,17 @@
                 });
             });
 
-            $('#search_due_form').change(function() {
-                $('#search_due_to').flatpickr({
-                    onReady: function(selectedDates, dateStr, instance) {
-                        if (instance.isMobile) {
-                            $(instance.mobileInput).attr('step', null);
-                        }
-                    },
-                    static: true,
-                    altInput: true,
-                    altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: $('#search_due_form').val()
-                });
-            });
-
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
                 var serializedData = $(this).serialize();
                 $.ajax({
-                    url: "pages/receipt/function/search.php",
+                    url: "pages/receipt/function/search-agent.php",
                     type: "POST",
-                    data: serializedData + "&action=search",
+                    data: serializedData + "&action=search-invoice",
                     success: function(response) {
-                        if (response != false) {
-                            $("#invoice-search-table").html(response);
-
-                            $('.invoice-list-table').DataTable({
-                                "searching": false,
-                                paging: false,
-                                order: [
-                                    [1, 'asc']
-                                ],
-                                dom: '<"d-flex justify-content-between align-items-center header-actions mx-1 row mt-75"' +
-                                    '<"col-lg-12 col-xl-6" l>' +
-                                    '<"col-lg-12 col-xl-6 pl-xl-75 pl-0"<"dt-action-buttons text-xl-right text-lg-left text-md-right text-left d-flex align-items-center justify-content-lg-end align-items-center flex-sm-nowrap flex-wrap mr-1"<"mr-1"f>B>>' +
-                                    '>t' +
-                                    '<"d-flex justify-content-between mx-2 row mb-1"' +
-                                    '<"col-sm-12 col-md-6"i>' +
-                                    '<"col-sm-12 col-md-6"p>' +
-                                    '>',
-                                columnDefs: [{
-                                    targets: [0],
-                                    orderable: false
-                                }],
-                                language: {
-                                    sLengthMenu: 'Show _MENU_'
-                                },
-                                // Buttons with Dropdown
-                                buttons: [],
-                                language: {
-                                    paginate: {
-                                        // remove previous & next text from pagination
-                                        previous: '&nbsp;',
-                                        next: '&nbsp;'
-                                    }
-                                },
-                            });
-
-                            if (feather) {
-                                feather.replace({
-                                    width: 14,
-                                    height: 14
-                                });
-                            }
+                        if (response != 'false') {
+                            $('#div-receipt-custom').html(response);
                         }
                     }
                 });
@@ -304,134 +246,194 @@
                     }
                 });
             }
+
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
         });
 
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
 
+        function search_start_date(tabs, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search-invoice');
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/receipt/function/search-agent.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + tabs).html(response);
+                    }
+                }
+            });
+        }
+
+        function modal_detail(agent_id, agent_name, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('agent_id', agent_id);
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/receipt/function/search-invoice.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#div-modal-detail').html(response);
+                    }
+                }
+            });
+        }
+
         function modal_receipt(cover_id) {
-            var res_inv = JSON.parse($('#checkbox' + cover_id).attr('data-inv_id'));
-            if (res_inv.length > 0 && cover_id > 0) {
+
+            var array_booking = document.getElementById('array_booking').value;
+            var array_extar = document.getElementById('array_extar').value;
+            var array_invoice = document.getElementById('array_invoice').value;
+            if (cover_id > 0 && array_booking !== '') {
+                var res = $.parseJSON(array_booking);
+                var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : '';
+                var res_invoice = array_invoice !== '' ? $.parseJSON(array_invoice) : '';
+
+                document.getElementById('cover_id').value = cover_id;
+
+                document.getElementById('agent_name_text').innerHTML = document.getElementById('agent_value').dataset.name;
+                document.getElementById('agent_tax_text').innerHTML = document.getElementById('agent_value').dataset.license;
+                document.getElementById('agent_tel_text').innerHTML = document.getElementById('agent_value').dataset.telephone;
+                document.getElementById('agent_address_text').innerHTML = document.getElementById('agent_value').dataset.address;
+
+                document.getElementById('inv_full_text').innerHTML = res_invoice[cover_id].inv_full;
+                document.getElementById('branch_text').innerHTML = res_invoice[cover_id].brch_name;
+                document.getElementById('inv_date_text').innerHTML = res_invoice[cover_id].inv_date;
+                document.getElementById('rec_date_text').innerHTML = res_invoice[cover_id].rec_date;
+                document.getElementById('due_date_text').innerHTML = res_invoice[cover_id].due_date;
+
                 var text_html = '';
-                var no = 1;
-                var vat_total = 0;
-                var vat_cut = 0;
-                var withholding_total = 0;
                 var total = 0;
-                var discount = 0;
+                var amount = 0;
                 var cot = 0;
-                var dep = 0;
-                var res_inv_no = JSON.parse($('#checkbox' + cover_id).attr('data-inv_no'));
-                var res_bo_id = JSON.parse($('#checkbox' + cover_id).attr('data-bo_id'));
-                var res_bo_full = JSON.parse($('#checkbox' + cover_id).attr('data-bo_full'));
-                var res_voucher = JSON.parse($('#checkbox' + cover_id).attr('data-voucher'));
-                var res_cus_name = JSON.parse($('#checkbox' + cover_id).attr('data-cus_name'));
-                var res_product_name = JSON.parse($('#checkbox' + cover_id).attr('data-product_name'));
-                var res_discount = JSON.parse($('#checkbox' + cover_id).attr('data-discount'));
-                var res_total = JSON.parse($('#checkbox' + cover_id).attr('data-total'));
-                var res_payment_id = JSON.parse($('#checkbox' + cover_id).attr('data-payment_id'));
-                var res_payment_name = JSON.parse($('#checkbox' + cover_id).attr('data-payment_name'));
-                
-                document.getElementById('cover_id').value = $('#checkbox' + cover_id).val();
-                document.getElementById('bo_id').value = $('#checkbox' + cover_id).attr('data-bo_id');
-                document.getElementById('agent_name_text').innerHTML = $('#checkbox' + cover_id).attr('data-agent_name');
-                document.getElementById('agent_address_text').innerHTML = $('#checkbox' + cover_id).attr('data-agent_address');
-                document.getElementById('agent_tel_text').innerHTML = $('#checkbox' + cover_id).attr('data-agent_telephone');
-                document.getElementById('agent_tax_text').innerHTML = $('#checkbox' + cover_id).attr('data-agent_tat');
-                document.getElementById('branch_text').innerHTML = $('#checkbox' + cover_id).attr('data-brch_name');
+                var discount = 0;
+                var no = 1;
+                if (res !== undefined && (res[cover_id] !== undefined)) {
+                    for (let index = 0; index < res[cover_id].id.length; index++) {
+                        var id = res[cover_id].id[index];
+                        discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                        cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+                        amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
 
-                var payment_name = '';
-                for (let index = 0; index < res_inv.length; index++) {
-                    var inv_full = res_inv_no[index] > 0 ? $('#checkbox' + cover_id).attr('data-inv_full') + '/' + res_inv_no[index] : $('#checkbox' + cover_id).attr('data-inv_full');
-                    payment_name = '<b>' + res_payment_name[index] + '</b>';
-                    payment_name = (res_payment_id[index] == 4 || res_payment_id[index] == 5) ? payment_name : payment_name;
+                        text_html += '<tr>' +
+                            '<td class="text-center">' + Number(no++) + '<input type="hidden" name="bo_id[]" value="' + id + '"></td>' +
+                            '<td class="text-center"> ' + res[id].travel_date + ' </td>' +
+                            '<td> ' + res[id].cus_name + ' </td>' +
+                            '<td> ' + res[id].product_name + ' </td>' +
+                            '<td class="text-center"> ' + res[id].voucher_no + ' </td>' +
+                            '<td class="text-center"> ' + res[id].adult + ' </td>' +
+                            '<td class="text-center"> ' + res[id].child + ' </td>' +
+                            '<td class="text-center"> ' + numberWithCommas(res[id].rate_adult) + ' </td>' +
+                            '<td class="text-center"> ' + numberWithCommas(res[id].rate_child) + ' </td>' +
+                            '<td class="text-center"> ' + res[id].discount + ' </td>' +
+                            '<td class="text-center"> ' + numberWithCommas(res[id].total) + ' </td>' +
+                            '<td class="text-center"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+                            '</tr>';
+
+                        if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+                            for (let index = 0; index < res_extar[id].id.length; index++) {
+                                amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
+                                text_html += '<tr>' +
+                                    '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
+                                    '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+                                    '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+                                    '<td class="text-center">-</td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+                                    '<td class="text-center">-</td>' +
+                                    '</tr>';
+                            }
+                        }
+                    }
 
                     text_html += '<tr>' +
-                        '<td class="text-center">' + Number(no++) + '</td>' +
-                        '<td class="text-center text-nowrap"> ' + inv_full + ' </td>' +
-                        '<td class="text-center"> ' + res_bo_full[index] + ' </td>' +
-                        '<td class="text-center"> ' + res_voucher[index] + ' </td>' +
-                        '<td class="text-center"> ' + res_cus_name[index] + ' </td>' +
-                        '<td class="text-center"> ' + res_product_name[index] + ' </td>' +
-                        '<td class="text-center"> ' + $('#checkbox' + cover_id).attr('data-rec_date') + ' </td>' +
-                        '<td class="text-center"> ' + payment_name + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(Number(res_total[index])) + ' </td>' +
-                        '</tr>';
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                        '</tr>'
 
-                    // if (res_payment_id[index] == 4) {
-                    //     cot = Number(cot) + Number(res_total_paid[index]);
-                    // } else if (res_payment_id[index] == 5) {
-                    //     dep = Number(dep) + Number(res_total_paid[index]);
-                    // }
-                    discount = Number(discount) + Number(res_discount[index]);
-                    total = Number(total) + Number(res_total[index]);
-                }
+                    if (discount > 0) {
+                        amount = amount - discount;
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+                            '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+                            '</tr>'
+                    }
 
-                text_html += '<tr>' +
-                    '<td colspan="7"></td>' +
-                    '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                    '<td class="text-center">' + numberWithCommas(total) + '</td>' +
-                    '</tr>'
+                    if (cot > 0) {
+                        amount = amount - cot;
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>Cash on tour</b></td>' +
+                            '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                            '</tr>'
+                    }
 
-                if (discount != 0) {
+                    if (res_invoice[cover_id].vat == 1) {
+                        vat_total = Number(((amount * 100) / 107));
+                        vat_cut = vat_total;
+                        vat_total = Number(amount - vat_total);
+                        withholding_total = res_invoice[cover_id].withholding > 0 ? Number((vat_cut * res_invoice[cover_id].withholding) / 100) : 0;
+                        amount = Number(amount - withholding_total);
+                        withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        });
+                    } else if (res_invoice[cover_id].vat == 2) {
+                        vat_total = Number(((amount * 7) / 100));
+                        amount = Number(amount) + Number(vat_total);
+                        withholding_total = res_invoice[cover_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[cover_id].withholding) / 100) : 0;
+                        amount = Number(amount - withholding_total);
+                        withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        });
+                    }
+
+                    if (res_invoice[cover_id].vat > 0) {
+                        text_vat = res_invoice[cover_id].vat == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%';
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b id="vat-multi-text">' + text_vat + '</b><br><small>(Vat)</small></td>' +
+                            '<td class="text-center">' + Number(vat_total).toLocaleString("en-US", {
+                                maximumFractionDigits: 2
+                            }) + '</td>' +
+                            '</tr>';
+                    }
+
+                    if (res_invoice[cover_id].withholding > 0) {
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b id="withholding-multi-text">หัก ณ ที่จ่าย (' + res_invoice[cover_id].withholding + '%)</b><br><small>(Withholding Tax)</small></td>' +
+                            '<td class="text-center">' + numberWithCommas(withholding_total) + '</td>' +
+                            '</tr>';
+                    }
+
                     text_html += '<tr>' +
-                        '<td colspan="7"></td>' +
-                        '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
-                        '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
-                        '</tr>';
-                }
-
-                total = (discount > 0) ? Number(total - discount) : total;
-                // --- vat and withholding --- //
-                if ($('#checkbox' + cover_id).attr('data-vat_id') == 1) {
-                    vat_total = Number(((total * 100) / 107));
-                    vat_cut = vat_total;
-                    vat_total = Number(total - vat_total);
-                    withholding_total = $('#checkbox' + cover_id).attr('data-withholding') > 0 ? Number((vat_cut * $('#checkbox' + cover_id).attr('data-withholding')) / 100) : 0;
-                    total = Number(total - withholding_total);
-                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    });
-                } else if ($('#checkbox' + cover_id).attr('data-vat_id') == 2) {
-                    vat_total = Number(((total * 7) / 100));
-                    total = Number(total) + Number(vat_total);
-                    withholding_total = $('#checkbox' + cover_id).attr('data-withholding') > 0 ? Number(((total - vat_total) * $('#checkbox' + cover_id).attr('data-withholding')) / 100) : 0;
-                    total = Number(total - withholding_total);
-                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    });
-                }
-
-                if ($('#checkbox' + cover_id).attr('data-vat_id') != 0) {
-                    text_html += '<tr>' +
-                        '<td colspan="7"></td>' +
-                        '<td class="text-center"><b>' + $('#checkbox' + cover_id).attr('data-vat_name') + '</b><br><small>(Vat)</small></td>' +
-                        '<td class="text-center">' + Number(vat_total).toLocaleString("en-US", {
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
+                        '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
                             maximumFractionDigits: 2
                         }) + '</td>' +
                         '</tr>';
+
                 }
+                $('#tbody-multi-booking').html(text_html);
 
-                if ($('#checkbox' + cover_id).attr('data-withholding') != 0) {
-                    text_html += '<tr>' +
-                        '<td colspan="7"></td>' +
-                        '<td class="text-center"><b>หัก ณ ที่จ่าย (' + $('#checkbox' + cover_id).attr('data-withholding') + '%)</b><br><small>(Withholding Tax)</small></td>' +
-                        '<td class="text-center">' + numberWithCommas(withholding_total) + '</td>' +
-                        '</tr>';
-                }
-
-                text_html += '<tr>' +
-                    '<td colspan="7"></td>' +
-                    '<td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
-                    '<td class="text-center" id="price-amount">' + Number(total).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    }); + '</td>' +
-                '</tr>';
-
-                $('#tbody-invoice').html(text_html);
-
-                document.getElementById('price_total').value = total;
+                document.getElementById('amount').value = amount;
             }
 
             $('#rec_date').flatpickr({
@@ -460,60 +462,9 @@
                 defaultDate: 'today'
             });
 
-            check_payment();
+            // calculator_price();
         }
 
-        function fun_search_period() {
-            var search_period = document.getElementById('search_period').value;
-            document.getElementById('div-due-form').hidden = search_period == 'custom' ? false : true;
-            document.getElementById('div-due-to').hidden = search_period == 'custom' ? false : true;
-
-            const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            switch (search_period) {
-                case 'tomorrow':
-                    day = date.getDate() + 1;
-                    break;
-                case 'week':
-                    day = date.getDate() + 7;
-                    break;
-                case 'month':
-                    month = date.getMonth() + 2;
-                    break;
-                case 'year':
-                    year = date.getFullYear() + 1;
-                    break;
-            }
-            let currentDate = `${year}-${month}-${day}`;
-
-            $('#search_due_form').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-
-            $('#search_due_to').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-        }
 
         function check_diff_date(type) {
             var today = document.getElementById('today').value;

@@ -20,7 +20,7 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['cov
     // get value from ajax
     # --- booking create form --- #
     $cover_id = !empty($_POST['cover_id']) ? $_POST['cover_id'] : 0;
-    $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id'], true) : '';
+    $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : '';
     $is_approved = !empty($_POST['is_approved']) ? $_POST['is_approved'] : 0;
     $rec_date = $_POST['rec_date'] != "" ? $_POST['rec_date'] : '';
     $payments_type = !empty($_POST['payments_type']) ? $_POST['payments_type'] : 0;

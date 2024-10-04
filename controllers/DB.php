@@ -9,7 +9,7 @@ class DB
     private $host = 'localhost';
     private $username = 'root';
     private $password = '';
-    private $database = 'tms.demo';
+    private $database = 'tms_demo';
     protected $connection;
 
     public function __construct()

@@ -61,6 +61,11 @@ if (!empty($bookings)) {
             $prod_child[$booking['product_id']][] = !empty($booking['bp_child']) && $booking['mange_id'] == 0 ? $booking['bp_child'] : 0;
             $prod_infant[$booking['product_id']][] = !empty($booking['bp_infant']) && $booking['mange_id'] == 0 ? $booking['bp_infant'] : 0;
             $prod_foc[$booking['product_id']][] = !empty($booking['bp_foc']) && $booking['mange_id'] == 0 ? $booking['bp_foc'] : 0;
+            # --- array manage --- #
+            $book['adult'][$booking['mange_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
+            $book['child'][$booking['mange_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
+            $book['infant'][$booking['mange_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
+            $book['foc'][$booking['mange_id']][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
         }
 
         # --- get value booking transfer --- #
@@ -154,6 +159,30 @@ foreach ($manages as $manage) {
             </div>
         </div>
 
+        <div class="row">
+            <!-- Plan Card Manage Boat -->
+            <?php
+            if (!empty($mange['id'])) {
+                for ($i = 0; $i < count($mange['id']); $i++) {
+                    $cus_sum = (!empty($book['adult'][$mange['id'][$i]]) && !empty($book['child'][$mange['id'][$i]]) && !empty($book['infant'][$mange['id'][$i]]) && !empty($book['foc'][$mange['id'][$i]])) ? array_sum($book['adult'][$mange['id'][$i]]) + array_sum($book['child'][$mange['id'][$i]]) + array_sum($book['infant'][$mange['id'][$i]]) + array_sum($book['foc'][$mange['id'][$i]]) : 0;
+                    if ($cus_sum > 0) {
+            ?>
+                        <div class="col-lg-2 col-sm-3 col-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?></h2>
+                                        <h5 class="card-text"><?php echo $mange['car'][$i]; ?></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            <?php }
+                }
+            } ?>
+            <!-- /Plan Card Manage Boat Ends -->
+        </div>
+
         <div class="content-body">
             <!-- list start -->
             <section class="app-booking-list">
@@ -187,7 +216,7 @@ foreach ($manages as $manage) {
                                 </div>
                             </div>
                             <input type="hidden" id="pickup_retrun" name="search_retrun" value="1">
-                            <div class="col-md-2 col-12">
+                            <div class="col-md-4 col-12">
                                 <button type="submit" class="btn btn-primary">Search</button>
                                 <button type="button" class="btn btn-success waves-effect waves-float waves-light btn-page-block-spinner" data-toggle="modal" data-target="#modal-transfers" onclick="modal_transfer('<?php echo date('j F Y', strtotime($get_date)); ?>', 0, 0, 1);"><i data-feather='plus'></i> เปิดรถ</button>
                             </div>

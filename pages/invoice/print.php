@@ -189,11 +189,11 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
         <textarea id="array_extar" hidden><?php echo !empty($arr_extar) ? json_encode($arr_extar, true) : ''; ?></textarea>
 
         <!-- Header starts -->
-        <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
-            <div>
-                <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="150"></span>
+        <div class="row">
+            <div class="col-6">
+                <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="120"></span>
             </div>
-            <div class="mt-md-0 mt-2">
+            <div class="col-6 text-right mt-md-0 mt-2">
                 <span style="color: #000;">
                     <?php echo $main_document; ?>
                 </span>
@@ -335,17 +335,18 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                     }
                 }
                 $amount = !empty($discount) ? $sum_total - array_sum($discount) : $sum_total;
+                $amount = !empty($cot) ? $amount - array_sum($cot) : $amount;
                 if ($vat[0] == 1) {
-                    $vat_total = $sum_total * 100 / 107;
+                    $vat_total = $amount * 100 / 107;
                     $vat_cut = $vat_total;
-                    $vat_total = $sum_total - $vat_total;
+                    $vat_total = $amount - $vat_total;
                     $withholding_total = $withholding[0] > 0 ? ($vat_cut * $withholding[0]) / 100 : 0;
-                    $amount = $sum_total - $withholding_total;
+                    $amount = $amount - $withholding_total;
                 } elseif ($vat[0] == 2) {
-                    $vat_total = ($sum_total * 7) / 100;
-                    $sum_total = $sum_total + $vat_total;
-                    $withholding_total = $withholding[0] > 0 ? ($sum_total - $vat_total) * $withholding[0] / 100 : 0;
-                    $amount = $sum_total - $withholding_total;
+                    $vat_total = ($amount * 7) / 100;
+                    $amount = $amount + $vat_total;
+                    $withholding_total = $withholding[0] > 0 ? ($amount - $vat_total) * $withholding[0] / 100 : 0;
+                    $amount = $amount - $withholding_total;
                 }
                 ?>
 

@@ -28,8 +28,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                 $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
                 $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
                 $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+                $rate_adult[] = !empty($booking['rate_adult']) ? $booking['rate_adult'] : 0;
+                $rate_child[] = !empty($booking['rate_child']) ? $booking['rate_child'] : 0;
                 $cot[] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
                 $start_pickup[] = !empty($booking['start_pickup']) ? date('H:i', strtotime($booking['start_pickup'])) : '00:00:00';
+                $end_pickup[] = !empty($booking['end_pickup']) ? date('H:i', strtotime($booking['end_pickup'])) : '00:00:00';
                 $car_name[] = !empty($booking['car_name']) ? $booking['car_name'] : '';
                 $cus_name[] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
                 $book_full[] = !empty($booking['book_full']) ? $booking['book_full'] : '';
@@ -60,6 +63,23 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             # --- get value booking --- #
             if (in_array($booking['bec_id'], $first_extar) == false && !empty($booking['bec_id'])) {
                 $first_extar[] = $booking['bec_id'];
+
+                $bec_id[$booking['id']][] = !empty($booking['bec_id']) ? $booking['bec_id'] : 0;
+                $extra_id[$booking['id']][] = !empty($booking['extra_id']) ? $booking['extra_id'] : 0;
+                $extra_name[$booking['id']][] = !empty($booking['extra_name']) ? $booking['extra_name'] : '';
+                $bec_type[$booking['id']][] = !empty($booking['bec_type']) ? $booking['bec_type'] : 0;
+                $bec_adult[$booking['id']][] = !empty($booking['bec_adult']) ? $booking['bec_adult'] : 0;
+                $bec_child[$booking['id']][] = !empty($booking['bec_child']) ? $booking['bec_child'] : 0;
+                $bec_infant[$booking['id']][] = !empty($booking['bec_infant']) ? $booking['bec_infant'] : 0;
+                $bec_privates[$booking['id']][] = !empty($booking['bec_privates']) ? $booking['bec_privates'] : 0;
+                $bec_rate_adult[$booking['id']][] = !empty($booking['bec_rate_adult']) ? $booking['bec_rate_adult'] : 0;
+                $bec_rate_child[$booking['id']][] = !empty($booking['bec_rate_child']) ? $booking['bec_rate_child'] : 0;
+                $bec_rate_infant[$booking['id']][] = !empty($booking['bec_rate_infant']) ? $booking['bec_rate_infant'] : 0;
+                $bec_rate_private[$booking['id']][] = !empty($booking['bec_rate_private']) ? $booking['bec_rate_private'] : 0;
+                $bec_rate_total[$booking['id']][] = $booking['bec_type'] > 0 ? $booking['bec_type'] == 1 ? (($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) + ($booking['bec_infant'] * $booking['bec_rate_infant'])) : ($booking['bec_privates'] * $booking['bec_rate_private']) : 0;
+                $bec_extar_unit[$booking['id']][] = $booking['bec_type'] > 0 ? $booking['bec_type'] == 1 ? ($booking['bec_adult'] + $booking['bec_child'] + $booking['bec_infant']) . ' คน' : $booking['bec_privates'] . ' ' . $booking['extra_unit'] : '';
+                $bec_name[$booking['id']][] = !empty($booking['extra_id']) ? $booking['extra_name'] : $booking['bec_name'];
+
                 $arr_extar[$booking['id']]['id'][] = !empty($booking['bec_id']) ? $booking['bec_id'] : 0;
                 $arr_extar[$booking['id']]['name'][] = !empty($booking['extra_id']) ? $booking['extra_name'] : $booking['bec_name'];
                 $arr_extar[$booking['id']]['adult'][] = !empty($booking['bec_adult']) ? $booking['bec_adult'] : $booking['bec_privates'];
@@ -107,7 +127,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                         </div>
                     </th>
                     <th width="7%">เวลารับ</th>
-                    <th width="5%">Driver</th>
                     <th width="14%">โปรแกรม</th>
                     <th width="15%">ชื่อลูกค้า</th>
                     <th width="5%">V/C</th>
@@ -142,8 +161,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                                     <label class="custom-control-label" for="checkbox<?php echo $bo_id[$i]; ?>"></label>
                                 </div>
                             </td>
-                            <td class="text-center"><?php echo $start_pickup[$i]; ?></td>
-                            <td class="text-center"><?php echo $car_name[$i]; ?></td>
+                            <td class="text-center"><?php echo $start_pickup[$i] . ' - ' . $end_pickup[$i]; ?></td>
                             <td><?php echo $product_name[$i]; ?></td>
                             <td><?php echo $cus_name[$i]; ?></td>
                             <td><?php echo !empty($voucher_no[$i]) ? $voucher_no[$i] : $book_full[$i]; ?></td>
@@ -156,12 +174,26 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                                 } ?>
                             </td>
                             <td><?php echo $room_no[$i]; ?></td>
-                            <td class="text-center"><?php echo $adult[$i]; ?></td>
-                            <td class="text-center"><?php echo $child[$i]; ?></td>
+                            <td class="text-center"><?php echo $adult[$i] . ' X ' . $rate_adult[$i]; ?></td>
+                            <td class="text-center"><?php echo !empty($child[$i]) ? $child[$i] . ' X ' . $rate_adult[$i] : $child[$i]; ?></td>
                             <td class="text-center"><?php echo $infant[$i]; ?></td>
                             <td class="text-center"><?php echo $foc[$i]; ?></td>
                             <td class="text-nowrap"><b class="text-danger"><?php echo !empty($cot[$i]) ? number_format($cot[$i]) : ''; ?></b></td>
-                            <td><b class="text-info"><?php echo $bp_note[$i]; ?></b></td>
+                            <td><b class="text-info">
+                                    <?php if (!empty($bec_id[$bo_id[$i]])) {
+                                        for ($e = 0; $e < count($bec_name[$bo_id[$i]]); $e++) {
+                                            echo $bec_name[$bo_id[$i]][$e] . ' : ';
+                                            if ($bec_type[$bo_id[$i]][$e] == 1) {
+                                                echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
+                                                echo !empty($bec_child[$bo_id[$i]][$e]) ? ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e] : '';
+                                            } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
+                                                echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e] . ' ';
+                                            }
+                                        }
+                                    }
+                                    echo !empty($bp_note[$i]) ? ' / ' . $bp_note[$i] : ''; ?>
+                                </b>
+                            </td>
                         </tr>
                 <?php }
                 } ?>

@@ -762,9 +762,9 @@
         }
 
         function check_extar_type(select) {
-            var adult = document.getElementById('adult').value;
-            var child = document.getElementById('child').value;
-            var infant = document.getElementById('infant').value;
+            var adult = document.getElementById('cover-adult').value;
+            var child = document.getElementById('cover-child').value;
+            var infant = document.getElementById('cover-infant').value;
 
             var div_name_perpax = select.name.replace('[extra_type]', '[div_extar_perpax]');
             document.getElementsByName(div_name_perpax)[0].hidden = select.value == 1 ? false : true;

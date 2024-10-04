@@ -242,7 +242,7 @@ if (!empty($programed)) {
                                     <input type="text" class="form-control date-picker" id="date_travel_booking" name="date_travel_booking" value="<?php echo $get_date; ?>" />
                                 </div>
                             </div>
-                            <div class="col-md-2 col-12">
+                            <div class="col-md-4 col-12">
                                 <button type="submit" class="btn btn-primary">Search</button>
                                 <button type="button" class="btn btn-success waves-effect waves-float waves-light btn-page-block-spinner" data-toggle="modal" data-target="#modal-boat" onclick="modal_boat('<?php echo date('j F Y', strtotime($get_date)); ?>', 0, 0);"><i data-feather='plus'></i> เปิดเรือ</button>
                             </div>
