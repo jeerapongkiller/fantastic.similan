@@ -46,7 +46,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             if (in_array($invoice['id'], $first_booking) == false) {
                 $first_booking[] = $invoice['id'];
                 $inv_id[] = !empty($invoice['inv_id']) ? $invoice['inv_id'] : 0;
-                $bo_id[] = !empty($invoice['id']) ? $invoice['id'] : 0;
+                $bo_id[$invoice['cover_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
                 $comp_id[] = !empty($invoice['comp_id']) ? $invoice['comp_id'] : 0;
                 $agent_name[] = !empty($invoice['comp_name']) ? $invoice['comp_name'] : '';
                 $agent_license[] = !empty($invoice['tat_license']) ? $invoice['tat_license'] : '';
@@ -138,7 +138,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                             <td><?php echo date('j F Y', strtotime($inv_date[$i])); ?></td>
                             <td><?php echo $inv_full[$i]; ?></td>
                             <td><?php echo $due_date[$i]; ?></td>
-                            <td class="text-center"><?php echo count($inv_id); ?></td>
+                            <td class="text-center"><?php echo !empty($bo_id[$cover_id[$i]]) ? count($bo_id[$cover_id[$i]]) : '-'; ?></td>
                             <td class="text-center"><?php echo $vat[$i] != '-' ? $vat[$i] == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%' : '-'; ?></td>
                             <td class="text-center"><?php echo $withholding[$i] != '-' ? $withholding[$i] . '%' : '-'; ?></td>
                             <td class="text-center"></td>

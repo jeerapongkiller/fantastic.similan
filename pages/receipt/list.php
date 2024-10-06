@@ -41,7 +41,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                     <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
                                     </div>
                                     <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
-                                        <form id="invoice-search-form" name="invoice-search-form" method="get" enctype="multipart/form-data">
+                                        <form id="receipt-search-form" name="receipt-search-form" method="get" enctype="multipart/form-data">
                                             <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
                                                 <div class="col-md-3 col-12">
                                                     <div class="form-group">

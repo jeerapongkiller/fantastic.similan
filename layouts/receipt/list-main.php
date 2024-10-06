@@ -263,20 +263,12 @@
             jqForm.on("submit", function(e) {
                 var serializedData = $(this).serialize();
                 $.ajax({
-                    url: "pages/receipt/function/search-list.php",
+                    url: "pages/receipt/function/search-agent.php",
                     type: "POST",
-                    data: serializedData + "&action=search",
+                    data: serializedData + "&action=search-receipt",
                     success: function(response) {
                         if (response != false) {
-                            var agent_name = $('#search_agent').find(':selected').attr('data-name');
-                            var agent_address = $('#search_agent').find(':selected').attr('data-address');
-                            var agent_telephone = $('#search_agent').find(':selected').attr('data-telephone');
-                            var agent_tat = $('#search_agent').find(':selected').attr('data-tat');
-                            document.getElementById('agent_name_text').innerHTML = agent_name;
-                            document.getElementById('agent_address_text').innerHTML = agent_address;
-                            document.getElementById('agent_tel_text').innerHTML = agent_telephone;
-                            document.getElementById('agent_tax_text').innerHTML = agent_tat;
-                            $("#receipt-search-table").html(response);
+                            $("#div-invoice-custom").html(response);
                         }
                     }
                 });
