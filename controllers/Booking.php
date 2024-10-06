@@ -1429,7 +1429,7 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_data(int $id, int  $book_status, string $voucher_no_agent, string $sender, int $company_id, int $booking_type_id)
+    public function update_data(int $id, int  $book_status, string $voucher_no_agent, string $sender, int $company_id, int $booking_type_id, string $discount)
     {
         $bind_types = "";
         $params = array();
@@ -1455,6 +1455,10 @@ class Booking extends DB
         $query .= " company_id = ?,";
         $bind_types .= "i";
         array_push($params, $company_id);
+
+        $query .= " discount = ?,";
+        $bind_types .= "d";
+        array_push($params, $discount);
 
         $query .= " updated_at = now()";
 

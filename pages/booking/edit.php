@@ -325,8 +325,14 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row" id="div-total">
-                                                <div class="form-group col-md-4">
+                                            <div class="row">
+                                            <div class="form-group col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="discount">Discount (ส่วนลด)</label>
+                                                        <input type="text" class="form-control numeral-mask" id="discount" name="discount" value="<?php echo number_format($discount); ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-4" id="div-total">
                                                     <div class="form-group">
                                                         <label class="form-label" for="rate_total">Total Price (Program)</label>
                                                         <input type="text" class="form-control numeral-mask" id="rate_total" name="rate_total" onchange="check_rate('input');" value="<?php echo number_format($rate_total); ?>" />

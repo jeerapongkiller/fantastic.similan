@@ -165,88 +165,233 @@ if (!empty($bookings[0]['bp_id'])) {
 ?>
 
     <div id="div-inc-print" style="background-color: #fff;">
-        <div class="card-body invoice-padding pb-0">
-            <!-- Header starts -->
-            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0 mb-1">
-                <div>
-                    <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="150"></span>
-                </div>
-                <div>
-                    <span style="color: #000;">
-                        <?php echo $main_document; ?>
-                    </span>
-                </div>
-            </div>
-            <!-- Header ends -->
-            <!-- Header starts -->
-            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
-                <div class="col-6 mt-md-0 mt-2">
-                    <h3>Voucher No. <?php echo $voucher_no_agent; ?></h3>
-                    <h4>Booking No. <?php echo $book_full; ?></h4>
-                    <h4><?php echo $agent_name; ?></h4>
-                    <h4>Sender : <?php echo $sender; ?></h4>
-                    <input type="hidden" value="<?php echo $book_full; ?>" id="booking_full">
-                    <br>
-                    <?php
-                    $position_cus = !empty($customers['head']) ? array_search(1, $customers['head'], true) : '';
-                    echo !empty($customers['name'][$position_cus]) ? '<b>ชื่อลูกค้า : </b>' . $customers['name'][$position_cus] . '</br>' : '';
-                    // echo !empty($customers['whatsapp'][$position_cus]) ? $customers['whatsapp'][$position_cus] . '</br>' : '';
-                    // echo !empty($customers['email'][$position_cus]) ? $customers['email'][$position_cus] . '</br>' : '';
-                    echo !empty($customers['telephone'][$position_cus]) ? '<b>โทร : </b>' .  $customers['telephone'][$position_cus] . '</br>' : '';
-                    echo !empty($customers['nation_name'][$position_cus]) ? '<b>สัญชาติ : </b>' .  $customers['nation_name'][$position_cus] . '</br>' : '';
-                    // echo !empty($customers['address'][$position_cus]) ? $customers['address'][$position_cus] . '</br>' : '';
-                    ?>
-                </div>
 
-                <div class="mt-md-0 mt-2">
-                    <?php echo $_SESSION["supplier"]["fullname"]; ?>
-                    <table style="border: 1px solid #ddd;" cellspacing="0" cellpadding="6" class="w-100">
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Booking No:
-                            </td>
-                            <td align="right"><?php echo $book_full; ?></td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Created:
-                            </td>
-                            <td align="right"><?php echo date('j F Y', strtotime($created_at)); ?></td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Booker:
-                            </td>
-                            <td align="right"><?php echo $booker_name; ?></td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Payment :
-                            </td>
-                            <td align="right"><?php echo !empty($payment_name) ? $payment_name : 'ไม่ได้ระบุ'; ?></td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Travel Date:
-                            </td>
-                            <td align="right">
-                                <?php echo date('j F Y', strtotime($travel_date)); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#d9d9d9">
-                                Total (THB):
-                            </td>
-                            <td align="right">฿ <?php echo number_format($total_sum); ?></td>
-                        </tr>
-                    </table>
-
-                </div>
+        <!-- Header starts -->
+        <div class="row">
+            <div class="col-6">
+                <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="120"></span>
             </div>
-            <!-- Header ends -->
+            <div class="col-6 text-right mt-md-0 mt-2">
+                <span style="color: #000;">
+                    <?php echo $main_document; ?>
+                </span>
+                <table width="100%" class="mt-50">
+                    <tr>
+                        <td rowspan="2" class="text-center" bgcolor="#c28f26" style="color: #fff; border-radius: 15px 0px 0px 0px;">
+                            VOUCHER
+                        </td>
+                        <td class="text-center">
+                            Voucher No.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <?php echo $voucher_no_agent; ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
+        <!-- Header ends -->
 
-        <hr class="invoice-spacing" />
+        <!-- Header 2 starts -->
+        <table width="100%" class="mt-1">
+            <tr class="default-td">
+                <td width="34%" align="left" colspan="4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Booking No.
+                        </dt>
+                        <dd class="col-sm-8"><?php echo $book_full; ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Programe
+                        </dt>
+                        <dd class="col-sm-8"></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Travel Date
+                        </dt>
+                        <dd class="col-sm-8"><?php echo date('j F Y', strtotime($travel_date)); ?></dd>
+                    </dl>
+                    <?php $position_cus = !empty($customers['head']) ? array_search(1, $customers['head'], true) : ''; ?>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            ชื่อลูกค้า
+                        </dt>
+                        <dd class="col-sm-8"><?php echo !empty($customers['name'][$position_cus]) ? $customers['name'][$position_cus] : ''; ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            โทร
+                        </dt>
+                        <dd class="col-sm-8"><?php echo !empty($customers['telephone'][$position_cus]) ? $customers['telephone'][$position_cus] : ''; ?></dd>
+                    </dl>
+                </td>
+                <td align="left" colspan="2">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Created
+                        </dt>
+                        <dd class="col-sm-8"><?php echo date('j F Y', strtotime($created_at)); ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Booker
+                        </dt>
+                        <dd class="col-sm-8"><?php echo $booker_name; ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Payment
+                        </dt>
+                        <dd class="col-sm-8"><?php echo !empty($payment_name) ? $payment_name : '-'; ?></dd>
+                    </dl>
+                </td>
+                <td width="34%" align="left" colspan="2">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Company
+                        </dt>
+                        <dd class="col-sm-8"><?php echo $agent_name; ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Tel
+                        </dt>
+                        <dd class="col-sm-8"><?php echo $agent_telephone; ?></dd>
+                    </dl>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-right">
+                            Sender
+                        </dt>
+                        <dd class="col-sm-8"><?php echo $sender; ?></dd>
+                    </dl>
+                </td>
+            </tr>
+        </table>
+        <!-- Header 2 ends -->
+
+        <table width="100%" class="mt-1">
+            <tr>
+                <td colspan="5">Detail</td>
+            </tr>
+            <tr>
+                <td>1.</td>
+                <td>Adult(s)</td>
+                <td>3</td>
+                <td>1,000</td>
+                <td>3,000</td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td>Child(s)</td>
+                <td>2</td>
+                <td>500</td>
+                <td>1,000</td>
+            </tr>
+            <tr>
+                <td>3.</td>
+                <td>Infant(s)</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>4.</td>
+                <td>FOC</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr colspan="5">
+                <td>Amount 0</td>
+            </tr>
+        </table>
+
+        <table width="100%" class="mt-1">
+            <tr>
+                <td colspan="6">Extra Charge</td>
+            </tr>
+            <tr>
+                <td>5.</td>
+                <td>name</td>
+                <td>Adult(s)</td>
+                <td>3</td>
+                <td>1,000</td>
+                <td>3,000</td>
+            </tr>
+            <tr>
+                <td>6.</td>
+                <td>name</td>
+                <td>Child(s)</td>
+                <td>2</td>
+                <td>500</td>
+                <td>1,000</td>
+            </tr>
+            <tr>
+                <td>7.</td>
+                <td>name</td>
+                <td>Infant(s)</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>8.</td>
+                <td>name</td>
+                <td>FOC</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr colspan="6">
+                <td>Amount 0</td>
+            </tr>
+        </table>
+
+        <table width="100%" class="mt-1">
+            <tr>
+                <td colspan="6">Extra Charge</td>
+            </tr>
+            <tr>
+                <td>5.</td>
+                <td>name</td>
+                <td>Adult(s)</td>
+                <td>3</td>
+                <td>1,000</td>
+                <td>3,000</td>
+            </tr>
+            <tr>
+                <td>6.</td>
+                <td>name</td>
+                <td>Child(s)</td>
+                <td>2</td>
+                <td>500</td>
+                <td>1,000</td>
+            </tr>
+            <tr>
+                <td>7.</td>
+                <td>name</td>
+                <td>Infant(s)</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>8.</td>
+                <td>name</td>
+                <td>FOC</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr colspan="6">
+                <td>Amount 0</td>
+            </tr>
+        </table>
 
         <!-- Invoice Description starts -->
         <div class="table-responsive">

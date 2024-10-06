@@ -16,6 +16,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     $sender = !empty($_POST['sender']) ? $_POST['sender'] : '';
     $cot_id = !empty($_POST['cot_id']) ? $_POST['cot_id'] : 0;
     $cot = !empty($_POST['cot']) ? preg_replace('(,)', '', $_POST['cot']) : 0;
+    $discount = !empty($_POST['discount']) ? preg_replace('(,)', '', $_POST['discount']) : 0;
     # --- get value booking product form --- #
     $bp_id = !empty($_POST['bp_id']) ? $_POST['bp_id'] : 0;
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';
@@ -89,7 +90,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     if ($agent == 'outside' && !empty($_POST['agent_outside'])) {
         $agent_out_id = $bookObj->insert_agent($_POST['agent_outside']);
     }
-    $response = $bookObj->update_data($bo_id, $book_status, $voucher_no, $sender, ($agent == 'outside' && !empty($_POST['agent_outside'])) ? $agent_out_id : $agent, $book_type); // update data booking
+    $response = $bookObj->update_data($bo_id, $book_status, $voucher_no, $sender, ($agent == 'outside' && !empty($_POST['agent_outside'])) ? $agent_out_id : $agent, $book_type, $discount); // update data booking
 
     $response = ($response > 0 && $response != false) ? $bookObj->update_booking_product($bp_id, $travel_date, $adult, $child, $infant, $foc, $bp_note, $product_id, $category_id) : false; // update data booking product
 
