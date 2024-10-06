@@ -47,6 +47,17 @@
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- END: Custom CSS-->
 
+    <style>
+        .table-black {
+            color: #FFFFFF;
+            background-color: #333;
+        }
+
+        .table-black-2 {
+            color: #FFFFFF;
+            background-color: #4f4e4e;
+        }
+    </style>
 </head>
 <!-- END: Head-->
 
@@ -113,7 +124,13 @@
         // --------------------------------------------------------------------
         function deleteReceipt() {
             var rec_id = $('#rec_id').val();
-            var res_bo = JSON.parse($('#rec' + rec_id).attr('data-bo_id'));
+            var bo_arr = document.getElementsByName('bo_id[]');
+            var bo_id = [];
+            if (bo_arr.length) {
+                for (let index = 0; index < bo_arr.length; index++) {
+                    bo_id.push(bo_arr[index].value);
+                }
+            }
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -132,7 +149,7 @@
                         type: "POST",
                         data: {
                             rec_id: rec_id,
-                            res_bo: res_bo,
+                            bo_id: bo_id,
                             action: 'delete'
                         },
                         success: function(response) {
@@ -179,6 +196,7 @@
                 jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
+                range = $('.flatpickr-range'),
                 select = $('.select2');
 
             // select2
@@ -194,6 +212,22 @@
                         $(this).valid();
                     });
             });
+
+            // Range
+            if (range.length) {
+                range.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    mode: 'range',
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
+                });
+            }
 
             // Picker
             if (picker.length) {
@@ -298,11 +332,260 @@
                 });
             }
 
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
         });
 
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
+
+        function search_start_date(tabs, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search-receipt');
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/receipt/function/search-agent.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + tabs).html(response);
+                    }
+                }
+            });
+        }
+
+        function modal_detail(agent_id, agent_name, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('agent_id', agent_id);
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/receipt/function/search-receipt.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#div-modal-detail').html(response);
+                    }
+                }
+            });
+        }
+
+        function modal_show_receipt(rec_id) {
+            var formData = new FormData();
+            formData.append('action', 'preview');
+            formData.append('rec_id', rec_id);
+            $.ajax({
+                url: "pages/receipt/print.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != false) {
+                        $("#div-show-receipt").html(response);
+                    }
+                }
+            });
+        }
+
+        function modal_receipt(rec_id) {
+            $('#modal-show').modal('toggle');
+            $('#modal-add-receipt').modal('show');
+            $("#modal-add-receipt").css({
+                "overflow-y": "auto"
+            });
+
+            var array_booking = document.getElementById('array_booking').value;
+            var array_extar = document.getElementById('array_extar').value;
+            var array_invoice = document.getElementById('array_invoice').value;
+            if (array_booking !== '') {
+                var res = $.parseJSON(array_booking);
+                var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : '';
+                var res_invoice = array_invoice !== '' ? $.parseJSON(array_invoice) : '';
+
+                document.getElementById('rec_id').value = rec_id;
+                document.getElementById('rec_date').value = document.getElementById('agent_value').dataset.rec_date;
+                document.getElementById('payments_type').value = document.getElementById('agent_value').dataset.payt_id;
+                document.getElementById('bank_account').value = document.getElementById('agent_value').dataset.banacc_id;
+                document.getElementById('rec_bank').value = document.getElementById('agent_value').dataset.bank_id;
+                document.getElementById('check_no').value = typeof document.getElementById('agent_value').dataset.check_no !== 'undefined' ? document.getElementById('agent_value').dataset.check_no : '';
+                document.getElementById('date_check').value = document.getElementById('agent_value').dataset.cheque_date;
+                document.getElementById('note').value = document.getElementById('agent_value').dataset.note;
+
+                document.getElementById('agent_name_text').innerHTML = document.getElementById('agent_value').dataset.name;
+                document.getElementById('agent_tax_text').innerHTML = document.getElementById('agent_value').dataset.license;
+                document.getElementById('agent_tel_text').innerHTML = document.getElementById('agent_value').dataset.telephone;
+                document.getElementById('agent_address_text').innerHTML = document.getElementById('agent_value').dataset.address;
+
+                document.getElementById('rec_full_text').innerHTML = document.getElementById('agent_value').dataset.rec_full;
+                document.getElementById('inv_full_text').innerHTML = res_invoice[rec_id].inv_full;
+                document.getElementById('branch_text').innerHTML = res_invoice[rec_id].brch_name;
+                document.getElementById('inv_date_text').innerHTML = res_invoice[rec_id].inv_date;
+                document.getElementById('rec_date_text').innerHTML = res_invoice[rec_id].rec_date;
+                document.getElementById('due_date_text').innerHTML = res_invoice[rec_id].due_date;
+
+                var text_html = '';
+                var total = 0;
+                var amount = 0;
+                var cot = 0;
+                var discount = 0;
+                var no = 1;
+                for (let index = 0; index < res.id.length; index++) {
+                    var id = res.id[index];
+                    discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                    cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+                    amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
+
+                    text_html += '<tr>' +
+                        '<td class="text-center">' + Number(no++) + '<input type="hidden" name="bo_id[]" value="' + id + '"></td>' +
+                        '<td class="text-center"> ' + res[id].travel_date + ' </td>' +
+                        '<td> ' + res[id].cus_name + ' </td>' +
+                        '<td> ' + res[id].product_name + ' </td>' +
+                        '<td class="text-center"> ' + res[id].voucher_no + ' </td>' +
+                        '<td class="text-center"> ' + res[id].adult + ' </td>' +
+                        '<td class="text-center"> ' + res[id].child + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_adult) + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_child) + ' </td>' +
+                        '<td class="text-center"> ' + res[id].discount + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].total) + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+                        '</tr>';
+
+                    if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+                        for (let index = 0; index < res_extar[id].id.length; index++) {
+                            amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
+                            text_html += '<tr>' +
+                                '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
+                                '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+                                '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
+                                '</tr>';
+                        }
+                    }
+                }
+
+                text_html += '<tr>' +
+                    '<td colspan="9"></td>' +
+                    '<td colspan="2" class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+                    '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                    '</tr>'
+
+                if (discount > 0) {
+                    amount = amount - discount;
+                    text_html += '<tr>' +
+                        '<td colspan="9"></td>' +
+                        '<td colspan="2" class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+                        '</tr>'
+                }
+
+                if (cot > 0) {
+                    amount = amount - cot;
+                    text_html += '<tr>' +
+                        '<td colspan="9"></td>' +
+                        '<td colspan="2" class="text-center"><b>Cash on tour</b></td>' +
+                        '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                        '</tr>'
+                }
+
+                if (res_invoice[rec_id].vat == 1) {
+                    vat_total = Number(((amount * 100) / 107));
+                    vat_cut = vat_total;
+                    vat_total = Number(amount - vat_total);
+                    withholding_total = res_invoice[rec_id].withholding > 0 ? Number((vat_cut * res_invoice[rec_id].withholding) / 100) : 0;
+                    amount = Number(amount - withholding_total);
+                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                        maximumFractionDigits: 2
+                    });
+                } else if (res_invoice[rec_id].vat == 2) {
+                    vat_total = Number(((amount * 7) / 100));
+                    amount = Number(amount) + Number(vat_total);
+                    withholding_total = res_invoice[rec_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[rec_id].withholding) / 100) : 0;
+                    amount = Number(amount - withholding_total);
+                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                        maximumFractionDigits: 2
+                    });
+                }
+
+                if (res_invoice[rec_id].vat > 0) {
+                    text_vat = res_invoice[rec_id].vat == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%';
+                    text_html += '<tr>' +
+                        '<td colspan="9"></td>' +
+                        '<td colspan="2" class="text-center"><b id="vat-multi-text">' + text_vat + '</b><br><small>(Vat)</small></td>' +
+                        '<td class="text-center">' + Number(vat_total).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        }) + '</td>' +
+                        '</tr>';
+                }
+
+                if (res_invoice[rec_id].withholding > 0) {
+                    text_html += '<tr>' +
+                        '<td colspan="9"></td>' +
+                        '<td colspan="2" class="text-center"><b id="withholding-multi-text">หัก ณ ที่จ่าย (' + res_invoice[rec_id].withholding + '%)</b><br><small>(Withholding Tax)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(withholding_total) + '</td>' +
+                        '</tr>';
+                }
+
+                text_html += '<tr>' +
+                    '<td colspan="9"></td>' +
+                    '<td colspan="2" class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
+                    '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
+                        maximumFractionDigits: 2
+                    }) + '</td>' +
+                    '</tr>';
+
+                $('#tbody-multi-booking').html(text_html);
+
+                document.getElementById('amount').value = amount;
+            }
+
+            $('#rec_date').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: document.getElementById('agent_value').dataset.rec_date
+            });
+
+            $('#date_check').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: document.getElementById('agent_value').dataset.cheque_date
+            });
+
+            // calculator_price();
+
+            $("#payments_type").val(document.getElementById('agent_value').dataset.payt_id).trigger("change");
+            $("#bank_account").val(document.getElementById('agent_value').dataset.banacc_id).trigger("change");
+            $("#rec_bank").val(document.getElementById('agent_value').dataset.bank_id).trigger("change");
+        }
+
+
+
+
 
         function modal_show_receipt(rec_id) {
             var formData = new FormData();

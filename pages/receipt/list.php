@@ -2,8 +2,11 @@
 require_once 'controllers/Receipt.php';
 
 $recObj = new Receipt();
-$today = date("Y-m-d");
 $times = date("H:i:s");
+$today = date("Y-m-d");
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
+// $today = '2024-09-29';
+// $tomorrow = '2024-09-30';
 ?>
 
 <div class="app-content content">
@@ -14,221 +17,97 @@ $times = date("H:i:s");
         </div>
 
         <div class="content-body">
-            <!-- cars list start -->
-            <section class="app-user-list">
-                <div class="card">
-                    <div class="content-header">
-                        <h5 class="pt-1 pl-2 pb-0">Search Filter</h5>
-                        <form id="receipt-search-form" name="receipt-search-form" method="post" enctype="multipart/form-data">
-                            <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
-                                <div class="col-md-2 col-12">
-                                    <div class="form-group">
-                                        <label for="search_period">Period</label>
-                                        <select class="form-control select2" id="search_period" name="search_period" onchange="fun_search_period();">
-                                            <option value="all">All</option>
-                                            <option value="today">Today</option>
-                                            <option value="tomorrow">Tomorrow</option>
-                                            <option value="custom">Custom</option>
-                                        </select>
+            <!-- Basic tabs start -->
+            <section id="basic-tabs-components">
+                <div class="row match-height">
+                    <!-- Basic Tabs starts -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="false">Custom</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
                                     </div>
-                                </div>
-                                <div class="col-md-2 col-12" id="div-form" hidden>
-                                    <div class="form-group">
-                                        <label class="form-label" for="search_rec_form">receipt Date (Form)</label></br>
-                                        <input type="text" class="form-control" id="search_rec_form" name="search_rec_form" value="<?php echo $get_date; ?>" />
+                                    <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
                                     </div>
-                                </div>
-                                <div class="col-md-2 col-12" id="div-to" hidden>
-                                    <div class="form-group">
-                                        <label class="form-label" for="search_rec_to">receipt Date (To)</label></br>
-                                        <input type="text" class="form-control" id="search_rec_to" name="search_rec_to" value="<?php echo $get_date; ?>" />
+                                    <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+                                        <form id="invoice-search-form" name="invoice-search-form" method="get" enctype="multipart/form-data">
+                                            <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
+                                                <div class="col-md-3 col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="travel_date">วันที่เที่ยว (Travel Date)</label></br>
+                                                        <input type="text" class="form-control flatpickr-range" id="travel_date" name="travel_date" value="<?php echo $today; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-12">
+                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        <div id="div-invoice-custom">
+
+                                        </div>
+
                                     </div>
-                                </div>
-                                <div class="col-md-3 col-12">
-                                    <div class="form-group">
-                                        <label for="search_agent">Agents</label>
-                                        <select class="form-control select2" id="search_agent" name="search_agent">
-                                            <option value="all">All</option>
-                                            <?php
-                                            $agents = $recObj->showlistagent();
-                                            foreach ($agents as $agent) {
-                                            ?>
-                                                <option value="<?php echo $agent['id']; ?>"><?php echo $agent['name']; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-2 col-12">
-                                    <button type="submit" class="btn btn-primary" name="submit" value="Submit">Search</button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                    <hr class="pb-0 pt-0">
-                    <div class="table-responsive" id="receipt-search-table">
-                        <?php
-                            $first_rec = array();
-                            $first_inv = array();
-                            $first_ext = array();
-                            $total = 0;
-                            $receipts = $recObj->showlistreceipt('all', '0000-00-00', '0000-00-00', 'all', 'list', 0);
-                            # --- Check Invoice --- #
-                            if (!empty($receipts)) {
-                                foreach ($receipts as $receipt) {
-                                    if (in_array($receipt['id'], $first_rec) == false) {
-                                        $first_rec[] = $receipt['id'];
-                                        # --- get value invoice --- #
-                                        $is_approved[] = !empty($receipt['is_approved']) ? $receipt['is_approved'] : 0;
-                                        $rec_id[] = !empty($receipt['id']) ? $receipt['id'] : 0;
-                                        $rec_date[] = !empty($receipt['rec_date']) ? $receipt['rec_date'] : 0;
-                                        $rec_full[] = !empty($receipt['rec_full']) ? $receipt['rec_full'] : '';
-                                        $inv_full[] = !empty($receipt['inv_full']) ? $receipt['inv_full'] : '';
-                                        $book_full[] = !empty($receipt['book_full']) ? $receipt['book_full'] : '';
-                                        $brch_name[] = !empty($receipt['brch_name']) ? $receipt['brch_name'] : '';
-                                        $payment[] = !empty($receipt['payt_id']) ? $receipt['payt_id'] : '';
-                                        $banacc[] = !empty($receipt['banacc_id']) ? $receipt['banacc_id'] : '';
-                                        $bank[] = !empty($receipt['bank_id']) ? $receipt['bank_id'] : '';
-                                        $cheque_no[] = !empty($receipt['cheque_no']) ? $receipt['cheque_no'] : '';
-                                        $cheque_date[] = !empty($receipt['cheque_date']) ? $receipt['cheque_date'] : '';
-                                        $note[] = !empty($receipt['note']) ? $receipt['note'] : '';
-                                        $vat[] = !empty($receipt['vat_id']) ? $receipt['vat_id'] : 0;
-                                        $vat_name[] = !empty($receipt['vat_name']) ? $receipt['vat_name'] : 0;
-                                        $withholding[] = !empty($receipt['withholding']) ? $receipt['withholding'] : 0;
-                                        # --- get value company agent --- #
-                                        $agent_id[] = !empty($receipt['comp_id']) ? $receipt['comp_id'] : 0;
-                                        $agent_name[] = !empty($receipt['comp_name']) ? $receipt['comp_name'] : '';
-                                        $agent_address[] = !empty($receipt['comp_address']) ? $receipt['comp_address'] : '';
-                                        $agent_telephone[] = !empty($receipt['comp_telephone']) ? $receipt['comp_telephone'] : '';
-                                        $agent_tat[] = !empty($receipt['comp_tat']) ? $receipt['comp_tat'] : '';
-                                    }
-
-                                    if (in_array($receipt['inv_id'], $first_inv) == false) {
-                                        $first_inv[] = $receipt['inv_id'];
-                                        $inv_id[$receipt['id']][] = !empty($receipt['inv_id']) ? $receipt['inv_id'] : 0;
-                                        $inv_no[$receipt['id']][] = !empty($receipt['inv_no']) ? $receipt['inv_no'] : 0;
-                                        $bo_id[$receipt['id']][] = !empty($receipt['bo_id']) ? $receipt['bo_id'] : 0;
-                                        $bo_full[$receipt['id']][] = !empty($receipt['book_full']) ? $receipt['book_full'] : '';
-                                        $voucher_no_agent[$receipt['id']][] = !empty($receipt['voucher_no_agent']) ? $receipt['voucher_no_agent'] : '';
-                                        $travel_date[$receipt['id']][] = !empty($receipt['travel_date']) ? date("j F Y", strtotime($receipt['travel_date'])) : 0;
-                                        $discount[$receipt['id']][] = !empty($receipt['discount']) ? $receipt['discount'] : 0;
-                                        # --- get value booking products --- #
-                                        $product_name[$receipt['id']][] = !empty($receipt['product_name']) ? $receipt['product_name'] : '';
-                                        # --- get value payment --- #
-                                        $bopay_id[$receipt['id']][] = !empty($receipt['bopay_id']) ? $receipt['bopay_id'] : 0;
-                                        $bopay_id[$receipt['id']][] = !empty($receipt['bopay_id']) ? $receipt['bopay_id'] : 0;
-                                        $bopay_name[$receipt['id']][] = !empty($receipt['bopay_name']) ? $receipt['bopay_name'] : '';
-                                        # --- calculator --- #
-                                        $transfer_type[$receipt['id']][] = !empty($receipt['transfer_type']) ? $receipt['transfer_type'] : 0;
-                                        $rate_total[$receipt['id']][] = !empty($receipt['rate_total']) ? $receipt['rate_total'] : 0;
-                                        $bt_id[$receipt['id']][] = !empty($receipt['bt_id']) ? $receipt['bt_id'] : 0;
-                                        $bt_adult[$receipt['id']][] = !empty($receipt['bt_adult']) ? $receipt['bt_adult'] : 0;
-                                        $bt_child[$receipt['id']][] = !empty($receipt['bt_child']) ? $receipt['bt_child'] : 0;
-                                        $bt_infant[$receipt['id']][] = !empty($receipt['bt_infant']) ? $receipt['bt_infant'] : 0;
-                                        $btr_rate_adult[$receipt['id']][] = !empty($receipt['btr_rate_adult']) && $receipt['transfer_type'] == 1 ? $receipt['btr_rate_adult'] : 0;
-                                        $btr_rate_child[$receipt['id']][] = !empty($receipt['btr_rate_child']) && $receipt['transfer_type'] == 1 ? $receipt['btr_rate_child'] : 0;
-                                        $btr_rate_infant[$receipt['id']][] = !empty($receipt['btr_rate_infant']) && $receipt['transfer_type'] == 1 ? $receipt['btr_rate_infant'] : 0;
-                                    }
-                                    # --- get value booking extra chang --- #
-                                    if ((in_array($receipt['bec_id'], $first_ext) == false) && !empty($receipt['bec_id'])) {
-                                        $first_ext[] = $receipt['bec_id'];
-                                        $bec_id[$receipt['bo_id']][] = !empty($receipt['bec_id']) ? $receipt['bec_id'] : 0;
-                                        $extra_name[$receipt['bo_id']][] = !empty($receipt['extra_name']) ? $receipt['extra_name'] : '';
-                                        $bec_name[$receipt['bo_id']][] = !empty($receipt['bec_name']) ? $receipt['bec_name'] : '';
-                                        $bec_type[$receipt['bo_id']][] = !empty($receipt['bec_type']) ? $receipt['bec_type'] : 0;
-                                        $bec_adult[$receipt['bo_id']][] = !empty($receipt['bec_adult']) ? $receipt['bec_adult'] : 0;
-                                        $bec_child[$receipt['bo_id']][] = !empty($receipt['bec_child']) ? $receipt['bec_child'] : 0;
-                                        $bec_infant[$receipt['bo_id']][] = !empty($receipt['bec_infant']) ? $receipt['bec_infant'] : 0;
-                                        $bec_privates[$receipt['bo_id']][] = !empty($receipt['bec_privates']) ? $receipt['bec_privates'] : 0;
-                                        $bec_rate_adult[$receipt['bo_id']][] = !empty($receipt['bec_rate_adult']) ? $receipt['bec_rate_adult'] : 0;
-                                        $bec_rate_child[$receipt['bo_id']][] = !empty($receipt['bec_rate_child']) ? $receipt['bec_rate_child'] : 0;
-                                        $bec_rate_infant[$receipt['bo_id']][] = !empty($receipt['bec_rate_infant']) ? $receipt['bec_rate_infant'] : 0;
-                                        $bec_rate_private[$receipt['bo_id']][] = !empty($receipt['bec_rate_private']) ? $receipt['bec_rate_private'] : 0;
-                                    }
-                                }
-                            }
-                        ?>
-                        <table class="table table-bordered">
-                            <thead class="bg-primary bg-darken-2 text-white">
-                                <tr>
-                                    <th>REC DATE</th>
-                                    <th>RECEIPT NO.</th>
-                                    <th>INVOICE NO.</th>
-                                    <th class="cell-fit">AMOUNT</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($rec_id)) {
-                                    for ($i = 0; $i < count($rec_id); $i++) {
-                                        $href = 'href="javascript:void(0)" style="color:#6E6B7B" data-toggle="modal" data-target="#modal-show-receipt" onclick="modal_show_receipt(\''. $rec_id[$i] .'\');"';
-                                        for ($b=0; $b < count($rate_total[$rec_id[$i]]); $b++) { 
-                                            $total = 0;
-                                            $total = $total + $rate_total[$rec_id[$i]][$b];
-                                            $total = $transfer_type[$rec_id[$i]][$b] == 1 ? $total + ($bt_adult[$rec_id[$i]][$b] * $btr_rate_adult[$rec_id[$i]][$b]) : $total;
-                                            $total = $transfer_type[$rec_id[$i]][$b] == 1 ? $total + ($bt_child[$rec_id[$i]][$b] * $btr_rate_child[$rec_id[$i]][$b]) : $total;
-                                            $total = $transfer_type[$rec_id[$i]][$b] == 1 ? $total + ($bt_infant[$rec_id[$i]][$b] * $btr_rate_infant[$rec_id[$i]][$b]) : $total;
-                                            $total = $transfer_type[$rec_id[$i]][$b] == 2 ? $recObj->sumbtrprivate($bt_id[$rec_id[$i]][$b])['sum_rate_private'] + $total : $total;
-                                            if (!empty($bec_id[$bo_id[$rec_id[$i]][$b]])) {
-                                                for ($a = 0; $a < count($bec_id[$bo_id[$rec_id[$i]][$b]]); $a++) {
-                                                    $total = $bec_type[$bo_id[$rec_id[$i]][$b]][$a] == 1 ? $total + ($bec_adult[$bo_id[$rec_id[$i]][$b]][$a] * $bec_rate_adult[$bo_id[$rec_id[$i]][$b]][$a]) + ($bec_child[$bo_id[$rec_id[$i]][$b]][$a] * $bec_rate_child[$bo_id[$rec_id[$i]][$b]][$a]) + ($bec_infant[$bo_id[$rec_id[$i]][$b]][$a] * $bec_rate_infant[$bo_id[$rec_id[$i]][$b]][$a]) : $total;
-                                                    $total = $bec_type[$bo_id[$rec_id[$i]][$b]][$a] == 2 ? $total + ($bec_privates[$bo_id[$rec_id[$i]][$b]][$a] * $bec_rate_private[$bo_id[$rec_id[$i]][$b]][$a]) : $total;
-                                                }
-                                            }
-                                            $array_bo_total[$rec_id[$i]][] = $total;
-                                            $total = $total - $discount[$rec_id[$i]][$b];
-                                            // $total = ($bopay_id[$rec_id[$i]][$b] == 4 || $bopay_id[$rec_id[$i]][$b] == 5) ? $total - $bo_total_paid[$rec_id[$i]][$b] : $total;
-                                            $array_total[$rec_id[$i]][] = $total;
-                                        }
-                                ?>
-                                        <tr>
-                                            <td>
-                                                <a <?php echo $href; ?>><?php echo date("j F Y", strtotime($rec_date[$i])); ?></a>
-                                                <input type="hidden" id="<?php echo 'rec' . $rec_id[$i]; ?>" name="<?php echo 'rec' . $rec_id[$i]; ?>"
-                                                value="<?php echo $rec_id[$i]; ?>" 
-                                                data-bo_id='<?php echo json_encode($bo_id[$rec_id[$i]]); ?>'
-                                                data-inv_id='<?php echo json_encode($inv_id[$rec_id[$i]]); ?>'
-                                                data-inv_full="<?php echo $inv_full[$i]; ?>"
-                                                data-inv_no='<?php echo json_encode($inv_no[$rec_id[$i]]); ?>'
-                                                data-voucher='<?php echo json_encode($voucher_no_agent[$rec_id[$i]]); ?>'
-                                                data-product_name='<?php echo json_encode($product_name[$rec_id[$i]]); ?>'
-                                                data-bo_full='<?php echo json_encode($bo_full[$rec_id[$i]]); ?>' 
-                                                data-is_approved="<?php echo $is_approved[$i]; ?>"
-                                                data-rec_date="<?php echo $rec_date[$i]; ?>"
-                                                data-travel_date='<?php echo json_encode($travel_date[$rec_id[$i]]); ?>'
-                                                data-branche="<?php echo $brch_name[$i]; ?>"
-                                                data-payment="<?php echo $payment[$i]; ?>"
-                                                data-bank="<?php echo $bank[$i]; ?>"
-                                                data-banacc="<?php echo $banacc[$i]; ?>"
-                                                data-cheque_no="<?php echo $cheque_no[$i]; ?>"
-                                                data-cheque_date="<?php echo $cheque_date[$i]; ?>"
-                                                data-note="<?php echo $note[$i]; ?>"
-                                                data-vat="<?php echo $vat[$i]; ?>"
-                                                data-vat_name="<?php echo $vat_name[$i]; ?>"
-                                                data-withholding="<?php echo $withholding[$i]; ?>"
-                                                data-agent_name="<?php echo $agent_name[$i]; ?>"
-                                                data-agent_address="<?php echo $agent_address[$i]; ?>" 
-                                                data-agent_telephone="<?php echo $agent_telephone[$i]; ?>" 
-                                                data-agent_tat="<?php echo $agent_tat[$i]; ?>" 
-                                                data-payment_id='<?php echo json_encode($bopay_id[$rec_id[$i]]); ?>'
-                                                data-payment_paid='<?php echo json_encode($total_paid[$rec_id[$i]]); ?>'
-                                                data-discount='<?php echo json_encode($discount[$rec_id[$i]]); ?>'
-                                                data-total='<?php echo json_encode($array_total[$rec_id[$i]]); ?>'
-                                                />
-                                            </td>
-                                            <td><a <?php echo $href; ?>><?php echo $rec_full[$i]; ?></a></td>
-                                            <td><a <?php echo $href; ?>><?php echo $inv_full[$i]; ?></a></td>
-                                            <td class="text-right"><a <?php echo $href; ?>><?php echo number_format(array_sum($array_total[$rec_id[$i]])); ?></a></td>
-                                        </tr>
-                                <?php }
-                                } ?>
-                            </tbody>
-                        </table>
-                    </div>
+                    <!-- Basic Tabs ends -->
                 </div>
             </section>
+            <!-- Basic Tabs end -->
         </div>
 
         <!-- Start Form Modal -->
         <!------------------------------------------------------------------>
+        <div class="modal fade text-left" id="modal-show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel16" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel16">Receipt</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="div-show-receipt">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade text-left" id="modal-detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel16" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content" id="div-modal-detail">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="h4-agent-name"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Accept</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="modal-size-xl d-inline-block">
             <div class="modal fade text-left" id="modal-show-receipt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel16" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -245,9 +124,6 @@ $times = date("H:i:s");
                     </div>
                 </div>
             </div>
-            <!------------------------------------------------------------------>
-            <!-- End Form Modal -->
-
         </div>
 
         <div class="modal-size-xl d-inline-block">
@@ -280,38 +156,6 @@ $times = date("H:i:s");
                                         <div class="form-group">
                                             <label class="form-label" for="rec_date">วันที่ชำระ</label></br>
                                             <input type="text" class="form-control" id="rec_date" name="rec_date" value="" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="content-header">
-                                            <h5>Agent</h5>
-                                        </div>
-                                        <hr class="mt-0">
-                                    </div>
-                                    <div class="form-group col-md-3 col-12">
-                                        <label class="form-label" for="agent_name">Company</label>
-                                        <div class="input-group">
-                                            <span id="agent_name_text"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-3 col-12">
-                                        <label class="form-label" for="agent_tax">Tax ID.</label>
-                                        <div class="input-group">
-                                            <span id="agent_tax_text"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-3 col-12">
-                                        <label class="form-label" for="agent_tel">Tel</label>
-                                        <div class="input-group">
-                                            <span id="agent_tel_text"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-3 col-12">
-                                        <label class="form-label" for="agent_address">Address</label>
-                                        <div class="input-group">
-                                            <span id="agent_address_text"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -368,7 +212,6 @@ $times = date("H:i:s");
                                                 <option value="">Please choose bank ... </option>
                                                 <?php
                                                 foreach ($banks as $bank) {
-                                                    // $selected_payment = $payments_type == $payment['id'] ? 'selected' : '';
                                                 ?>
                                                     <option value="<?php echo $bank['id']; ?>" data-name="<?php echo $bank['name']; ?>"><?php echo $bank['name']; ?></option>
                                                 <?php } ?>
@@ -388,35 +231,109 @@ $times = date("H:i:s");
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" id="div-multi-booking">
                                     <table class="table table-bordered">
-                                        <thead class="bg-warning bg-darken-2 text-white">
-                                            <tr>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff; border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="7%"><b>เลขที่</b><br>
-                                                    <small>No.</small>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="12%"><b>INVOICE NO.</b>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="12%"><b>VOUCHER NO.</b>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="12%"><b>BOOKING NO.</b>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="25%"><b>โปรแกรม</b><br>
-                                                    <small>Programe</small>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="12%"><b>วันที่เที่ยว</b><br>
-                                                    <small>Travel Date.</small>
-                                                </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff; border-radius: 0px 15px 0px 0px;" width="20%"><b>จํานวนเงิน</b><br>
-                                                    <small>Amount</small>
-                                                </td>
+                                        <tr class="table-content">
+                                            <td width="50%" align="left" colspan="4">
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-4 text-right">
+                                                        Company
+                                                    </dt>
+                                                    <dd class="col-sm-8" id="agent_name_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-4 text-right">
+                                                        Address
+                                                    </dt>
+                                                    <dd class="col-sm-8" id="agent_address_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-4 text-right">
+                                                        Tel
+                                                    </dt>
+                                                    <dd class="col-sm-8" id="agent_tel_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-4 text-right">
+                                                        Tax ID.
+                                                    </dt>
+                                                    <dd class="col-sm-8" id="agent_tax_text"></dd>
+                                                </dl>
+                                            </td>
+                                            <td width="50%" align="left" colspan="2">
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                        Receipt No.
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="rec_full_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                        Invoice No.
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="inv_full_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                        สำนักงาน
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="branch_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                        Departure Date
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="inv_date_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                        Due Date
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="rec_date_text"></dd>
+                                                </dl>
+                                                <dl class="row" style="margin-bottom: 0;">
+                                                    <dt class="col-sm-6 text-right">
+                                                    </dt>
+                                                    <dd class="col-sm-6" id="due_date_text"></dd>
+                                                </dl>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table class="table table-bordered">
+                                        <thead class="bg-darken-2 text-white">
+                                            <tr class="table-black">
+                                                <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
+                                                <td class="text-center"><b>วันที่เที่ยว</b></td>
+                                                <td class="text-center"><b>ชื่อลูค้า</b></td>
+                                                <td class="text-center"><b>โปรแกรม</b></td>
+                                                <td class="text-center"><b>หมายเลข</b></td>
+                                                <td class="text-center" colspan="2"><b>จํานวน</b></td>
+                                                <td class="text-center" colspan="2"><b>ราคาต่อหน่วย</b></td>
+                                                <td class="text-center"><b>ส่วนลด</b></td>
+                                                <td class="text-center"><b>จำนวนเงิน</b></td>
+                                                <td class="text-center" style="border-radius: 0px 15px 0px 0px;"><b>Cash on tour</b></td>
+                                            </tr>
+                                            <tr class="table-black-2">
+                                                <td class="text-center p-50"><small>Items</small></td>
+                                                <td class="text-center p-50"><small>Date</small></td>
+                                                <td class="text-center p-50"><small>Customer's name</small></td>
+                                                <td class="text-center p-50"><small>Programe</small></td>
+                                                <td class="text-center p-50"><small>Voucher No.</small></td>
+                                                <td class="text-center p-50"><small>Adult</small></td>
+                                                <td class="text-center p-50"><small>Child</small></td>
+                                                <td class="text-center p-50"><small>Adult</small></td>
+                                                <td class="text-center p-50"><small>Child</small></td>
+                                                <td class="text-center p-50"><small>Discount</small></td>
+                                                <td class="text-center p-50"><small>Amounth</small></td>
+                                                <td class="text-center p-50"><small>เงินมัดจำ</small></td>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody-invoice">
+                                        <tbody id="tbody-multi-booking">
+
                                         </tbody>
                                     </table>
                                 </div>
-                                <input type="hidden" id="price_total" name="price_total" value="">
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         <div class="form-group">
@@ -435,9 +352,7 @@ $times = date("H:i:s");
                     </div>
                 </div>
             </div>
-            <!------------------------------------------------------------------>
-            <!-- End Form Modal -->
-
         </div>
+
     </div>
 </div>

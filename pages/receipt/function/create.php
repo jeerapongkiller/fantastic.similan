@@ -29,6 +29,7 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['cov
     $check_no = !empty($_POST['check_no']) ? $_POST['check_no'] : 0;
     $date_check = !empty($_POST['date_check']) ? $_POST['date_check'] : 0;
     $amount = !empty($_POST['amount']) ? $_POST['amount'] : 0;
+    $note = $_POST['note'] != "" ? $_POST['note'] : '';
     # --- recipet no full --- #
     if ($cover_id > 0) {
         $rec_no = $recObj->checkrecno();
@@ -37,12 +38,12 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['cov
         $rec['full'] = 'REC-' . setNumberLength($no, 7);
         $rec['no'] = $no;
 
-        $response = $recObj->insert_data($rec['no'], $rec['full'], $rec_date, $check_no, $date_check, $bank_account, $rec_bank, $cover_id, $payments_type, $is_approved);
+        $response = $recObj->insert_data($rec['no'], $rec['full'], $rec_date, $check_no, $date_check, $bank_account, $rec_bank, $cover_id, $payments_type, $is_approved, $note);
     }
 
     # --- insert booking paid --- #
     if (!empty($bo_id)) {
-        for ($i=0; $i < count($bo_id); $i++) { 
+        for ($i = 0; $i < count($bo_id); $i++) {
             $response = $response != false && $response > 0 ? $recObj->update_booking_paid($bo_id[$i], 3) : false;
         }
     }

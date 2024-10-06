@@ -16,10 +16,9 @@ function setNumberLength($num, $length)
     return $results;
 }
 
-if (isset($_POST['action']) && $_POST['action'] == "edit" && (isset($_POST['rec_id']) || isset($_POST['cover_id']))) {
+if (isset($_POST['action']) && $_POST['action'] == "edit" && (isset($_POST['rec_id']))) {
     # --- get value --- #
-    $cover_id = !empty($_POST['cover_id']) ? $_POST['cover_id'] : 0;
-    $rec_id = !empty($_POST['rec_id']) ? $cover_id > 0 ? json_decode($_POST['rec_id']) : $_POST['rec_id'] : 0;
+    $rec_id = !empty($_POST['rec_id']) ? $_POST['rec_id'] : 0;
     $is_approved = !empty($_POST['is_approved']) ? $_POST['is_approved'] : 0;
     $rec_date = $_POST['rec_date'] != "" ? $_POST['rec_date'] : '';
     $payment_id = !empty($_POST['payments_type']) ? $_POST['payments_type'] : 0;
@@ -28,15 +27,10 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (isset($_POST['rec_
     $cheque_no = !empty($_POST['check_no']) ? $_POST['check_no'] : 0;
     $cheque_date = !empty($_POST['date_check']) ? $_POST['date_check'] : 0;
     $amount = !empty($_POST['amount']) ? $_POST['amount'] : 0;
+    $note = $_POST['note'] != "" ? $_POST['note'] : '';
 
-    if ($cover_id > 0) {
-        for ($i=0; $i < count($rec_id); $i++) { 
-            $response = $recObj->update_data($rec_date, $cheque_no, $cheque_date, $bank_account_id, $bank_cheque_id, $payment_id, $is_approved, $rec_id[$i]);
-        }
-    } else {
-        $response = $recObj->update_data($rec_date, $cheque_no, $cheque_date, $bank_account_id, $bank_cheque_id, $payment_id, $is_approved, $rec_id);
-    }
-
+    $response = $recObj->update_data($rec_date, $cheque_no, $cheque_date, $bank_account_id, $bank_cheque_id, $payment_id, $is_approved, $note, $rec_id);
+    
     echo $response != false && $response > 0 ? $response : false;
 } else {
     echo $response = false;

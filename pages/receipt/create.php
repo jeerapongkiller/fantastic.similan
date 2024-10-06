@@ -3,10 +3,10 @@ require_once 'controllers/Receipt.php';
 
 $recObj = new Receipt();
 $times = date("H:i:s");
-// $today = date("Y-m-d");
-// $tomorrow = date("Y-m-d", strtotime(" +1 day"));
-$today = '2024-09-29';
-$tomorrow = '2024-09-30';
+$today = date("Y-m-d");
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
+// $today = '2024-09-29';
+// $tomorrow = '2024-09-30';
 ?>
 
 <div class="app-content content">

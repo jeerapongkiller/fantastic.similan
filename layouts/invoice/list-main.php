@@ -367,58 +367,6 @@
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
 
-        function fun_search_period() {
-            var search_period = document.getElementById('search_period').value;
-            document.getElementById('div-form').hidden = search_period == 'custom' ? false : true;
-            document.getElementById('div-to').hidden = search_period == 'custom' ? false : true;
-
-            const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            switch (search_period) {
-                case 'tomorrow':
-                    day = date.getDate() + 1;
-                    break;
-                case 'week':
-                    day = date.getDate() + 7;
-                    break;
-                case 'month':
-                    month = date.getMonth() + 2;
-                    break;
-                case 'year':
-                    year = date.getFullYear() + 1;
-                    break;
-            }
-            let currentDate = `${year}-${month}-${day}`;
-
-            $('#search_inv_form').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-
-            $('#search_inv_to').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-        }
-
         function modal_invoice() {
             $('#modal-show').modal('toggle');
             $('#modal-add-invoice').modal('show');

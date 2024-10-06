@@ -10,7 +10,7 @@ class Receipt extends DB
         parent::__construct();
     }
 
-    public function showlist($type, $travel_date, $agent, $cover_id)
+    public function showlist($type, $travel_date, $agent, $rec_id)
     {
         $bind_types = "";
         $params = array();
@@ -48,12 +48,13 @@ class Receipt extends DB
                     COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
                     GUIDE.id as guide_id, GUIDE.name as guide_name,
                     BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
-                    INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding, INV.vat_id as vat, INV.note as inv_note, INV.is_deleted as inv_deleted,
+                    INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding, INV.vat_id as vat, INV.no as inv_no, INV.note as inv_note, INV.is_deleted as inv_deleted,
                     COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
                     BRCH.id as brch_id, BRCH.name as brch_name,
                     BANACC.id as banacc_id, BANACC.account_name as account_name, BANACC.account_no as account_no,
                     BANK.id as bank_id, BANK.name as bank_name,
-                    REC.id as rec_id
+                    REC.id as rec_id, REC.rec_full as rec_full, REC.rec_date as date_rec, REC.cheque_no as cheque_no, REC.cheque_date as cheque_date, REC.note as rec_note,
+                    PAYT.id as payt_id, PAYT.name as payt_name
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -126,6 +127,8 @@ class Receipt extends DB
                     ON BANACC.bank_id = BANK.id
                 LEFT JOIN receipts REC
                     ON COVER.id = REC.cover_id
+                LEFT JOIN payments_type PAYT
+                    ON REC.payment_id = PAYT.id
                 WHERE BO.is_deleted = 0
                 AND BP.id > 0
                 AND BSTA.id != 3
@@ -144,11 +147,11 @@ class Receipt extends DB
                 array_push($params, $agent);
             }
 
-            $query .= " ORDER BY COMP.name ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, INV.no ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
         if (isset($type) && $type == "receipts") {
-            $query .= " AND REC.id IS NOT NULL ";
+            $query .= " AND COVER.id IS NOT NULL AND REC.id IS NOT NULL ";
 
             if (isset($agent) && $agent != "all") {
                 $query .= " AND COMP.id = ?";
@@ -156,13 +159,13 @@ class Receipt extends DB
                 array_push($params, $agent);
             }
 
-            if (isset($cover_id) && $cover_id > 0) {
-                $query .= " AND COVER.id = ?";
+            if (isset($rec_id) && $rec_id > 0) {
+                $query .= " AND REC.id = ?";
                 $bind_types .= "i";
-                array_push($params, $cover_id);
+                array_push($params, $rec_id);
             }
 
-            $query .= " ORDER BY COMP.name ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, INV.no ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
         $statement = $this->connection->prepare($query);
@@ -546,7 +549,7 @@ class Receipt extends DB
         return $data;
     }
 
-    public function insert_data(int $rec_no, string $rec_full, string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $cover_id, int $payment_id, int $is_approved)
+    public function insert_data(int $rec_no, string $rec_full, string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $cover_id, int $payment_id, int $is_approved, string $note)
     {
         $bind_types = "";
         $params = array();
@@ -576,7 +579,7 @@ class Receipt extends DB
         array_push($params, '');
 
         $bind_types .= "s";
-        array_push($params, '');
+        array_push($params, $note);
 
         $bind_types .= "i";
         array_push($params, $bank_account_id);
@@ -606,7 +609,7 @@ class Receipt extends DB
         return $this->response;
     }
 
-    public function update_data(string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $payment_id, int $is_approved, int $id)
+    public function update_data(string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $payment_id, int $is_approved, string $note, int $id)
     {
         $bind_types = "";
         $params = array();
@@ -636,6 +639,10 @@ class Receipt extends DB
         $query .= " payment_id = ?,";
         $bind_types .= "s";
         array_push($params, $payment_id);
+
+        $query .= " note = ?,";
+        $bind_types .= "s";
+        array_push($params, $note);
 
         $query .= " receipts_by = ?,";
         $bind_types .= "i";
@@ -718,6 +725,8 @@ class Receipt extends DB
         $bind_types .= "i";
         array_push($params, $bo_id);
 
+        $query .= " AND booking_payment_id = 6";
+
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
 
@@ -730,14 +739,41 @@ class Receipt extends DB
 
     public function delete_booking_paid(int $id)
     {
-        $query = "DELETE FROM booking_paid WHERE booking_id = ? AND booking_payment_id = 3";
+
+        $bind_types = "";
+        $params = array();
+
+        $query = "UPDATE booking_paid SET";
+
+        $query .= " booking_payment_id = ?,";
+        $bind_types .= "i";
+        array_push($params, 6);
+
+        $query .= " updated_at = now()";
+
+        $query .= " WHERE booking_id = ?";
+        $bind_types .= "i";
+        array_push($params, $id);
+
+        $query .= " AND booking_payment_id = 3";
+
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("i", $id);
-        $statement->execute();
+        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
+
         if ($statement->execute()) {
             $this->response = true;
         }
 
         return $this->response;
+
+        // $query = "DELETE FROM booking_paid WHERE booking_id = ? AND booking_payment_id = 3";
+        // $statement = $this->connection->prepare($query);
+        // $statement->bind_param("i", $id);
+        // $statement->execute();
+        // if ($statement->execute()) {
+        //     $this->response = true;
+        // }
+
+        // return $this->response;
     }
 }

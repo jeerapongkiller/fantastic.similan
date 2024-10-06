@@ -80,16 +80,22 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
     <?php } ?>
 
 <?php
-} elseif (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_POST['travel_date'])) {
+} elseif (isset($_POST['action']) && $_POST['action'] == "search-receipt" && !empty($_POST['travel_date'])) {
     // get value from ajax
     $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
 
+    $first_rec = array();
     $first_cover = array();
     $first_company = array();
     $first_booking = array();
     $invoices = $recObj->showlist('receipts', $travel_date, 'all', 0);
     if (!empty($invoices)) {
         foreach ($invoices as $invoice) {
+            # --- get value booking --- #
+            if (in_array($invoice['rec_id'], $first_rec) == false) {
+                $first_rec[] = $invoice['rec_id'];
+                $rec_id[$invoice['comp_id']][] = !empty($invoice['rec_id']) ? $invoice['rec_id'] : 0;
+            }
             # --- get value booking --- #
             if (in_array($invoice['cover_id'], $first_cover) == false) {
                 $first_cover[] = $invoice['cover_id'];
@@ -125,7 +131,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
             <thead class="bg-light">
                 <tr>
                     <th>ชื่อเอเยนต์</th>
-                    <th class="text-center">Invoice</th>
+                    <th class="text-center">Receipt</th>
                     <th class="text-center">Total</th>
                     <th class="text-center">Audlt</th>
                     <th class="text-center">Children</th>
@@ -138,7 +144,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
                 <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
                     <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo $agent_name[$i]; ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
                         <td><?php echo $agent_name[$i]; ?></td>
-                        <td class="text-center"><?php echo !empty($cover_id[$agent_id[$i]]) ? count($cover_id[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($rec_id[$agent_id[$i]]) ? count($rec_id[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo array_sum($adult[$agent_id[$i]]) + array_sum($child[$agent_id[$i]]) + array_sum($infant[$agent_id[$i]]) + array_sum($foc[$agent_id[$i]]); ?></td>
                         <td class="text-center"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
