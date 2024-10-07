@@ -261,7 +261,126 @@ $times = date("H:i:s");
                     ?>
 
                     <div>
-                        เรือ
+                        <h5>เรือ</h5>
+                        <div class="row">
+                            <div class="col-lg-6 col-12">
+                                <div class="card card-app-design">
+                                    <div class="card-body p-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h4 class="card-title">Today</h4>
+                                            <h4 class="card-title">30 September 2024</h4>
+                                            <!-- <div class="badge badge-light-primary">30 September 2024</div> -->
+                                        </div>
+                                        <div class="design-group">
+                                            <!-- <h6 class="section-label">Team</h6> -->
+                                            <div class="badge badge-light-warning mr-50 font-size-20">Boat</div>
+                                            <div class="badge badge-light-primary font-size-20">Guide</div>
+                                        </div>
+                                        <div class="design-planning-wrapper">
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Booking</p>
+                                                <h6 class="mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Total</p>
+                                                <h6 class="mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Adult</p>
+                                                <h6 class="mb-0">5</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Children</p>
+                                                <h6 class="mb-0">3</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Infant</p>
+                                                <h6 class="mb-0">3</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">FOC</p>
+                                                <h6 class="mb-0">1</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <div class="card card-app-design">
+                                    <div class="card-body p-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h4 class="card-title">Tomorrow</h4>
+                                            <h4 class="card-title">31 September 2024</h4>
+                                            <!-- <div class="badge badge-light-primary">30 September 2024</div> -->
+                                        </div>
+                                        <!-- <div class="design-group">
+                                            <div class="badge badge-light-warning mr-50 font-size-20">Boat</div>
+                                            <div class="badge badge-light-primary font-size-20">Guide</div>
+                                        </div> -->
+                                        <div class="design-planning-wrapper mb-0">
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Fantastic</h5>
+                                                <h6 class="text-light mb-0">ไกด์นุ่น</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Booking</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Total</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Adult</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Children</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">Infant</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning bg-warning bg-darken-4">
+                                                <h5 class="text-light card-text mb-25">FOC</h5>
+                                                <h6 class="text-light mb-0">10</h6>
+                                            </div>
+                                        </div>
+                                        <div class="design-planning-wrapper mb-0">
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Boat</p>
+                                                <h6 class="mb-0">Guide</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Booking</p>
+                                                <h6 class="mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Total</p>
+                                                <h6 class="mb-0">10</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Adult</p>
+                                                <h6 class="mb-0">5</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Children</p>
+                                                <h6 class="mb-0">3</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">Infant</p>
+                                                <h6 class="mb-0">3</h6>
+                                            </div>
+                                            <div class="design-planning">
+                                                <p class="card-text mb-25">FOC</p>
+                                                <h6 class="mb-0">1</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div hidden>
@@ -617,7 +736,7 @@ $times = date("H:i:s");
                                                     <a <?php echo $href; ?>>
                                                         <?php if (!empty($bec_id[$bo_id[$i]])) {
                                                             for ($e = 0; $e < count($bec_name[$bo_id[$i]]); $e++) {
-                                                                echo $e == 0  ? $bec_name[$bo_id[$i]][$e] : ' : ' .$bec_name[$bo_id[$i]][$e];
+                                                                echo $e == 0  ? $bec_name[$bo_id[$i]][$e] : ' : ' . $bec_name[$bo_id[$i]][$e];
                                                             }
                                                         }
                                                         echo !empty($note[$i]) ? ' / ' . $note[$i] : ''; ?>

@@ -211,7 +211,7 @@ class Booking extends DB
             $query .= " AND CUS.name LIKE '%" . $name . "%' ";
         }
 
-        $query .= " ORDER BY BO.id DESC, BP.travel_date ASC";
+        $query .= " ORDER BY BO.id DESC, BP.travel_date ASC, BOPA.id ASC";
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
