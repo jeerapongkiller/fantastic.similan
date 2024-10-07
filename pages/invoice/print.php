@@ -318,7 +318,8 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                                 $amount = $arr_extar[$bo_id[$i]]['total'][$e] + $amount;
                                 $sum_total = $arr_extar[$bo_id[$i]]['total'][$e] + $sum_total; ?>
                                 <tr class="table-content">
-                                    <td class="text-left" colspan="5"><?php echo $arr_extar[$bo_id[$i]]['name'][$e]; ?></td>
+                                    <td class="text-left" colspan="2"><?php echo $arr_extar[$bo_id[$i]]['name'][$e]; ?></td>
+                                    <td class="text-left" colspan="3"></td>
                                     <td class="text-center"><?php echo $arr_extar[$bo_id[$i]]['adult'][$e]; ?></td>
                                     <td class="text-center"><?php echo $arr_extar[$bo_id[$i]]['child'][$e]; ?></td>
                                     <td class="text-center"><?php echo $arr_extar[$bo_id[$i]]['rate_adult'][$e] != '-' ? number_format($arr_extar[$bo_id[$i]]['rate_adult'][$e]) : $arr_extar[$bo_id[$i]]['rate_adult'][$e]; ?></td>

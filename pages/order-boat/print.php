@@ -210,9 +210,9 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                 <th class="text-center" width="1%">C</th>
                                 <th class="text-center" width="1%">Inf</th>
                                 <th class="text-center" width="1%">FOC</th>
-                                <th class="text-center">รวม</th>
+                                <!-- <th class="text-center">รวม</th> -->
                                 <th width="5%">COT</th>
-                                <th width="5%">Remark</th>
+                                <th>Remark</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -247,22 +247,22 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                             } ?>
                                         </td>
                                         <td><?php echo $book['room_no'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo $book['adult'][$mange['id'][$i]][$a] . ' X ' . number_format($book['rate_adult'][$mange['id'][$i]][$a]); ?></td>
-                                        <td class="text-center"><?php echo !empty($book['child'][$mange['id'][$i]][$a]) ? $book['child'][$mange['id'][$i]][$a] . ' X ' . number_format($book['rate_child'][$mange['id'][$i]][$a]) : 0; ?></td>
+                                        <td class="text-center"><?php echo $book['adult'][$mange['id'][$i]][$a]; ?></td>
+                                        <td class="text-center"><?php echo $book['child'][$mange['id'][$i]][$a]; ?></td>
                                         <td class="text-center"><?php echo $book['infant'][$mange['id'][$i]][$a]; ?></td>
                                         <td class="text-center"><?php echo $book['foc'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo !empty($bec_rate_total[$id]) ? number_format($book['total'][$mange['id'][$i]][$a] + array_sum($bec_rate_total[$id])) : number_format($book['total'][$mange['id'][$i]][$a]); ?></td>
+                                        <!-- <td class="text-center"><?php echo !empty($bec_rate_total[$id]) ? number_format($book['total'][$mange['id'][$i]][$a] + array_sum($bec_rate_total[$id])) : number_format($book['total'][$mange['id'][$i]][$a]); ?></td> -->
                                         <td class="text-nowrap"><b class="text-danger"><?php echo $book['cot'][$mange['id'][$i]][$a] > 0 ? number_format($book['cot'][$mange['id'][$i]][$a]) : ''; ?></b></td>
                                         <td><b class="text-info">
                                                 <?php if (!empty($bec_id[$id])) {
                                                     for ($e = 0; $e < count($bec_name[$id]); $e++) {
-                                                        echo $bec_name[$id][$e] . ' : ';
-                                                        if ($bec_type[$id][$e] == 1) {
-                                                            echo 'A ' . $bec_adult[$id][$e] . ' X ' . $bec_rate_adult[$id][$e];
-                                                            echo !empty($bec_child[$id][$e]) ? ' C ' . $bec_child[$id][$e] . ' X ' . $bec_rate_child[$id][$e] : '';
-                                                        } elseif ($bec_type[$id][$e] == 2) {
-                                                            echo $bec_privates[$id][$e] . ' X ' . $bec_rate_total[$id][$e] . ' ';
-                                                        }
+                                                        echo $e == 0 ? $bec_name[$id][$e]  : ' : ' . $bec_name[$id][$e];
+                                                        // if ($bec_type[$id][$e] == 1) {
+                                                        //     echo 'A ' . $bec_adult[$id][$e] . ' X ' . $bec_rate_adult[$id][$e];
+                                                        //     echo !empty($bec_child[$id][$e]) ? ' C ' . $bec_child[$id][$e] . ' X ' . $bec_rate_child[$id][$e] : '';
+                                                        // } elseif ($bec_type[$id][$e] == 2) {
+                                                        //     echo $bec_privates[$id][$e] . ' X ' . $bec_rate_total[$id][$e] . ' ';
+                                                        // }
                                                     }
                                                 }
                                                 echo !empty($book['note'][$mange['id'][$i]][$a]) ? ' / ' . $book['note'][$mange['id'][$i]][$a] : ''; ?>

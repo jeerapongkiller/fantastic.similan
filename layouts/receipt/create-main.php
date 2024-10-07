@@ -347,7 +347,8 @@
                             for (let index = 0; index < res_extar[id].id.length; index++) {
                                 amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
                                 text_html += '<tr>' +
-                                    '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
+                                    '<td class="text-left" colspan="2"> ' + res_extar[id].name[index] + ' </td>' +
+                                    '<td class="text-left" colspan="3">  </td>' +
                                     '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
                                     '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
                                     '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +

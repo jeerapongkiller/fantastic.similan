@@ -233,7 +233,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                                     <th class="text-center" width="1%">C</th>
                                                     <th class="text-center" width="1%">Inf</th>
                                                     <th class="text-center" width="1%">FOC</th>
-                                                    <th class="text-center" width="1%">รวม</th>
+                                                    <!-- <th class="text-center" width="1%">รวม</th> -->
                                                     <th width="5%">COT</th>
                                                     <th width="5%">Remark</th>
                                                 </tr>
@@ -269,22 +269,22 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                                                 } ?>
                                                             </td>
                                                             <td><?php echo $room_no[$mange_id[$i]][$a]; ?></td>
-                                                            <td class="text-center"><?php echo $adult[$mange_id[$i]][$a] . ' X ' . $rate_adult[$mange_id[$i]][$a]; ?></td>
-                                                            <td class="text-center"><?php echo !empty($child[$mange_id[$i]][$a]) ? $child[$mange_id[$i]][$a] . ' X ' . $rate_adult[$mange_id[$i]][$a] : $child[$mange_id[$i]][$a]; ?></td>
+                                                            <td class="text-center"><?php echo $adult[$mange_id[$i]][$a]; ?></td>
+                                                            <td class="text-center"><?php echo $child[$mange_id[$i]][$a]; ?></td>
                                                             <td class="text-center"><?php echo $infant[$mange_id[$i]][$a]; ?></td>
                                                             <td class="text-center"><?php echo $foc[$mange_id[$i]][$a]; ?></td>
-                                                            <td class="text-center"><?php echo !empty($bec_rate_total[$id]) ? number_format($total[$mange_id[$i]][$a] + array_sum($bec_rate_total[$id])) : number_format($total[$mange_id[$i]][$a]); ?></td>
+                                                            <!-- <td class="text-center"><?php echo !empty($bec_rate_total[$id]) ? number_format($total[$mange_id[$i]][$a] + array_sum($bec_rate_total[$id])) : number_format($total[$mange_id[$i]][$a]); ?></td> -->
                                                             <td class="text-nowrap"><b class="text-danger"><?php echo !empty($cot[$id]) ? array_sum($cot[$id]) : ''; ?></b></td>
                                                             <td><b class="text-info">
                                                                     <?php if (!empty($bec_id[$id])) {
                                                                         for ($e = 0; $e < count($bec_name[$id]); $e++) {
-                                                                            echo $bec_name[$id][$e] . ' : ';
-                                                                            if ($bec_type[$id][$e] == 1) {
-                                                                                echo 'A ' . $bec_adult[$id][$e] . ' X ' . $bec_rate_adult[$id][$e];
-                                                                                echo !empty($bec_child[$id][$e]) ? ' C ' . $bec_child[$id][$e] . ' X ' . $bec_rate_child[$id][$e] : '';
-                                                                            } elseif ($bec_type[$id][$e] == 2) {
-                                                                                echo $bec_privates[$id][$e] . ' X ' . $bec_rate_total[$id][$e] . ' ';
-                                                                            }
+                                                                            echo $e == 0 ? $bec_name[$id][$e] : ' : ' . $bec_name[$id][$e];
+                                                                            // if ($bec_type[$id][$e] == 1) {
+                                                                            //     echo 'A ' . $bec_adult[$id][$e] . ' X ' . $bec_rate_adult[$id][$e];
+                                                                            //     echo !empty($bec_child[$id][$e]) ? ' C ' . $bec_child[$id][$e] . ' X ' . $bec_rate_child[$id][$e] : '';
+                                                                            // } elseif ($bec_type[$id][$e] == 2) {
+                                                                            //     echo $bec_privates[$id][$e] . ' X ' . $bec_rate_total[$id][$e] . ' ';
+                                                                            // }
                                                                         }
                                                                     }
                                                                     echo !empty($bp_note[$mange_id[$i]][$a]) ? ' / ' . $bp_note[$mange_id[$i]][$a] : ''; ?>

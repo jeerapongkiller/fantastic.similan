@@ -171,7 +171,7 @@ foreach ($manages as $manage) {
                             <div class="card">
                                 <div class="card-header">
                                     <div>
-                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?></h2>
+                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?> / <span class="text-danger"><?php echo $mange['seat'][$i]; ?></span></h2>
                                         <h5 class="card-text"><?php echo $mange['car'][$i]; ?></h5>
                                     </div>
                                 </div>

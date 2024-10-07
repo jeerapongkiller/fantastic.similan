@@ -402,29 +402,31 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             <table class="booking-list-table table table-responsive">
                 <thead class="thead-light">
                     <tr>
-                        <th rowspan="2" class="cell-fit">STATUS</th>
-                        <th rowspan="2" class="cell-fit">PAYMENT</th>
-                        <th rowspan="2">โปรแกรม</th>
-                        <th rowspan="2">TRAVEL DATE / BOOKING DATE</th>
-                        <th rowspan="2">AGENT NAME</th>
-                        <th rowspan="2">ชื่อลูกค้า</th>
-                        <th rowspan="2">โรงแรม</th>
-                        <th rowspan="2">ห้อง</th>
-                        <th colspan="2" class="text-center">จำนวน/ราคาต่อหน่วย</th>
-                        <th rowspan="2" class="text-center">รวม</th>
-                        <th rowspan="2">เวลารับ</th>
-                        <th rowspan="2">VOUCHER NO.</th>
-                        <th rowspan="2">Remark</th>
-                        <th rowspan="2">BOKING NO.</th>
+                        <th class="cell-fit">STATUS</th>
+                        <th class="cell-fit">PAYMENT</th>
+                        <th>โปรแกรม</th>
+                        <th>TRAVEL DATE / BOOKING DATE</th>
+                        <th>AGENT NAME</th>
+                        <th>ชื่อลูกค้า</th>
+                        <th>โรงแรม</th>
+                        <th>ห้อง</th>
+                        <th class="text-center">A</th>
+                        <th class="text-center">C</th>
+                        <!-- <th rowspan="2" class="text-center">รวม</th> -->
+                        <th>เวลารับ</th>
+                        <th>VOUCHER NO.</th>
+                        <th>Remark</th>
+                        <th>BOKING NO.</th>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th>Adult</th>
                         <th>Child</th>
-                    </tr>
+                    </tr> -->
                 </thead>
                 <?php if ($bookings) { ?>
                     <tbody>
                         <?php
+                        $total_t = 0;
                         for ($i = 0; $i < count($bo_id); $i++) {
                             $href = 'href="./?pages=booking/edit&id=' . $bo_id[$i] . '" style="color:#6E6B7B" class="btn-page-block-spinner"';
                         ?>
@@ -471,25 +473,27 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                 </td>
                                 <td class="text-center">
                                     <a <?php echo $href; ?>>
-                                        <?php echo !empty($adult[$i]) ? !empty($rate_adult[$i]) ? $adult[$i] . ' X ' . number_format($rate_adult[$i]) : $adult[$i] : ''; ?></a>
+                                        <?php echo $adult[$i]; ?></a>
                                     </a>
                                 </td>
                                 <td class="text-center">
                                     <a <?php echo $href; ?>>
-                                        <?php echo !empty($child[$i]) ? !empty($rate_child[$i]) ? $child[$i] . ' X ' . number_format($rate_child[$i]) : $child[$i] : ''; ?></a>
+                                        <?php echo $child[$i]; ?></a>
                                     </a>
                                 </td>
-                                <td class="text-center">
+                                <!-- <td class="text-center">
                                     <a <?php echo $href; ?>>
                                         <?php
                                         $total_sum = $rate_total[$i];
-                                        $total_sum = $transfer_type[$i] == 1 ? $total_sum + ($btr_rate_adult[$i] + $btr_rate_child[$i] + $btr_rate_infant[$i]) : $total_sum;
-                                        $total_sum = $transfer_type[$i] == 2 ? $total_sum + array_sum($rate_private[$bo_id[$i]]) : $total_sum;
+                                        // $total_sum = $transfer_type[$i] == 1 ? $total_sum + ($btr_rate_adult[$i] + $btr_rate_child[$i] + $btr_rate_infant[$i]) : $total_sum;
+                                        // $total_sum = $transfer_type[$i] == 2 ? $total_sum + array_sum($rate_private[$bo_id[$i]]) : $total_sum;
                                         $total_sum = !empty($bec_id[$bo_id[$i]]) ? $total_sum + array_sum($bec_rate_total[$bo_id[$i]]) : $total_sum;
+                                        $total_t = $total_t + $total_sum;
                                         $total_sum = !empty($discount[$i]) ? $total_sum - $discount[$i] : $total_sum;
                                         echo number_format($total_sum);
                                         ?></a>
                                     </a>
+                                </td> -->
                                 <td>
                                     <a <?php echo $href; ?>>
                                         <?php echo $start_pickup[$i]; ?>
@@ -504,13 +508,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                     <a <?php echo $href; ?>>
                                         <?php if (!empty($bec_id[$bo_id[$i]])) {
                                             for ($e = 0; $e < count($bec_name[$bo_id[$i]]); $e++) {
-                                                echo $bec_name[$bo_id[$i]][$e] . ' : ';
-                                                if ($bec_type[$bo_id[$i]][$e] == 1) {
-                                                    echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
-                                                    echo ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e];
-                                                } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
-                                                    echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e];
-                                                }
+                                                echo $e == 0  ? $bec_name[$bo_id[$i]][$e] : ' : ' . $bec_name[$bo_id[$i]][$e];
                                             }
                                         }
                                         echo !empty($note[$i]) ? ' / ' . $note[$i] : ''; ?>
@@ -524,7 +522,8 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                             </tr>
                         <?php } ?>
                     </tbody>
-                <?php } ?>
+                <?php }
+                // echo $total_t; echo ' : ' .  array_sum($discount); ?>
             </table>
         </div>
     </div>

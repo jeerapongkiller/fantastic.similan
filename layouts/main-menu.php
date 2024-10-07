@@ -77,7 +77,7 @@
 
             <?php if ($_SESSION["supplier"]["role_id"] == 1 || $_SESSION["supplier"]["role_id"] == 2 || in_array(5, $_SESSION["supplier"]["permission"]) > 0) { ?>
                 <li class="navigation-header"><span data-i18n="Report">Report</span><i data-feather="more-horizontal"></i></li>
-                <li class="disabled nav-item <?php echo (strstr($_GET['pages'], "report/")) ? 'active' : ''; ?>">
+                <li class="nav-item <?php echo (strstr($_GET['pages'], "report/")) ? 'active' : ''; ?>">
                     <a class="d-flex align-items-center" href="./?pages=report/list"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="Report">Report</span></a>
                 </li>
             <?php } ?>

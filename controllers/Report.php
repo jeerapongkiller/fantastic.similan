@@ -34,12 +34,11 @@ class Report extends DB
                     BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no, BT.note as bt_note, BT.transfer_type as transfer_type,
                     BT.pickup_type as pickup_type,
                     BTR.id as btr_id, BTR.rate_adult as btr_rate_adult, BTR.rate_child as btr_rate_child, BTR.rate_infant as btr_rate_infant, BTR.rate_private as rate_private,
+                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
+                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
+                    EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     CARC.id as cars_category_id, CARC.name as cars_category,
-                    -- BOT.id as bot_id,
-                    -- ORTRAN.id as ortran_id, ORTRAN.note as ortran_note, ORTRAN.driver_id as ortran_driver_id, 
-                    -- ORTRAN.car_id as ortran_car_id, ORTRAN.price as ortran_price, ORTRAN.percent as ortran_percent, ORTRAN.travel_date as ortran_travel, ORTRAN.retrun as ortran_retrun,
-                    -- CAR.id as car_id, CAR.name as car_name, CAR.car_registration as car_registration,
-                    -- DRIV.id as driver_id, DRIV.name as driver_name, DRIV.telephone as driver_telephone,
+                    BOT.id as BOT_id, BOT.arrange as arrange,
                     ORTRAN.id as ortran_id, ORTRAN.driver as driver_name, ORTRAN.license as license, ORTRAN.telephone as ortran_telephone, ORTRAN.travel_date as ortran_travel,
                     CAR.id as car_id, CAR.name as car_name,
                     HOTPIK.id as hotel_pickup_id, HOTPIK.name as hotel_pickup_name,
@@ -51,11 +50,7 @@ class Report extends DB
                     BOBOAT.id as boboat_id,
                     ORBOAT.id as orboat_id, ORBOAT.travel_date as orboat_travel, ORBOAT.note as orboat_note,
                     COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
-                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
-                    CAPT.id as capt_id, CAPT.name as capt_name, CAPT.telephone as capt_telephone
-                    -- BOBOAT.id as boboat_id,
-                    -- ORBOAT.id as orboat_id, ORBOAT.color as orboat_color, ORBOAT.note as orboat_note, ORBOAT.price as orboat_price, ORBOAT.travel_date as orboat_travel,
-                    -- BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
+                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -77,21 +72,18 @@ class Report extends DB
                     ON BP.id = BT.booking_products_id
                 LEFT JOIN booking_transfer_rates BTR
                     ON BT.id = BTR.booking_transfer_id
+                LEFT JOIN booking_extra_charge BEC
+                    ON BO.id = BEC.booking_id
+                LEFT JOIN extra_charges EXTRA
+                    ON BEC.extra_charge_id = EXTRA.id
                 LEFT JOIN cars_category CARC
                     ON BTR.cars_category_id = CARC.id 
                 LEFT JOIN booking_order_transfer BOT
                     ON BT.id = BOT.booking_transfer_id
                 LEFT JOIN order_transfer ORTRAN 
-                    ON BT.manage_id = ORTRAN.id
+                    ON BOT.order_id = ORTRAN.id
                 LEFT JOIN cars CAR 
                     ON ORTRAN.car_id = CAR.id
-                -- LEFT JOIN order_transfer ORTRAN
-                --     ON BOT.order_id = ORTRAN.id
-                    -- AND ORTRAN.retrun = 1
-                -- LEFT JOIN cars CAR
-                --     ON ORTRAN.car_id = CAR.id
-                -- LEFT JOIN drivers DRIV
-                --     ON ORTRAN.driver_id = DRIV.id
                 LEFT JOIN hotel HOTPIK
                     ON BT.hotel_pickup_id = HOTPIK.id
                 LEFT JOIN hotel HOTDRO
@@ -113,12 +105,6 @@ class Report extends DB
                     ON INV.vat_id = VAT.id
                 LEFT JOIN receipts REC
                     ON INVCO.id = REC.cover_id
-                -- LEFT JOIN booking_order_boat BOBOAT
-                --     ON BO.id = BOBOAT.booking_id
-                -- LEFT JOIN order_boat ORBOAT
-                --     ON BOBOAT.order_boat_id = ORBOAT.id
-                -- LEFT JOIN boats BOAT
-                --     ON ORBOAT.boat_id = BOAT.id
                 LEFT JOIN booking_order_boat BOBOAT
                     ON BO.id = BOBOAT.booking_id
                 LEFT JOIN order_boat ORBOAT
@@ -127,8 +113,6 @@ class Report extends DB
                     ON ORBOAT.color_id = COLOR.id
                 LEFT JOIN boats BOAT
                     ON ORBOAT.boat_id = BOAT.id
-                LEFT JOIN captains CAPT
-                    ON ORBOAT.captain_id = CAPT.id
                 WHERE BO.is_deleted = 0
                 AND PROD.id > 0
         ";

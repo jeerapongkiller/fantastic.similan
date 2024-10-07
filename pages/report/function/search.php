@@ -29,6 +29,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $first_prod = array();
     $first_bot = array();
     $first_boboat = array();
+    $first_extar = array();
     $first_pay = array();
     $bookings = $repObj->showlist($date_form, $date_to, $search_agent, $search_product);
     foreach ($bookings as $booking) {
@@ -53,32 +54,34 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
             $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
             $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+            $discount[] = !empty($booking['discount']) ? $booking['discount'] : 0;
             # --- get value booking products --- #
             $hotel_pickup_name[] = !empty($booking['hotel_pickup_name']) ? $booking['hotel_pickup_name'] : '';
             $hotel_dropoff_name[] = !empty($booking['hotel_dropoff_name']) ? $booking['hotel_dropoff_name'] : '';
             # --- get value customers --- #
             $cus_name[] = !empty($booking['cus_name']) && $booking['cus_head'] == 1 ? $booking['cus_name'] : '';
             # --- calculate amount booking --- #
-            $total = $booking['rate_total'];
-            $total = ($booking['transfer_type'] == 1) ? $total + ($booking['bt_adult'] * $booking['btr_rate_adult']) + ($booking['bt_child'] * $booking['btr_rate_child']) + ($booking['bt_infant'] * $booking['btr_rate_infant']) : $total;
-            $total = ($booking['transfer_type'] == 2) ? $repObj->sumbtrprivate($booking['bt_id'])['sum_rate_private'] + $total : $total;
-            $total = $repObj->sumbectotal($booking['id'])['sum_rate_total'] + $total;
+            $total = $booking['bp_private_type'] == 1 ? ($booking['bp_adult'] * $booking['rate_adult']) + ($booking['bp_child'] * $booking['rate_child']) : $booking['rate_total'];
+            // $total = $booking['rate_total'];
+            // $total = ($booking['transfer_type'] == 1) ? $total + ($booking['bt_adult'] * $booking['btr_rate_adult']) + ($booking['bt_child'] * $booking['btr_rate_child']) + ($booking['bt_infant'] * $booking['btr_rate_infant']) : $total;
+            // $total = ($booking['transfer_type'] == 2) ? $repObj->sumbtrprivate($booking['bt_id'])['sum_rate_private'] + $total : $total;
+            // $total = $repObj->sumbectotal($booking['id'])['sum_rate_total'] + $total;
 
-            $amount = $total;
+            // $amount = $total;
             $array_total[] = $total;
-            if ($booking['vat_id'] == 1) {
-                $vat_total = $total * 100 / 107;
-                $vat_cut = $vat_total;
-                $vat_total = $total - $vat_total;
-                $withholding_total = $booking['withholding'] > 0 ? ($vat_cut * $booking['withholding']) / 100 : 0;
-                $amount = $total - $withholding_total;
-            } elseif ($booking['vat_id'] == 2) {
-                $vat_total = ($total * 7) / 100;
-                $total = $total + $vat_total;
-                $withholding_total = $booking['withholding'] > 0 ? ($total - $vat_total) * $booking['withholding'] / 100 : 0;
-                $amount = $total - $withholding_total;
-            }
-            $array_amount[$booking['id']] = $amount;
+            // if ($booking['vat_id'] == 1) {
+            //     $vat_total = $total * 100 / 107;
+            //     $vat_cut = $vat_total;
+            //     $vat_total = $total - $vat_total;
+            //     $withholding_total = $booking['withholding'] > 0 ? ($vat_cut * $booking['withholding']) / 100 : 0;
+            //     $amount = $total - $withholding_total;
+            // } elseif ($booking['vat_id'] == 2) {
+            //     $vat_total = ($total * 7) / 100;
+            //     $total = $total + $vat_total;
+            //     $withholding_total = $booking['withholding'] > 0 ? ($total - $vat_total) * $booking['withholding'] / 100 : 0;
+            //     $amount = $total - $withholding_total;
+            // }
+            $array_amount[$booking['id']] = $total;
 
             $inv_no = !empty($booking['inv_id']) ? $inv_no + 1 : $inv_no;
             // $over_due = (diff_date($today, $booking['rec_date'])['day'] <= 0) && !empty($booking['inv_id']) && empty($booking['rec_id']) ? $over_due + 1 : $over_due;
@@ -89,7 +92,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             # --- Agent --- #
             $comp_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
             $comp_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
-            $comp_amount[$booking['comp_id']][] = $amount;
+            $comp_amount[$booking['comp_id']][] = $total;
             $comp_revenue[$booking['comp_id']][] = !empty($booking['rec_id']) ? $total : 0;
             $comp_adult[$booking['comp_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
             $comp_child[$booking['comp_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
@@ -180,11 +183,17 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $bopay_name_class[$booking['id']] = !empty($booking['bopay_name_class']) ? $booking['bopay_name_class'] : '';
             $bopay_paid_name[$booking['id']] = $booking['bopay_id'] == 4 || $booking['bopay_id'] == 5 ? $booking['bopay_name'] . '</br>(' . number_format($booking['total_paid']) . ')' : $booking['bopay_name'];
         }
+        # --- get value booking --- #
+        if (in_array($booking['bec_id'], $first_extar) == false && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
+            $first_extar[] = $booking['bec_id'];
+            $extar_arr_total[] = $booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) : ($booking['bec_privates'] * $booking['bec_rate_private']);
+            $extar_total[$booking['id']][] = $booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) : ($booking['bec_privates'] * $booking['bec_rate_private']);
+        }
     }
     # ------ calculate booking paid ------ #
     if (!empty($bopay_id)) {
         foreach ($bopay_id as $x => $val) {
-            $bo_paid = $val == 3 ? $bo_paid + $array_amount[$x] : $bo_paid;
+            $bo_paid = $val == 3 ? !empty($extar_total[$x]) ? $bo_paid + $array_amount[$x] + array_sum($extar_total[$x]) : $bo_paid + $array_amount[$x] : $bo_paid;
         }
     }
 ?>
@@ -288,7 +297,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-primary"><?php echo number_format(array_sum($array_total)) . ' THB'; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0 text-primary"><?php echo !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total) - array_sum($discount)) : number_format(array_sum($array_total) - array_sum($discount)); ?> THB</h4>
                                         <p class="card-text font-small-3 mb-0">ยอดขายทั้งหมด</p>
                                     </div>
                                 </div>
@@ -303,7 +312,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-success"><?php echo number_format($bo_paid) . ' THB'; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0 text-success"><?php echo number_format($bo_paid - array_sum($discount)) . ' THB'; ?></h4>
                                         <p class="card-text font-small-3 mb-0">รับเงินทั้งหมด</p>
                                     </div>
                                 </div>
