@@ -51,6 +51,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                 $hotel_name[$booking['id']] = !empty($booking['pickup_id']) ? $booking['pickup_name'] : $booking['outside'];
                 $hotel_dropoff[$booking['id']] = !empty($booking['dropoff_id']) ? $booking['dropoff_name'] : $booking['outside_dropoff'];
                 $note[$booking['id']] = !empty($booking['bp_note']) ? $booking['bp_note'] : '';
+                $start_pickup[$booking['id']] = !empty($booking['start_pickup']) && $booking['start_pickup'] != '00:00' ? $booking['start_pickup'] : '00:00';
+                $end_pickup[$booking['id']] = !empty($booking['end_pickup']) && $booking['end_pickup'] != '00:00' ? $booking['end_pickup'] : '00:00';
+                $zone_name[$booking['id']] = !empty($booking['zonep_name']) ? $booking['zonep_name'] : '';
             }
 
             if (in_array($booking['bt_id'], $first_bt) == false) {
@@ -117,7 +120,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                     <label class="custom-control-label" for="<?php echo 'checkbo_all' . $programe_id[$a]; ?>"></label>
                                 </div>
                             </th>
+                            <th>เวลารับ</th>
                             <th>Category</th>
+                            <th>โซน</th>
                             <th>Hotel</th>
                             <th>Name</th>
                             <th class="cell-fit text-center">Total</th>
@@ -145,7 +150,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                                 <label class="custom-control-label" for="checkbox<?php echo $bt_id[$id]; ?>"></label>
                                             </div>
                                         </td>
+                                        <td><?php echo $start_pickup[$id] != '00:00' ? date('H:i', strtotime($start_pickup[$id])) . ' - ' . date('H:i', strtotime($end_pickup[$id])) : ''; ?></td>
                                         <td><span class="fw-bold"><?php echo $category_name[$id]; ?></span></td>
+                                        <td><?php echo $zone_name[$id]; ?></td>
                                         <td><?php echo $hotel_name[$id]; ?></td>
                                         <td><span class="fw-bold"><?php echo $cus_name[$id]; ?></span></td>
                                         <td class="text-center" id="toc-bookings<?php echo $bt_id[$id]; ?>"><?php echo $adult[$id] + $child[$id] + $infant[$id] + $foc[$id]; ?></td>
@@ -179,7 +186,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                     <label class="custom-control-label" for="<?php echo 'checkbo_all' . $programe_id[$a]; ?>"></label>
                                 </div>
                             </th>
+                            <th>เวลารับ</th>
                             <th>Category</th>
+                            <th>โซน</th>
                             <th>Hotel</th>
                             <th>Name</th>
                             <th class="cell-fit text-center">Total</th>
@@ -207,7 +216,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                                 <label class="custom-control-label" for="checkbox<?php echo $bt_id[$id]; ?>"></label>
                                             </div>
                                         </td>
+                                        <td><?php echo $start_pickup[$id] != '00:00' ? date('H:i', strtotime($start_pickup[$id])) . ' - ' . date('H:i', strtotime($end_pickup[$id])) : ''; ?></td>
                                         <td><span class="fw-bold"><?php echo $category_name[$id]; ?></span></td>
+                                        <td><?php echo $zone_name[$id]; ?></td>
                                         <td><?php echo $hotel_dropoff[$id]; ?></td>
                                         <td><span class="fw-bold"><?php echo $cus_name[$id]; ?></span></td>
                                         <td class="text-center" id="toc-bookings<?php echo $bt_id[$id]; ?>"><?php echo $adult[$id] + $child[$id] + $infant[$id] + $foc[$id]; ?></td>
@@ -245,7 +256,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                 <label class="custom-control-label" for="checkmanage_all"></label>
                             </div>
                         </th>
+                        <th>เวลารับ</th>
                         <th>Program</th>
+                        <th>โซน</th>
                         <th>Hotel</th>
                         <th>Name</th>
                         <th class="cell-fit text-center">Total</th>
@@ -265,10 +278,13 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                             <td>
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input dt-checkboxes checkbox-manage" type="checkbox" id="checkbox<?php echo $manage_bt[$manage_id][$c]; ?>" name="manage_bt[]" value="<?php echo $manage_bt[$manage_id][$c]; ?>" onclick="sum_checkbox();" checked>
-                                    <label class="custom-control-label" for="checkbox<?php echo $manage_bt[$manage_id][$c]; ?>"><?php // echo $manage_bt[$manage_id][$c]; ?></label>
+                                    <label class="custom-control-label" for="checkbox<?php echo $manage_bt[$manage_id][$c]; ?>"><?php // echo $manage_bt[$manage_id][$c]; 
+                                                                                                                                ?></label>
                                 </div>
                             </td>
+                            <td><?php echo $start_pickup[$id] != '00:00' ? date('H:i', strtotime($start_pickup[$id])) . ' - ' . date('H:i', strtotime($end_pickup[$id])) : ''; ?></td>
                             <td><span class="fw-bold"><?php echo $product_name[$id]; ?></span></td>
+                            <td><?php echo $zone_name[$id]; ?></td>
                             <td><?php echo $return == 1 ? $hotel_name[$id] : $hotel_dropoff[$id]; ?></td>
                             <td><span class="fw-bold"><?php echo $cus_name[$id]; ?></span></td>
                             <td class="text-center" id="toc-manage<?php echo $manage_bt[$manage_id][$c]; ?>"><?php echo $adult[$id] + $child[$id] + $infant[$id] + $foc[$id]; ?></td>

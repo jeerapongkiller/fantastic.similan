@@ -70,7 +70,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
     </div>
     <div class="modal-body" id="order-agent-image-table" style="background-color: #fff;">
 
+        <div class="row mb-50">
+            <span class="col-6 brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
+            <span class="col-6 text-right" style="color: #000;">
+                โทร : 062-3322800 / 084-7443000 / 083-1757444 </br>
+                Email : Fantasticsimilantravel11@gmail.com
+            </span>
+        </div>
+
         <div class="text-center mt-1 mb-1">
+            <h4 class="font-weight-bolder">Re Confirm Agent</h4>
             <h4>
                 <div class="badge badge-pill badge-light-warning">
                     <b class="text-danger"><?php echo $agent_name[0]; ?></b> <span class="text-danger">(<?php echo date('j F Y', strtotime($travel_date)); ?>)</span>
@@ -91,7 +100,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                     <th class="text-center" width="1%">C</th>
                     <th class="text-center" width="1%">Inf</th>
                     <th class="text-center" width="1%">FOC</th>
-                    <th class="text-center">รวม</th>
+                    <!-- <th class="text-center">รวม</th> -->
                     <th width="5%">COT</th>
                     <th width="8%">Remark</th>
                 </tr>
@@ -124,22 +133,22 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                                 } ?>
                             </td>
                             <td><?php echo $room_no[$i]; ?></td>
-                            <td class="text-center"><?php echo $adult[$i] . ' X ' . number_format($rate_adult[$i]); ?></td>
-                            <td class="text-center"><?php echo !empty($child[$i]) ? $child[$i] . ' X ' . number_format($rate_child[$i]) : $child[$i]; ?></td>
+                            <td class="text-center"><?php echo $adult[$i]; ?></td>
+                            <td class="text-center"><?php echo $child[$i]; ?></td>
                             <td class="text-center"><?php echo $infant[$i]; ?></td>
                             <td class="text-center"><?php echo $foc[$i]; ?></td>
-                            <td class="text-center"><?php echo !empty($bec_rate_total[$bo_id[$i]]) ? number_format($total[$i] + array_sum($bec_rate_total[$bo_id[$i]])) : number_format($total[$i]); ?></td>
+                            <!-- <td class="text-center"><?php echo !empty($bec_rate_total[$bo_id[$i]]) ? number_format($total[$i] + array_sum($bec_rate_total[$bo_id[$i]])) : number_format($total[$i]); ?></td> -->
                             <td class="text-nowrap"><b class="text-danger"><?php echo !empty($cot[$i]) ? number_format($cot[$i]) : ''; ?></b></td>
                             <td><b class="text-info">
                                     <?php if (!empty($bec_id[$bo_id[$i]])) {
                                         for ($e = 0; $e < count($bec_name[$bo_id[$i]]); $e++) {
-                                            echo $bec_name[$bo_id[$i]][$e] . ' : ';
-                                            if ($bec_type[$bo_id[$i]][$e] == 1) {
-                                                echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
-                                                echo !empty($bec_child[$bo_id[$i]][$e]) ? ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e] : '';
-                                            } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
-                                                echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e] . ' ';
-                                            }
+                                            echo $e == 0 ? $bec_name[$bo_id[$i]][$e] : ' : ' . $bec_name[$bo_id[$i]][$e];
+                                            // if ($bec_type[$bo_id[$i]][$e] == 1) {
+                                            //     echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
+                                            //     echo !empty($bec_child[$bo_id[$i]][$e]) ? ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e] : '';
+                                            // } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
+                                            //     echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e] . ' ';
+                                            // }
                                         }
                                     }
                                     echo !empty($bp_note[$i]) ? ' / ' . $bp_note[$i] : ''; ?>

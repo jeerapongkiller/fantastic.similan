@@ -95,7 +95,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                     <th class="text-center" width="1%">C</th>
                     <th class="text-center" width="1%">Inf</th>
                     <th class="text-center" width="1%">FOC</th>
-                    <th class="text-center">รวม</th>
+                    <!-- <th class="text-center">รวม</th> -->
                     <th class="text-center" width="3%">COT</th>
                     <th width="10%">Remark</th>
             </thead>
@@ -128,22 +128,22 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                                 } ?>
                             </td>
                             <td><?php echo $room_no[$i]; ?></td>
-                            <td class="text-center"><?php echo $adult[$i] . ' X ' . number_format($rate_adult[$i]); ?></td>
-                            <td class="text-center"><?php echo !empty($child[$i]) ? $child[$i] . ' X ' . number_format($rate_child[$i]) : $child[$i]; ?></td>
+                            <td class="text-center"><?php echo $adult[$i]; ?></td>
+                            <td class="text-center"><?php echo $child[$i]; ?></td>
                             <td class="text-center"><?php echo $infant[$i]; ?></td>
                             <td class="text-center"><?php echo $foc[$i]; ?></td>
-                            <td class="text-center"><?php echo !empty($bec_rate_total[$bo_id[$i]]) ? number_format($total[$i] + array_sum($bec_rate_total[$bo_id[$i]])) : number_format($total[$i]); ?></td>
+                            <!-- <td class="text-center"><?php echo !empty($bec_rate_total[$bo_id[$i]]) ? number_format($total[$i] + array_sum($bec_rate_total[$bo_id[$i]])) : number_format($total[$i]); ?></td> -->
                             <td class="text-nowrap"><b class="text-danger"><?php echo !empty($cot[$i]) ? number_format($cot[$i]) : ''; ?></b></td>
                             <td><b class="text-info">
                                     <?php if (!empty($bec_id[$bo_id[$i]])) {
                                         for ($e = 0; $e < count($bec_name[$bo_id[$i]]); $e++) {
-                                            echo $bec_name[$bo_id[$i]][$e] . ' : ';
-                                            if ($bec_type[$bo_id[$i]][$e] == 1) {
-                                                echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
-                                                echo !empty($bec_child[$bo_id[$i]][$e]) ? ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e] : '';
-                                            } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
-                                                echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e] . ' ';
-                                            }
+                                            echo $e == 0 ? $bec_name[$bo_id[$i]][$e] : ' : ' . $bec_name[$bo_id[$i]][$e];
+                                            // if ($bec_type[$bo_id[$i]][$e] == 1) {
+                                            //     echo 'A ' . $bec_adult[$bo_id[$i]][$e] . ' X ' . $bec_rate_adult[$bo_id[$i]][$e];
+                                            //     echo !empty($bec_child[$bo_id[$i]][$e]) ? ' C ' . $bec_child[$bo_id[$i]][$e] . ' X ' . $bec_rate_child[$bo_id[$i]][$e] : '';
+                                            // } elseif ($bec_type[$bo_id[$i]][$e] == 2) {
+                                            //     echo $bec_privates[$bo_id[$i]][$e] . ' X ' . $bec_rate_total[$bo_id[$i]][$e] . ' ';
+                                            // }
                                         }
                                     }
                                     echo !empty($bp_note[$i]) ? ' / ' . $bp_note[$i] : ''; ?>
