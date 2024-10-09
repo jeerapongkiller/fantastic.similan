@@ -91,11 +91,12 @@ class Booking extends DB
                         PICK.id as pickup_id, PICK.name as pickup_name, 
                         DROF.id as dropoff_id, DROF.name as dropoff_name,
                         BOMANGE.id as bomange_id,
-                        MANGET.id as manget_id, MANGET.driver as driver,
-                        CAR.id as car_id, CAR.name as car_name,
+                        MANGET.id as manget_id, MANGET.driver as driver, MANGET.license as license, MANGET.seat as seat,
+                        CAR.id as car_id, CAR.name as car_name, CAR.name as car_name,
                         BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
                         MANGE.id as mange_id, MANGE.time as manage_time,
                         COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex,
+                        GUIDE.id as guide_id, GUIDE.name as guide_name,
                         BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
                         -- MANGET.id as ortran_id, MANGET.driver as driver_name, MANGET.license as license, MANGET.telephone as ortran_telephone,
                         -- CAR.id as car_id, CAR.name as car_name,
@@ -160,6 +161,8 @@ class Booking extends DB
                         ON BORDB.manage_id = MANGE.id
                     LEFT JOIN colors COLOR 
                         ON MANGE.color_id = COLOR.id
+                    LEFT JOIN guides GUIDE
+                        ON MANGE.guide_id = GUIDE.id
                     LEFT JOIN boats BOAT
                         ON MANGE.boat_id = BOAT.id
                     -- LEFT JOIN order_transfer MANGET 
@@ -1073,7 +1076,7 @@ class Booking extends DB
         return $data;
     }
 
-    public function show_category_rate(int $agent_id, int $category_id, string $travel_date)
+    public function show_category_rate($agent_id, int $category_id, string $travel_date)
     {
         $query = "SELECT PRODC.*,
                 PRODP.id as periodid,
@@ -1088,14 +1091,14 @@ class Booking extends DB
                 WHERE PRODC.id = ? 
                 AND PRODP.is_approved = 1
                 AND PRODP.is_deleted = 0
-                AND COMR.company_id = ?
                 ";
 
         $query .= " AND PRODP.period_from <= '" . $travel_date . "'";
         $query .= " AND PRODP.period_to >= '" . $travel_date . "'";
+        $query .= (isset($agent_id) && $agent_id > 0) ? " AND COMR.company_id = " . $agent_id : "";
 
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("ii", $category_id, $agent_id);
+        $statement->bind_param("i", $category_id);
         $statement->execute();
         $result = $statement->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);

@@ -70,20 +70,6 @@ $agObj = new Agent();
                                                 <input type="text" id="telephone" name="telephone" class="form-control" />
                                             </div>
                                         </div>
-                                        <div class="col-md-2 col-12">
-                                            <label for="sale_id">Sale</label>
-                                            <select class="form-control select2" id="sale_id" name="sale_id">
-                                                <option value="">Please Select Sale...</option>
-                                                <?php
-                                                $sales = $agObj->showuser();
-                                                foreach ($sales as $sale) {
-                                                ?>
-                                                    <option value="<?php echo $sale['id']; ?>"><?php echo $sale['firstname'] . ' ' . $sale['lastname']; ?></option>
-                                                <?php
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 col-12">

@@ -430,7 +430,33 @@
                     }
                 });
             }
+
+            search_start_date('today', 'boat');
+            search_start_date('tomorrow', 'boat');
+            search_start_date('today', 'driver');
+            search_start_date('tomorrow', 'driver');
         });
+
+        function search_start_date(type_date, type) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type_date', type_date);
+            formData.append('type', type);
+            $.ajax({
+                url: "pages/booking/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false' && type == 'boat') {
+                        $('#boat-report-' + type_date).html(response);
+                    } else if (response != 'false' && type == 'driver') {
+                        $('#driver-report-' + type_date).html(response);
+                    }
+                }
+            });
+        }
 
         function search_program() {
             var open_rates = document.getElementById('open-rates').value;
@@ -486,11 +512,13 @@
             var open_rates = document.getElementById('open-rates').value;
             var book_type = document.getElementsByName('booking_type')[0].checked == true ? 1 : 2;
             var agent = document.getElementById('agent').value;
+            var product_id = document.getElementById('product_id').value;
             var category_id = document.getElementById('category_id').value;
             var travel_date = document.getElementById('travel_date').value;
             var formData = new FormData();
             formData.append('action', 'search');
             formData.append('agent_id', agent);
+            formData.append('product_id', product_id);
             formData.append('category_id', category_id);
             formData.append('travel_date', travel_date);
             $.ajax({
@@ -514,7 +542,7 @@
                         document.getElementById('start_pickup').value = (res.transfer == 0) ? '08:15' : '';
                         document.getElementById('end_pickup').value = (res.transfer == 0) ? '08:15' : '';
                         document.getElementById('include').value = (res.transfer === 1) ? '1' : '2';
-                    
+
                         check_rate();
                     }
                 }

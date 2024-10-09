@@ -65,9 +65,9 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     $trans_note = !empty($_POST['trans_note']) ? $_POST['trans_note'] : '';
     # --- get value rate transfer (Join) --- #
     $btr_id = !empty($_POST['btr_id']) ? $_POST['btr_id'] : 0;
-    $tran_rate_adult = !empty($_POST['tran_adult']) && $transfer_type == 1 ? $_POST['tran_adult'] : 0;
-    $tran_rate_child = !empty($_POST['tran_child']) && $transfer_type == 1 ? $_POST['tran_child'] : 0;
-    $tran_rate_infant = !empty($_POST['tran_infant']) && $transfer_type == 1 ? $_POST['tran_infant'] : 0;
+    $tran_rate_adult = !empty($_POST['tran_adult']) && $transfer_type == 1 ? preg_replace('(,)', '', $_POST['tran_adult']) : 0;
+    $tran_rate_child = !empty($_POST['tran_child']) && $transfer_type == 1 ? preg_replace('(,)', '', $_POST['tran_child']) : 0;
+    $tran_rate_infant = !empty($_POST['tran_infant']) && $transfer_type == 1 ? preg_replace('(,)', '', $_POST['tran_infant']) : 0;
     $tran_total_price = !empty($_POST['tran_total_price']) ? preg_replace('(,)', '', $_POST['tran_total_price']) : 0;
     # --- get value rate transfer (Private) --- #
     $transfers = !empty($_POST['transfers']) ? $_POST['transfers'] : '';
