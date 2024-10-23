@@ -8,11 +8,17 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     // get value from ajax
     $date_travel_manage = !empty($_POST['date_travel_manage']) ? $_POST['date_travel_manage'] : $tomorrow = new DateTime('tomorrow');
     $search_product = !empty($_POST['search_product']) ? $_POST['search_product'] : 'all';
+    $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
+    $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
+    $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
+    $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_bo = array();
     $first_prod = array();
     $first_cus = array();
-    $bookings = $manageObj->showlistboats('list', 0, $date_travel_manage, $search_product, 'all');
+    $bookings = $manageObj->showlistboats('list', 0, $date_travel_manage, $search_product, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     # --- Check products --- #
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {

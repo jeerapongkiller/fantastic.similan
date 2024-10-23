@@ -52,7 +52,7 @@ class ExtraCharge extends DB
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO extra_charges (name, unitม rate_adult, rate_child, rate_infant, rate_total, detail, pic, is_approved, is_deleted, created_at, updated_at)
+        $query = "INSERT INTO extra_charges (name, unit, rate_adult, rate_child, rate_infant, rate_total, detail, pic, is_approved, is_deleted, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
 
         $bind_types .= "s";

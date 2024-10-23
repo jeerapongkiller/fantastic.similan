@@ -64,7 +64,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
             </thead>
             <tbody>
                 <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
-                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo $agent_name[$i]; ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
+                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
                         <td><?php echo $agent_name[$i]; ?></td>
                         <td class="text-center"><?php echo !empty($cover_id[$agent_id[$i]]) ? count($cover_id[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo !empty($tourrist[$agent_id[$i]]) ? array_sum($tourrist[$agent_id[$i]]) : 0; ?></td>
@@ -142,7 +142,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
             </thead>
             <tbody>
                 <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
-                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo $agent_name[$i]; ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
+                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
                         <td><?php echo $agent_name[$i]; ?></td>
                         <td class="text-center"><?php echo !empty($rec_id[$agent_id[$i]]) ? count($rec_id[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo array_sum($adult[$agent_id[$i]]) + array_sum($child[$agent_id[$i]]) + array_sum($infant[$agent_id[$i]]) + array_sum($foc[$agent_id[$i]]); ?></td>

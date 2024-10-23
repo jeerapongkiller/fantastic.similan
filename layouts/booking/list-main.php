@@ -374,6 +374,8 @@
                                     height: 14
                                 });
                             }
+
+                            search_start_date('custom', 'booking', $('#search_travel').val());
                         }
                     }
                 });
@@ -431,17 +433,25 @@
                 });
             }
 
-            search_start_date('today', 'boat');
-            search_start_date('tomorrow', 'boat');
-            search_start_date('today', 'driver');
-            search_start_date('tomorrow', 'driver');
+            search_start_date('today', 'boat', '');
+            search_start_date('tomorrow', 'boat', '');
+            search_start_date('today', 'driver', '');
+            search_start_date('tomorrow', 'driver', '');
+            search_start_date('today', 'booking', '');
+            search_start_date('tomorrow', 'booking', '');
+            search_start_date('day3', 'booking', '<?php echo $day3; ?>');
+            search_start_date('day4', 'booking', '<?php echo $day4; ?>');
+            search_start_date('day5', 'booking', '<?php echo $day5; ?>');
+            search_start_date('day6', 'booking', '<?php echo $day6; ?>');
+            search_start_date('day7', 'booking', '<?php echo $day7; ?>');
         });
 
-        function search_start_date(type_date, type) {
+        function search_start_date(type_date, type, date) {
             var formData = new FormData();
             formData.append('action', 'search');
             formData.append('type_date', type_date);
             formData.append('type', type);
+            formData.append('date', date);
             $.ajax({
                 url: "pages/booking/function/search-report.php",
                 type: "POST",
@@ -453,6 +463,8 @@
                         $('#boat-report-' + type_date).html(response);
                     } else if (response != 'false' && type == 'driver') {
                         $('#driver-report-' + type_date).html(response);
+                    } else if (response != 'false' && type == 'booking') {
+                        $('#' + type_date).html(response);
                     }
                 }
             });

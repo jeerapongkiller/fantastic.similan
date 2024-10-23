@@ -9,10 +9,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
     // get value from ajax
     $agent_id = $_POST['agent_id'] != "" ? $_POST['agent_id'] : 0;
     $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
+    // $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
+    // $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
+    // $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    // $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    // $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
+    // $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_booking = array();
     $first_ext = array();
-    $bookings = $bookingObj->showlistboats('agent', $agent_id, $travel_date, 'all', 'all');
+    $bookings = $bookingObj->showlistboats('agent', $agent_id, $travel_date, 'all', 'all', 'all', 'all', 'all', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value booking --- #
@@ -31,6 +37,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                 $end_pickup[] = !empty($booking['end_pickup']) ? date('H:i', strtotime($booking['end_pickup'])) : '00:00:00';
                 $car_name[] = !empty($booking['car_name']) ? $booking['car_name'] : '';
                 $cus_name[] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
+                $telephone[] = !empty($booking['telephone']) ? $booking['telephone'] : '';
                 $book_full[] = !empty($booking['book_full']) ? $booking['book_full'] : '';
                 $voucher_no[] = !empty($booking['voucher_no_agent']) ? $booking['voucher_no_agent'] : '';
                 $pickup_type[] = !empty($booking['pickup_type']) ? $booking['pickup_type'] : 0;
@@ -122,7 +129,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                         <tr>
                             <td class="text-center"><?php echo $start_pickup[$i] . ' - ' . $end_pickup[$i]; ?></td>
                             <td><?php echo $product_name[$i]; ?></td>
-                            <td><?php echo $cus_name[$i]; ?></td>
+                            <td><?php echo !empty($telephone[$i]) ? $cus_name[$i] . ' <br>(' . $telephone[$i] . ')' : $cus_name[$i]; ?></td>
                             <td><?php echo !empty($voucher_no[$i]) ? $voucher_no[$i] : $book_full[$i]; ?></td>
                             <td style="padding: 5px;">
                                 <?php if ($pickup_type[$i] == 1) {
@@ -163,7 +170,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
         <div class="text-center mt-1 pb-2">
             <h4>
                 <div class="badge badge-pill badge-light-warning">
-                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                    Adult : <?php echo $total_adult; ?>
+                    Child : <?php echo $total_child; ?>
+                    Infant : <?php echo $total_infant; ?>
+                    FOC : <?php echo $total_foc; ?>
                 </div>
             </h4>
         </div>

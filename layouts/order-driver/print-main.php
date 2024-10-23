@@ -34,6 +34,30 @@
                 page-break-after: always;
             }
         }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            /* z-index: 1000; */
+            /* background-color: white; */
+            /* สีพื้นหลัง */
+            /* height: 120px; */
+            /* ปรับขนาดความสูงให้เหมาะสม */
+        }
+
+        .content {
+            width: 100%;
+            top: 130px;
+            bottom: 200px;
+        }
+
+        .header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            height: 120px;
+        }
     </style>
 
     <style>

@@ -19,7 +19,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
     $first_prod = array();
     $first_manage_bt = array();
     $frist_bomange = array();
-    $bookings = $manageObj->showlisttransfers('manage', 0, $travel, $product_id, 'all');
+    $bookings = $manageObj->showlisttransfers('manage', 0, $travel, $product_id, 'all', 'all', 'all', 'all', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value Programe --- #

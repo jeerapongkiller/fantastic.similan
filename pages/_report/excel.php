@@ -12,7 +12,6 @@ $objPHPExcel->setActiveSheetIndex(0);
 
 if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])) {
     # --- get value --- #
-    $search_status = !empty($_GET["search_status"]) ? $_GET["search_status"] : 'all';
     $search_travel = !empty($_GET["search_travel"]) ? $_GET["search_travel"] : '0000-00-00';
     $date_form = substr($search_travel, 0, 10) != '' ? substr($search_travel, 0, 10) : '0000-00-00';
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
@@ -30,31 +29,28 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $balance = 0;
     $count_boboat = 0;
     $count_bot = 0;
-    $paid = 0;
-    $not_issued = 0;
-    $issued_inv = 0;
+    $bo_paid = 0;
     $first_book = array();
     $first_agent = array();
     $first_prod = array();
     $first_bot = array();
     $first_boboat = array();
-    $first_extar = array();
     $first_pay = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product);
+    $bookings = $repObj->showlist($date_form, $date_to, $search_agent, $search_product);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
         if (in_array($booking['id'], $first_book) == false) {
             $first_book[] = $booking['id'];
             # --- get value booking --- #
             $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
-            $status[] = !empty($booking['booksta_name']) ? $booking['booksta_name'] : '';
+            $status[] = $booking['booksta_name'];
             $rec_id[] = !empty($booking['rec_id']) ? $booking['rec_id'] : 0;
             $book_full[] = !empty($booking['book_full']) ? $booking['book_full'] : '';
             $voucher_no_agent[] = !empty($booking['voucher_no_agent']) ? $booking['voucher_no_agent'] : '';
             $inv_full[] = !empty($booking['inv_full']) ? $booking['inv_full'] : '';
             $travel_date[] = !empty($booking['travel_date']) ? $booking['travel_date'] : '0000-00-00';
-            // $payment[] = !empty($booking['bopay_name']) ? !empty($booking['bopa_id']) ? '<span class="badge badge-pill badge-light-success text-capitalized"> ' . $booking['bopay_name'] . '<br> ชำระเงินแล้ว </span>' : '<span class="badge badge-pill ' . $booking['bookpay_name_class'] . ' text-capitalized"> ' . $booking['bopay_name'] . ' </span>' : '<span class="badge badge-pill badge-light-primary text-capitalized"> ไม่ได้ระบุ </span></br>';
-            // $payment_paid[] = !empty($booking['payment_paid']) ? $booking['payment_paid'] : 0;
+            $payment[] = !empty($booking['bopay_name']) ? $booking['bopay_name'] : 'ไม่ได้ระบุ';
+            $payment_paid[] = !empty($booking['payment_paid']) ? $booking['payment_paid'] : 0;
             // $inv_status[] = (diff_date($today, $booking['rec_date'])['day'] > 0) ? '<span class="badge badge-pill badge-light-success text-capitalized">ครบกำหนดชำระในอีก ' . diff_date($today, $booking['rec_date'])['num'] . ' วัน</span>' : '<span class="badge badge-pill badge-light-danger text-capitalized">เกินกำหนดชำระ</span>';
             $bo_status[] = !empty($booking['booksta_id']) ? $booking['booksta_id'] : 0;
             $sender[] = !empty($booking['sender']) ? $booking['sender'] : '';
@@ -63,34 +59,32 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
             $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
             $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-            $discount[] = !empty($booking['discount']) ? $booking['discount'] : 0;
             # --- get value booking products --- #
-            $hotel_pickup_name[] = !empty($booking['hotel_pickup_id']) ? $booking['hotel_pickup_name'] : $booking['hotel_pickup'];
-            $hotel_dropoff_name[] = !empty($booking['hotel_dropoff_id']) ? $booking['hotel_dropoff_name'] : $booking['hotel_dropoff'];
+            $hotel_pickup_name[] = !empty($booking['hotel_pickup_name']) ? $booking['hotel_pickup_name'] : '';
+            $hotel_dropoff_name[] = !empty($booking['hotel_dropoff_name']) ? $booking['hotel_dropoff_name'] : '';
             # --- get value customers --- #
             $cus_name[] = !empty($booking['cus_name']) && $booking['cus_head'] == 1 ? $booking['cus_name'] : '';
             # --- calculate amount booking --- #
-            $total = $booking['bp_private_type'] == 1 ? ($booking['bp_adult'] * $booking['rate_adult']) + ($booking['bp_child'] * $booking['rate_child']) : $booking['rate_total'];
-            // $total = $booking['rate_total'];
-            // $total = ($booking['transfer_type'] == 1) ? $total + ($booking['bt_adult'] * $booking['btr_rate_adult']) + ($booking['bt_child'] * $booking['btr_rate_child']) + ($booking['bt_infant'] * $booking['btr_rate_infant']) : $total;
-            // $total = ($booking['transfer_type'] == 2) ? $repObj->sumbtrprivate($booking['bt_id'])['sum_rate_private'] + $total : $total;
+            $total = $booking['rate_total'];
+            $total = ($booking['transfer_type'] == 1) ? $total + ($booking['bt_adult'] * $booking['btr_rate_adult']) + ($booking['bt_child'] * $booking['btr_rate_child']) + ($booking['bt_infant'] * $booking['btr_rate_infant']) : $total;
+            $total = ($booking['transfer_type'] == 2) ? $repObj->sumbtrprivate($booking['bt_id'])['sum_rate_private'] + $total : $total;
             // $total = $repObj->sumbectotal($booking['id'])['sum_rate_total'] + $total;
 
-            // $amount = $total;
-            $array_total[] = !empty($booking['discount']) ? $total - $booking['discount'] : $total;
-            // if ($booking['vat_id'] == 1) {
-            //     $vat_total = $total * 100 / 107;
-            //     $vat_cut = $vat_total;
-            //     $vat_total = $total - $vat_total;
-            //     $withholding_total = $booking['withholding'] > 0 ? ($vat_cut * $booking['withholding']) / 100 : 0;
-            //     $amount = $total - $withholding_total;
-            // } elseif ($booking['vat_id'] == 2) {
-            //     $vat_total = ($total * 7) / 100;
-            //     $total = $total + $vat_total;
-            //     $withholding_total = $booking['withholding'] > 0 ? ($total - $vat_total) * $booking['withholding'] / 100 : 0;
-            //     $amount = $total - $withholding_total;
-            // }
-            $array_amount[$booking['id']] = !empty($booking['discount']) ? $total - $booking['discount'] : $total;
+            $amount = $total;
+            $array_total[] = $total;
+            if ($booking['vat_id'] == 1) {
+                $vat_total = $total * 100 / 107;
+                $vat_cut = $vat_total;
+                $vat_total = $total - $vat_total;
+                $withholding_total = $booking['withholding'] > 0 ? ($vat_cut * $booking['withholding']) / 100 : 0;
+                $amount = $total - $withholding_total;
+            } elseif ($booking['vat_id'] == 2) {
+                $vat_total = ($total * 7) / 100;
+                $total = $total + $vat_total;
+                $withholding_total = $booking['withholding'] > 0 ? ($total - $vat_total) * $booking['withholding'] / 100 : 0;
+                $amount = $total - $withholding_total;
+            }
+            $array_amount[$booking['id']] = $amount;
 
             $inv_no = !empty($booking['inv_id']) ? $inv_no + 1 : $inv_no;
             // $over_due = (diff_date($today, $booking['rec_date'])['day'] <= 0) && !empty($booking['inv_id']) && empty($booking['rec_id']) ? $over_due + 1 : $over_due;
@@ -101,10 +95,8 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             # --- Agent --- #
             $comp_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
             $comp_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
-
-            $comp_amount[$booking['comp_id']][] = !empty($booking['discount']) ? $total - $booking['discount'] : $total;
-            $comp_revenue[$booking['comp_id']][] = !empty($booking['rec_id']) ? !empty($booking['discount']) ? $total - $booking['discount'] : $total : 0;
-
+            $comp_amount[$booking['comp_id']][] = $amount;
+            $comp_revenue[$booking['comp_id']][] = !empty($booking['rec_id']) ? $total : 0;
             $comp_adult[$booking['comp_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
             $comp_child[$booking['comp_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
             $comp_infant[$booking['comp_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
@@ -193,27 +185,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             $bo_dep[$booking['id']] = !empty($booking['bopay_id']) && $booking['bopay_id'] == 5 ? !empty($booking['total_paid']) ? $booking['total_paid'] : 0 : 0;
             $bopay_name_class[$booking['id']] = !empty($booking['bopay_name_class']) ? $booking['bopay_name_class'] : '';
             $bopay_paid_name[$booking['id']] = $booking['bopay_id'] == 4 || $booking['bopay_id'] == 5 ? $booking['bopay_name'] . ' (' . number_format($booking['total_paid']) . ')' : $booking['bopay_name'];
-
-            $pay_id[$booking['id']][] = !empty($booking['bopay_id']) ? $booking['bopay_id'] : 0;
-            $pay_name[$booking['id']][] = !empty($booking['bopay_name']) ? $booking['bopay_name'] : 0;
-        }
-        # --- get value booking --- #
-        if (in_array($booking['bec_id'], $first_extar) == false && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
-            $first_extar[] = $booking['bec_id'];
-            $ext_total = $booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) : ($booking['bec_privates'] * $booking['bec_rate_private']);
-            $extar_arr_total[] = $ext_total;
-            $extar_total[$booking['id']][] = $ext_total;
-            $extar_total_agent[$booking['comp_id']][] = $ext_total;
         }
     }
     # ------ calculate booking paid ------ #
     if (!empty($bopay_id)) {
         foreach ($bopay_id as $x => $val) {
-            $not_issued = (!empty($pay_id[$x]) && (in_array(6, $pay_id[$x]) == false) && (in_array(3, $pay_id[$x]) == false)) ? !empty($extar_total[$x]) ? $not_issued + $array_amount[$x] + array_sum($extar_total[$x]) : $not_issued + $array_amount[$x] : $not_issued;
-
-            $issued_inv = (!empty($pay_id[$x]) && (in_array(6, $pay_id[$x]) == true) && (in_array(3, $pay_id[$x]) == false)) ? !empty($extar_total[$x]) ? $issued_inv + $array_amount[$x] + array_sum($extar_total[$x]) : $issued_inv + $array_amount[$x] : $issued_inv;
-
-            $paid = (!empty($pay_id[$x]) && (in_array(3, $pay_id[$x]) == true)) ? !empty($extar_total[$x]) ? $paid + $array_amount[$x] + array_sum($extar_total[$x]) : $paid + $array_amount[$x] : $paid;
+            $bo_paid = $val == 3 ? $bo_paid + $array_amount[$x] : $bo_paid;
         }
     }
 
@@ -239,12 +216,8 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     } elseif ($_GET['type'] == 'agent') {
         $columnName[] = ['Agent', 'Booking', 'AD', 'CHD', 'INF', 'FOC', 'TOTAL', 'Amount', 'Income', 'Overdue',];
         if (!empty($agent_id)) {
-            $amount_comp = 0;
-            $revenue_comp = 0;
             for ($i = 0; $i < count($agent_id); $i++) {
-                $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_amount[$agent_id[$i]]) : 0;
-                $revenue_comp = !empty($comp_revenue[$agent_id[$i]]) ? (!empty($extar_total_agent[$agent_id[$i]]) && array_sum($comp_revenue[$agent_id[$i]]) > 0) ? array_sum($comp_revenue[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_revenue[$agent_id[$i]]) : 0;
-                $columnName[] = [$agent_name[$i], array_count_values($comp_id)[$agent_id[$i]], !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0, !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0, !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0, !empty($comp_foc[$agent_id[$i]]) ? array_sum($comp_foc[$agent_id[$i]]) : 0, !empty($comp_sum[$agent_id[$i]]) ? array_sum($comp_sum[$agent_id[$i]]) : 0, !empty($amount_comp) ? number_format($amount_comp) : 0, !empty($revenue_comp) ? number_format($revenue_comp) : 0, number_format($amount_comp - $revenue_comp),];
+                $columnName[] = [$agent_name[$i], array_count_values($comp_id)[$agent_id[$i]], !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0, !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0, !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0, !empty($comp_foc[$agent_id[$i]]) ? array_sum($comp_foc[$agent_id[$i]]) : 0, !empty($comp_sum[$agent_id[$i]]) ? array_sum($comp_sum[$agent_id[$i]]) : 0, !empty($comp_amount[$agent_id[$i]]) ? number_format(array_sum($comp_amount[$agent_id[$i]])) : 0, !empty($comp_revenue[$agent_id[$i]]) ? number_format(array_sum($comp_revenue[$agent_id[$i]])) : 0, !empty($comp_amount[$agent_id[$i]]) ? !empty($comp_revenue[$agent_id[$i]]) ? number_format(array_sum($comp_amount[$agent_id[$i]]) - array_sum($comp_revenue[$agent_id[$i]])) : number_format(array_sum($comp_amount[$agent_id[$i]])) : 0,];
             }
         }
     } elseif ($_GET['type'] == 'programe') {

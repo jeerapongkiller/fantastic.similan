@@ -120,6 +120,7 @@
             var jqForm = $('#order-job-search-form'),
                 jqFormPark = $('#order-park-form'),
                 picker = $('#dob'),
+                DatePicker = $('.date-picker'),
                 dtPicker = $('#dob-bootstrap-val'),
                 select = $('.select2');
 
@@ -130,6 +131,20 @@
                     numeralThousandsGroupStyle: 'thousand'
                 });
             });
+
+            if (DatePicker.length) {
+                DatePicker.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
+                });
+            }
 
             // select2
             select.each(function() {
@@ -165,8 +180,6 @@
                     }
                 });
             }
-
-            fun_search_period();
 
             // Ajax Search
             // --------------------------------------------------------------------
@@ -285,7 +298,7 @@
                     })
             });
 
-            
+
             document.getElementById('parks_text').innerHTML = $('#parks').find(':selected').attr('data-name');
 
             var ad_eng = 0;
@@ -361,58 +374,6 @@
             document.getElementById('adult_th').innerHTML = ad_th + ' X ' + rate_adult_th + ' = ' + numberWithCommas(Number(rate_adult_th * ad_th));
             document.getElementById('child_th').innerHTML = chd_th + ' X ' + rate_child_th + ' = ' + numberWithCommas(Number(rate_child_th * chd_th));
             document.getElementById('park_total').innerHTML = numberWithCommas(total)
-        }
-
-        function fun_search_period() {
-            var search_period = document.getElementById('search_period').value;
-            document.getElementById('div_custom_form').hidden = search_period == 'custom' ? false : true;
-            // document.getElementById('div_custom_to').hidden = search_period == 'custom' ? false : true;
-
-            const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            switch (search_period) {
-                case 'tomorrow':
-                    day = date.getDate() + 1;
-                    break;
-                case 'week':
-                    day = date.getDate() + 7;
-                    break;
-                case 'month':
-                    month = date.getMonth() + 2;
-                    break;
-                case 'year':
-                    year = date.getFullYear() + 1;
-                    break;
-            }
-            let currentDate = `${year}-${month}-${day}`;
-
-            $('#date_travel_form').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-
-            // $('#date_travel_to').flatpickr({
-            //     onReady: function(selectedDates, dateStr, instance) {
-            //         if (instance.isMobile) {
-            //             $(instance.mobileInput).attr('step', null);
-            //         }
-            //     },
-            //     static: true,
-            //     altInput: true,
-            //     altFormat: 'j F Y',
-            //     dateFormat: 'Y-m-d',
-            //     defaultDate: currentDate
-            // });
         }
 
         function download_image() {

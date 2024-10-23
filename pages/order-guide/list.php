@@ -22,23 +22,67 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                         <h5 class="pt-1 pl-2 pb-0">Search Filter</h5>
                         <form id="order-guide-search-form" name="order-guide-search-form" method="post" enctype="multipart/form-data">
                             <div class="d-flex align-items-center mx-50 row pt-0 pb-2">
-                                <div class="col-md-2 col-12" hidden>
+                                <div class="col-md-2 col-12">
                                     <div class="form-group">
-                                        <label for="search_period">Period</label>
-                                        <select class="form-control select2" id="search_period" name="search_period" onchange="fun_search_period();">
-                                            <option value="custom">Custom</option>
-                                            <option value="today">Today</option>
-                                            <option value="tomorrow">Tomorrow</option>
+                                        <label for="search_status">Status</label>
+                                        <select class="form-control select2" id="search_status" name="search_status">
+                                            <option value="all">All</option>
+                                            <?php
+                                            $bookstype = $orderObj->showliststatus();
+                                            foreach ($bookstype as $booktype) {
+                                                $selected = $search_status == $booktype['id'] ? 'selected' : '';
+                                            ?>
+                                                <option value="<?php echo $booktype['id']; ?>" <?php echo $selected; ?>><?php echo $booktype['name']; ?></option>
+                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2 col-12" id="div_custom_form">
+                                <div class="col-md-3 col-12">
                                     <div class="form-group">
-                                        <label class="form-label" for="date_travel_form">Travel Date (Form)</label></br>
-                                        <input type="text" class="form-control" id="date_travel_form" name="date_travel_form" value="<?php echo $today; ?>" />
+                                        <label for="search_agent">Agent</label>
+                                        <select class="form-control select2" id="search_agent" name="search_agent">
+                                            <option value="all">All</option>
+                                            <?php
+                                            $agents = $orderObj->showlistagent();
+                                            foreach ($agents as $agent) {
+                                                $selected = $search_agent == $agent['id'] ? 'selected' : '';
+                                            ?>
+                                                <option value="<?php echo $agent['id']; ?>" <?php echo $selected; ?>><?php echo $agent['name']; ?></option>
+                                            <?php } ?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="search_product">Programe</label>
+                                        <select class="form-control select2" id="search_product" name="search_product">
+                                            <option value="all">All</option>
+                                            <?php
+                                            $products = $orderObj->showlistproduct();
+                                            foreach ($products as $product) {
+                                                $selected = $search_product == $product['id'] ? 'selected' : '';
+                                            ?>
+                                                <option value="<?php echo $product['id']; ?>" <?php echo $selected; ?>><?php echo $product['name']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <div class="form-group">
+                                        <label for="search_boat">เรือ</label>
+                                        <select class="form-control select2" id="search_boat" name="search_boat">
+                                            <option value="all">All</option>
+                                            <?php
+                                            $boats = $orderObj->show_boats();
+                                            foreach ($boats as $boat) {
+                                                $selected = $search_boat == $boat['id'] ? 'selected' : '';
+                                            ?>
+                                                <option value="<?php echo $boat['id']; ?>" <?php echo $selected; ?>><?php echo $boat['name']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-12">
                                     <div class="form-group">
                                         <label for="search_guide">ไกด์</label>
                                         <select class="form-control select2" id="search_guide" name="search_guide">
@@ -50,6 +94,30 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                                 <option value="<?php echo $guide['id']; ?>"><?php echo $guide['name']; ?></option>
                                             <?php } ?>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="date_travel_form">วันที่เที่ยว (Travel Date)</label></br>
+                                        <input type="text" class="form-control date-picker" id="date_travel_form" name="date_travel_form" value="<?php echo $today; ?>" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="refcode">Booking No #</label>
+                                        <input type="text" class="form-control" id="refcode" name="refcode" value="<?php echo $refcode; ?>" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="voucher_no">Voucher No #</label>
+                                        <input type="text" class="form-control" id="voucher_no" name="voucher_no" value="<?php echo $search_voucher_no; ?>" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="name">Customer Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="<?php echo $name; ?>" />
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-12">
@@ -73,7 +141,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                         $sum_chd = 0;
                         $sum_inf = 0;
                         # --- get data --- #
-                        $orders = $orderObj->showlistboats('list', 0, $get_date, 'all', 'all', 'all');
+                        $orders = $orderObj->showlistboats('list', 0, $get_date, 'all', 'all', 'all', 'all', 'all', 'all', '', '', '');
                         if (!empty($orders)) {
                             foreach ($orders as $order) {
                                 if ((in_array($order['mange_id'], $first_order) == false) && !empty($order['mange_id'])) {
@@ -126,6 +194,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                     $first_cus[] = $order['cus_id'];
                                     $cus_id[$order['id']][] = !empty($order['cus_id']) ? $order['cus_id'] : 0;
                                     $cus_name[$order['id']][] = !empty($order['cus_name']) ? $order['cus_name'] : '';
+                                    $telephone[$order['id']][] = !empty($order['telephone']) ? $order['telephone'] : '';
                                     $cus_id_card[$order['id']][] = !empty($order['id_card']) ? $order['id_card'] : '';
                                 }
 
@@ -175,7 +244,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                         ?>
                         <div class="content-header">
                             <div class="pl-1 pt-0 pb-0">
-                                <a href="./?pages=order-guide/print&action=print&search_period=custom&search_product=all&<?php echo 'date_travel_form=' . $get_date; ?>" target="_blank" class="btn btn-info">Print</a>
+                                <a href="./?pages=order-guide/print&action=print&<?php echo 'date_travel_form=' . $get_date; ?>" target="_blank" class="btn btn-info">Print</a>
                                 <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
                                 <a href="javascript:void(0);" class="btn btn-info disabled" hidden>Download as PDF</a>
                             </div>
@@ -258,7 +327,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                                             <td class="text-center"><?php echo $pickup_time[$mange_id[$i]][$a]; ?></td>
                                                             <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                                             <td><?php echo $agent[$mange_id[$i]][$a]; ?></td>
-                                                            <td><?php echo $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
+                                                            <td><?php echo !empty($telephone[$bo_id[$mange_id[$i]][$a]][0]) ? $cus_name[$bo_id[$mange_id[$i]][$a]][0] . ' <br>(' . $telephone[$bo_id[$mange_id[$i]][$a]][0] . ')' : $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
                                                             <td><?php echo !empty($voucher_no[$mange_id[$i]][$a]) ? $voucher_no[$mange_id[$i]][$a] : $book_full[$mange_id[$i]][$a]; ?></td>
                                                             <td style="padding: 5px;">
                                                                 <?php if ($pickup_type[$mange_id[$i]][$a] == 1) {
@@ -299,7 +368,11 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                         <div class="text-center mt-1 pb-2">
                                             <h4>
                                                 <div class="badge badge-pill badge-light-warning">
-                                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                                    Adult : <?php echo $total_adult; ?>
+                                                    Child : <?php echo $total_child; ?>
+                                                    Infant : <?php echo $total_infant; ?>
+                                                    FOC : <?php echo $total_foc; ?>
                                                 </div>
                                             </h4>
                                         </div>

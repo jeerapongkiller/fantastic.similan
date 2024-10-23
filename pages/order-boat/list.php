@@ -3,9 +3,28 @@ require_once 'controllers/Order.php';
 
 $manageObj = new Order();
 $today = date("Y-m-d");
-$tomorrow = new DateTime('tomorrow');
-$get_date = !empty($_GET['date_travel_booking']) ? $_GET['date_travel_booking'] : $tomorrow->format("Y-m-d"); // $tomorrow->format("Y-m-d")
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
+// $today = '2024-09-29';
+// $tomorrow = '2024-09-30';
+$get_date = !empty($_GET['date_travel_booking']) ? $_GET['date_travel_booking'] : $tomorrow; // $tomorrow->format("Y-m-d")
 $search_boat = !empty($_GET['search_boat']) ? $_GET['search_boat'] : 'all';
+$search_status = $_GET['search_status'] != "" ? $_GET['search_status'] : 'all';
+$search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
+$search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+$search_voucher_no = $_GET['voucher_no'] != "" ? $_GET['voucher_no'] : '';
+$refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
+$name = $_GET['name'] != "" ? $_GET['name'] : '';
+
+$href = "./?pages=order-boat/print";
+$href .= "&date_travel=" . $get_date;
+$href .= "&search_boat=" . $search_boat;
+$href .= "&search_status=" . $search_status;
+$href .= "&search_agent=" . $search_agent;
+$href .= "&search_product=" . $search_product;
+$href .= "&search_voucher_no=" . $search_voucher_no;
+$href .= "&refcode=" . $refcode;
+$href .= "&name=" . $name;
+$href .= "&action=print";
 # --- show list boats booking --- #
 $first_booking = array();
 $first_prod = array();
@@ -15,7 +34,7 @@ $first_ext = array();
 $first_bomanage = array();
 $first_bo = [];
 $first_trans = [];
-$bookings = $manageObj->showlistboats('list', 0, $get_date, $search_boat, 'all');
+$bookings = $manageObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
 # --- Check products --- #
 if (!empty($bookings)) {
     foreach ($bookings as $booking) {
@@ -91,6 +110,7 @@ if (!empty($bookings)) {
             $book['hotel'][$booking['mange_id']][] = !empty($booking['pickup_name']) ? $booking['pickup_name'] : '';
             $book['room_no'][$booking['mange_id']][] = !empty($booking['room_no']) ? $booking['room_no'] : '';
             $book['cus_name'][$booking['mange_id']][] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
+            $book['telephone'][$booking['mange_id']][] = !empty($booking['telephone']) ? $booking['telephone'] : '';
             $book['comp_name'][$booking['mange_id']][] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
             $book['adult'][$booking['mange_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
             $book['child'][$booking['mange_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
@@ -204,27 +224,34 @@ if (!empty($programed)) {
         </div>
 
         <div class="row">
-            <!-- Plan Card Manage Boat -->
-            <?php
-            if (!empty($mange['id'])) {
-                for ($i = 0; $i < count($mange['id']); $i++) {
-                    $cus_sum = (!empty($book['adult'][$mange['id'][$i]]) && !empty($book['child'][$mange['id'][$i]]) && !empty($book['infant'][$mange['id'][$i]]) && !empty($book['foc'][$mange['id'][$i]])) ? array_sum($book['adult'][$mange['id'][$i]]) + array_sum($book['child'][$mange['id'][$i]]) + array_sum($book['infant'][$mange['id'][$i]]) + array_sum($book['foc'][$mange['id'][$i]]) : 0;
-                    if ($cus_sum > 0) {
-            ?>
-                        <div class="col-lg-2 col-sm-3 col-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?></h2>
-                                        <h5 class="card-text"><?php echo $mange['boat_name'][$i]; ?></h5>
-                                    </div>
-                                </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+
                             </div>
                         </div>
-            <?php }
-                }
-            } ?>
-            <!-- /Plan Card Manage Boat Ends -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="content-body">
@@ -237,8 +264,47 @@ if (!empty($programed)) {
                         <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="date_travel_booking">วันที่เที่ยว (Travel Date)</label></br>
-                                    <input type="text" class="form-control date-picker" id="date_travel_booking" name="date_travel_booking" value="<?php echo $get_date; ?>" />
+                                    <label for="search_status">Status</label>
+                                    <select class="form-control select2" id="search_status" name="search_status">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $bookstype = $manageObj->showliststatus();
+                                        foreach ($bookstype as $booktype) {
+                                            $selected = $search_status == $booktype['id'] ? 'selected' : '';
+                                        ?>
+                                            <option value="<?php echo $booktype['id']; ?>" <?php echo $selected; ?>><?php echo $booktype['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <div class="form-group">
+                                    <label for="search_agent">Agent</label>
+                                    <select class="form-control select2" id="search_agent" name="search_agent">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $agents = $manageObj->showlistagent();
+                                        foreach ($agents as $agent) {
+                                            $selected = $search_agent == $agent['id'] ? 'selected' : '';
+                                        ?>
+                                            <option value="<?php echo $agent['id']; ?>" <?php echo $selected; ?>><?php echo $agent['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <div class="form-group">
+                                    <label for="search_product">Programe</label>
+                                    <select class="form-control select2" id="search_product" name="search_product">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $products = $manageObj->showlistproduct();
+                                        foreach ($products as $product) {
+                                            $selected = $search_product == $product['id'] ? 'selected' : '';
+                                        ?>
+                                            <option value="<?php echo $product['id']; ?>" <?php echo $selected; ?>><?php echo $product['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-3 col-12">
@@ -257,6 +323,30 @@ if (!empty($programed)) {
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="date_travel_booking">วันที่เที่ยว (Travel Date)</label></br>
+                                    <input type="text" class="form-control date-picker" id="date_travel_booking" name="date_travel_booking" value="<?php echo $get_date; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="refcode">Booking No #</label>
+                                    <input type="text" class="form-control" id="refcode" name="refcode" value="<?php echo $refcode; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="voucher_no">Voucher No #</label>
+                                    <input type="text" class="form-control" id="voucher_no" name="voucher_no" value="<?php echo $search_voucher_no; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="name">Customer Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo $name; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
                         </div>
@@ -265,7 +355,7 @@ if (!empty($programed)) {
 
                 <div class="card">
                     <div class="card-body pt-0 p-50">
-                        <a href='./?pages=order-boat/print&date_travel=<?php echo $get_date; ?>&search_boat=<?php echo $search_boat; ?>&action=print' target="_blank"><button class="btn btn-info" id="print-btn">Print</button></a>
+                        <a href='<?php echo $href; ?>' target="_blank"><button class="btn btn-info" id="print-btn">Print</button></a>
                         <button type="button" class="btn btn-info waves-effect waves-float waves-light btn-page-block-spinner" onclick="download_image();">Image</button>
                     </div>
                     <div id="div-boat-job-image" style="background-color: #FFF;">
@@ -343,7 +433,7 @@ if (!empty($programed)) {
                                                     <td><?php echo $book['start_pickup'][$mange['id'][$i]][$a] != '00:00' ? $book['start_pickup'][$mange['id'][$i]][$a] . ' - ' . $book['end_pickup'][$mange['id'][$i]][$a] : ''; ?></td>
                                                     <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                                     <td><?php echo $book['comp_name'][$mange['id'][$i]][$a]; ?></td>
-                                                    <td><?php echo $book['cus_name'][$mange['id'][$i]][$a]; ?></td>
+                                                    <td><?php echo !empty($book['telephone'][$mange['id'][$i]][$a]) ? $book['cus_name'][$mange['id'][$i]][$a] . ' <br>(' . $book['telephone'][$mange['id'][$i]][$a] . ')' : $book['cus_name'][$mange['id'][$i]][$a]; ?></td>
                                                     <td><?php echo !empty($book['voucher'][$mange['id'][$i]][$a]) ? $book['voucher'][$mange['id'][$i]][$a] : $book['book_full'][$mange['id'][$i]][$a]; ?></td>
                                                     <td style="padding: 5px;">
                                                         <?php if ($pickup_type[$id] == 1) {
@@ -384,7 +474,11 @@ if (!empty($programed)) {
                                 <div class="text-center mt-1 pb-2">
                                     <h4>
                                         <div class="badge badge-pill badge-light-warning">
-                                            <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                                            <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                            Adult : <?php echo $total_adult; ?>
+                                            Child : <?php echo $total_child; ?>
+                                            Infant : <?php echo $total_infant; ?>
+                                            FOC : <?php echo $total_foc; ?>
                                         </div>
                                     </h4>
                                 </div>

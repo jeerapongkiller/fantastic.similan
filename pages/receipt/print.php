@@ -337,7 +337,7 @@ if (isset($action) && !empty($id)) {
             <tr class="table-black">
                 <td class="text-center" style="border-radius: 15px 0px 0px 0px;" width="3%"><b>เลขที่</b></td>
                 <td class="text-center"><b>เลขใบแจ้งหนี้</b></td>
-                <td class="text-center"><b>วันที่เที่ยว</b></td>
+                <td class="text-center"><b>วันที่เดินทาง</b></td>
                 <td class="text-center"><b>ชื่อลูค้า</b></td>
                 <td class="text-center"><b>โปรแกรม</b></td>
                 <td class="text-center"><b>หมายเลข</b></td>
@@ -404,8 +404,6 @@ if (isset($action) && !empty($id)) {
             <?php
                 }
             }
-            $amount = !empty($discount) ? $sum_total - array_sum($discount) : $sum_total;
-            $amount = !empty($cot) ? $amount - array_sum($cot) : $amount;
             if ($vat[0] == 1) {
                 $vat_total = $amount * 100 / 107;
                 $vat_cut = $vat_total;
@@ -432,6 +430,11 @@ if (isset($action) && !empty($id)) {
                     </dl>
                 </td>
             </tr>
+
+            <?php
+                $amount = !empty($discount) ? $amount - array_sum($discount) : $amount;
+                $amount = !empty($cot) ? $amount - array_sum($cot) : $amount;
+            ?>
 
             <tr class="default-td">
                 <td colspan="10" rowspan="5">

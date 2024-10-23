@@ -6,7 +6,7 @@ $bookObj = new Booking();
 
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['category_id'])) {
     # --- get value --- #
-    $agent_id = !empty($_POST['agent_id']) ? $_POST['agent_id'] : 0;
+    $agent_id = !empty($_POST['agent_id']) && $_POST['agent_id'] != 'outside' ? $_POST['agent_id'] : 0;
     $product_id = !empty($_POST['product_id']) ? $_POST['product_id'] : 0;
     $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : 0;
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';

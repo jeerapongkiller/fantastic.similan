@@ -24,7 +24,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (isset($_POST['rec_
     $payment_id = !empty($_POST['payments_type']) ? $_POST['payments_type'] : 0;
     $bank_account_id = !empty($_POST['bank_account']) ? $_POST['bank_account'] : 0;
     $bank_cheque_id = !empty($_POST['rec_bank']) ? $_POST['rec_bank'] : 0;
-    $cheque_no = !empty($_POST['check_no']) ? $_POST['check_no'] : 0;
+    $cheque_no = !empty($_POST['check_no']) && is_int($_POST['check_no']) ? $_POST['check_no'] : 0;
     $cheque_date = !empty($_POST['date_check']) ? $_POST['date_check'] : 0;
     $amount = !empty($_POST['amount']) ? $_POST['amount'] : 0;
     $note = $_POST['note'] != "" ? $_POST['note'] : '';

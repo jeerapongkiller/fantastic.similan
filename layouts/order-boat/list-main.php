@@ -250,7 +250,30 @@
                 });
             }
         
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-boat/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
+        
         function download_image() {
             var img_name = document.getElementById('name_img').value;
             var node = document.getElementById('div-boat-job-image');

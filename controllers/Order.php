@@ -108,6 +108,37 @@ class Order extends DB
         return $data;
     }
 
+    public function showliststatus()
+    {
+        $query = "SELECT id, name, button_class
+            FROM booking_status 
+            WHERE id > 0
+        ";
+        $query .= " ORDER BY name ASC";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
+    public function show_booking_payment()
+    {
+        $query = "SELECT *
+            FROM booking_payment 
+            WHERE id > 0
+            AND type != 2
+        ";
+        $query .= " ORDER BY name ASC";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
     // Order
     // --------------------------------------------------------------------
     public function showlist($search_period, $search_agent, $search_product, $search_payment, string $date_travel_form)
@@ -377,7 +408,7 @@ class Order extends DB
 
     // Management Transfer
     // --------------------------------------------------------------------
-    public function showlisttransfers($type, int $return, string $travel_date, $car, $programe)
+    public function showlisttransfers($type, int $return, string $travel_date, $car, $programe, $status, $agent, $product, $voucher_no, $refcode, $name)
     {
         $bind_types = "";
         $params = array();
@@ -401,7 +432,8 @@ class Order extends DB
                     ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name,
                     ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
                     BOMANGE.id as bomange_id, BOMANGE.arrange as arrange,
-                    MANGE.id as mange_id, MANGE.pickup as mange_pickup, MANGE.dropoff as mange_dropoff, MANGE.note as mange_note,
+                    MANGE.id as mange_id, MANGE.pickup as mange_pickup, MANGE.dropoff as mange_dropoff, MANGE.note as mange_note, MANGE.license as license, MANGE.seat as seat,
+                    CAR.id as car_id, CAR.name as car_name,
                     MANGEB.id as mangeb_id,
                     BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
                 FROM bookings BO
@@ -444,6 +476,8 @@ class Order extends DB
                     ON BT.id = BOMANGE.booking_transfer_id
                 LEFT JOIN order_transfer MANGE 
                     ON BOMANGE.order_id = MANGE.id
+                LEFT JOIN cars CAR
+                    ON MANGE.car_id = CAR.id
                 LEFT JOIN booking_order_boat BORDB
                     ON BO.id = BORDB.booking_id
                 LEFT JOIN order_boat MANGEB 
@@ -456,7 +490,17 @@ class Order extends DB
                 AND BT.pickup_type = 1
         ";
 
+        $query .= (isset($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
+        $query .= (isset($agent) && $agent != 'all') ? " AND COMP.id = " . $agent : "";
+        $query .= (isset($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
+        $query .= (isset($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
+        $query .= (isset($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
+        $query .= (isset($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
+
         if (!empty($type) && $type == 'manage') {
+
+            $query .= " AND BP.is_deleted = 0";
+
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
                 $bind_types .= "s";
@@ -473,7 +517,7 @@ class Order extends DB
             //     array_push($params, $programe);
             // }
             // $query .= " ORDER BY BP.travel_date DESC, PROD.id DESC, zones.id DESC, hotel.id DESC ";
-            $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, CATE.id ASC, BT.pickup_id ASC, BT.start_pickup ASC ";
+            $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, BT.pickup_id ASC, BT.start_pickup ASC, BT.hotel_pickup ASC ";
         }
 
         if (!empty($type) && $type == 'list') {
@@ -490,6 +534,9 @@ class Order extends DB
         }
 
         if (!empty($type) && $type == 'all') {
+
+            $query .= " AND BP.is_deleted = 0";
+
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
                 $bind_types .= "s";
@@ -532,7 +579,15 @@ class Order extends DB
             AND manage.travel_date = ?
         ";
 
-        $query .= " ORDER BY manage.pickup DESC, manage.id ASC";
+        $query .= " ORDER BY manage.pickup DESC,
+                    CASE 
+                        WHEN CAR.name LIKE 'PK%' THEN 1
+                        WHEN CAR.name LIKE 'KL%' THEN 2
+                        WHEN CAR.name LIKE 'KB%' THEN 3
+                        ELSE 4
+                    END,
+                    manage.id ASC";
+
         $statement = $this->connection->prepare($query);
         $statement->bind_param("s", $travel_date);
         $statement->execute();
@@ -785,7 +840,7 @@ class Order extends DB
 
     // Management Boat
     // --------------------------------------------------------------------
-    public function showlistboats($type, int $id, string $travel_date, $boat, $guide)
+    public function showlistboats($type, int $id, string $travel_date, $boat, $guide, $status, $agent, $product, $voucher_no, $refcode, $name)
     {
         $bind_types = "";
         $params = array();
@@ -895,7 +950,15 @@ class Order extends DB
                 --     ON MANGE.crew_second_id = CREWS.id
                 WHERE BO.id > 0
                 AND BO.booking_status_id != 3
+                AND BP.is_deleted = 0
         ";
+
+        $query .= (isset($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
+        $query .= (isset($agent) && $agent != 'all') ? " AND COMP.id = " . $agent : "";
+        $query .= (isset($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
+        $query .= (isset($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
+        $query .= (isset($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
+        $query .= (isset($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
 
         if (!empty($type) && $type == 'list') {
             if (isset($travel_date) && $travel_date != '0000-00-00') {
@@ -913,10 +976,13 @@ class Order extends DB
                 $bind_types .= "i";
                 array_push($params, $boat);
             }
-            $query .= " ORDER BY BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
         }
 
         if (!empty($type) && $type == 'manage') {
+
+            $query .= " AND BP.is_deleted = 0 ";
+
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
                 $bind_types .= "s";
@@ -927,19 +993,22 @@ class Order extends DB
                 $bind_types .= "i";
                 array_push($params, $boat);
             }
-            $query .= " ORDER BY BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
         }
 
         if (!empty($type) && $type == 'agent') {
+
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= !empty(substr($travel_date, 11, 20)) ? " AND BP.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 11, 20) . "'" : " AND BP.travel_date = '" . $travel_date . "' ";
             }
+
             if (isset($id) && $id > 0) {
                 $query .= " AND COMP.id  = ?";
                 $bind_types .= "i";
                 array_push($params, $id);
             }
-            $query .= " ORDER BY BT.pickup_type DESC, CATE.name DESC";
+
+            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
         }
 
         $statement = $this->connection->prepare($query);
@@ -1152,21 +1221,35 @@ class Order extends DB
 
         $query = "UPDATE booking_order_boat SET";
 
-        $query .= " arrange = ?,";
-        $bind_types .= "i";
-        array_push($params, $arrange);
+        if ($id > 0) {
+            $query .= " arrange = ?,";
+            $bind_types .= "i";
+            array_push($params, $arrange);
 
-        $query .= " booking_id = ?,";
-        $bind_types .= "i";
-        array_push($params, $booking_id);
+            $query .= " booking_id = ?,";
+            $bind_types .= "i";
+            array_push($params, $booking_id);
 
-        $query .= " manage_id = ?";
-        $bind_types .= "i";
-        array_push($params, $manage_id);
+            $query .= " manage_id = ?";
+            $bind_types .= "i";
+            array_push($params, $manage_id);
 
-        $query .= " WHERE id = ?";
-        $bind_types .= "i";
-        array_push($params, $id);
+            $query .= " WHERE id = ?";
+            $bind_types .= "i";
+            array_push($params, $id);
+        } elseif ($id == 0) {
+            $query .= " arrange = ?";
+            $bind_types .= "i";
+            array_push($params, $arrange);
+
+            $query .= " WHERE booking_id = ?";
+            $bind_types .= "i";
+            array_push($params, $booking_id);
+
+            $query .= " AND manage_id = ?";
+            $bind_types .= "i";
+            array_push($params, $manage_id);
+        }
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';

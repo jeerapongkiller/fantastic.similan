@@ -9,7 +9,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
     // get value from ajax
     $date_travel = $_GET['date_travel'] != "" ? $_GET['date_travel'] : '0000-00-00';
     $search_boat = $_GET['search_boat'] != "" ? $_GET['search_boat'] : 'all';
-
+    $search_status = $_GET['search_status'] != "" ? $_GET['search_status'] : 'all';
+    $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
+    $search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+    $search_voucher_no = $_GET['search_voucher_no'] != "" ? $_GET['search_voucher_no'] : '';
+    $refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
+    $name = $_GET['name'] != "" ? $_GET['name'] : '';
     # --- show list boats booking --- #
     $first_booking = array();
     $first_prod = array();
@@ -19,7 +24,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
     $first_bomanage = array();
     $first_bo = [];
     $first_trans = [];
-    $bookings = $manageObj->showlistboats('list', 0, $date_travel, $search_boat, 'all');
+    $bookings = $manageObj->showlistboats('list', 0, $date_travel, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     # --- Check products --- #
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
@@ -95,6 +100,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                 $book['hotel'][$booking['mange_id']][] = !empty($booking['pickup_name']) ? $booking['pickup_name'] : '';
                 $book['room_no'][$booking['mange_id']][] = !empty($booking['room_no']) ? $booking['room_no'] : '';
                 $book['cus_name'][$booking['mange_id']][] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
+                $book['telephone'][$booking['mange_id']][] = !empty($booking['telephone']) ? $booking['telephone'] : '';
                 $book['comp_name'][$booking['mange_id']][] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
                 $book['adult'][$booking['mange_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
                 $book['child'][$booking['mange_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
@@ -199,6 +205,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                     <table class="tableprint">
                         <thead class="">
                             <tr>
+                                <td colspan="10">ไกด์ : <?php echo $mange['guide_name'][$i]; ?></td>
+                                <td colspan="3" style="background-color: <?php echo $mange['color_hex'][$i]; ?>;">
+                                    สี : <?php echo $mange['color_name'][$i]; ?>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th width="5%">เวลารับ</th>
                                 <th width="5%">Driver</th>
                                 <th width="15%">เอเยนต์</th>
@@ -236,7 +248,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                         <td><?php echo $book['start_pickup'][$mange['id'][$i]][$a] != '00:00' ? $book['start_pickup'][$mange['id'][$i]][$a] . ' - ' . $book['end_pickup'][$mange['id'][$i]][$a] : ''; ?></td>
                                         <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                         <td><?php echo $book['comp_name'][$mange['id'][$i]][$a]; ?></td>
-                                        <td><?php echo $book['cus_name'][$mange['id'][$i]][$a]; ?></td>
+                                        <td><?php echo !empty($book['telephone'][$mange['id'][$i]][$a]) ? $book['cus_name'][$mange['id'][$i]][$a] . ' <br>(' . $book['telephone'][$mange['id'][$i]][$a] . ')' : $book['cus_name'][$mange['id'][$i]][$a]; ?></td>
                                         <td><?php echo !empty($book['voucher'][$mange['id'][$i]][$a]) ? $book['voucher'][$mange['id'][$i]][$a] : $book['book_full'][$mange['id'][$i]][$a]; ?></td>
                                         <td style="padding: 5px;">
                                             <?php if ($pickup_type[$id] == 1) {
@@ -276,7 +288,11 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                     <div class="text-center mt-1 pb-2">
                         <h4>
                             <div class="badge badge-pill badge-light-warning">
-                                <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                                <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                Adult : <?php echo $total_adult; ?>
+                                Child : <?php echo $total_child; ?>
+                                Infant : <?php echo $total_infant; ?>
+                                FOC : <?php echo $total_foc; ?>
                             </div>
                         </h4>
                     </div>

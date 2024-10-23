@@ -20,6 +20,16 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && (!empty($_POST['m
             $response = $manageObj->insert_booking_manage_boat(0, $data[$i], $manage_id);
         }
     }
+
+    # --- update booking transfer manage --- #
+    $arrange = 1;
+    if ($manage_id != false && $manage_id > 0 && !empty($bo_data)) {
+        for ($i = 0; $i < count($bo_data); $i++) {
+            $response = $manageObj->update_booking_manage_boat($arrange, $bo_data[$i], $manage_id, 0);
+            $arrange++;
+        }
+    }
+
     # --- delete booking manage --- #
     if ($manage_id != false && $manage_id > 0 && !empty($before_data)) {
         for ($i = 0; $i < count($before_data); $i++) {

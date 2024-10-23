@@ -15,7 +15,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['cover
     $rec_date = $_POST['rec_date'] != "" ? $_POST['rec_date'] : '';
     $currency_id = !empty($_POST['currency']) ? $_POST['currency'] : 0;
     $vat_id = !empty($_POST['vat']) ? $_POST['vat'] : 0;
-    $withholding = !empty($_POST['withholding']) ? $_POST['withholding'] : 0;
+    $withholding = !empty($_POST['withholding']) && is_int($_POST['withholding']) ? $_POST['withholding'] : 0;
     $branch = !empty($_POST['branch']) ? $_POST['branch'] : 0;
     $payment_id = 0;
     $bank_account_id = !empty($_POST['bank_account']) ? $_POST['bank_account'] : 0;

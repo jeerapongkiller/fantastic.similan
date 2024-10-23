@@ -177,6 +177,7 @@ class Invoice extends DB
                     ON BO.company_id = COMP.id
                 LEFT JOIN booking_paid BOPA
                     ON BO.id = BOPA.booking_id
+                    AND BOPA.booking_payment_id = 4
                 LEFT JOIN booking_payment BOPAY
                     ON BOPA.booking_payment_id = BOPAY.id
                 LEFT JOIN booking_products BP
@@ -239,6 +240,7 @@ class Invoice extends DB
                 WHERE BO.is_deleted = 0
                 AND BP.id > 0
                 AND BSTA.id != 3
+                AND BP.is_deleted = 0
         ";
 
         if (isset($travel_date) && $travel_date != '0000-00-00') { // 11, 20

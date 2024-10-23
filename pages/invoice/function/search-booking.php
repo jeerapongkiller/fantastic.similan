@@ -203,7 +203,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
         <div class="text-center mt-1 pb-2">
             <h4>
                 <div class="badge badge-pill badge-light-warning">
-                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                    Adult : <?php echo $total_adult; ?>
+                    Child : <?php echo $total_child; ?>
+                    Infant : <?php echo $total_infant; ?>
+                    FOC : <?php echo $total_foc; ?>
                 </div>
             </h4>
         </div>

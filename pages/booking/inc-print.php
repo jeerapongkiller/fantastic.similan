@@ -26,8 +26,12 @@ if ($bookings[0]['id'] > 0) {
     $book_status_name = !empty(!empty($bookings[0]['booksta_name'])) ? $bookings[0]['booksta_name'] : 0;
     $created_at = date('j F Y', strtotime($bookings[0]['created_at']));
     $guests_type = $agent_id == 0 ? 'Supplier' : 'Agent';
+    # --- get value manage boat and transfer --- #
+    $mange_transfer_id = !empty($bookings[0]['bomange_id']) ? $bookings[0]['bomange_id'] : 0;
+    $mange_transfer = !empty($bookings[0]['manget_id']) ? $bookings[0]['manget_id'] : 0;
+    $mange_boat_id = !empty($bookings[0]['boman_id']) ? $bookings[0]['boman_id'] : 0;
+    $mange_boat = !empty($bookings[0]['mange_id']) ? $bookings[0]['mange_id'] : 0;
     # --- get value booking products --- #
-    // $bp_action = !empty($bookings[0]['bp_id']) ? 'edit' : 'create';
     $bp_id = !empty($bookings[0]['bp_id']) ? $bookings[0]['bp_id'] : 0;
     $product_id = !empty($bookings[0]['product_id']) ? $bookings[0]['product_id'] : 0;
     $product_name = !empty($bookings[0]['product_name']) ? $bookings[0]['product_name'] : 0;
@@ -167,7 +171,7 @@ if (!empty($bookings[0]['bp_id'])) {
     <div id="div-inc-print" style="background-color: #fff;">
 
         <!-- Header starts -->
-        <div class="row">
+        <div class="row" hidden>
             <div class="col-6">
                 <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="120"></span>
             </div>
@@ -195,7 +199,7 @@ if (!empty($bookings[0]['bp_id'])) {
         <!-- Header ends -->
 
         <!-- Header 2 starts -->
-        <table width="100%" class="mt-1">
+        <table width="100%" hidden class="mt-1">
             <tr class="default-td">
                 <td width="34%" align="left" colspan="4">
                     <dl class="row mb-0">
@@ -274,7 +278,7 @@ if (!empty($bookings[0]['bp_id'])) {
         </table>
         <!-- Header 2 ends -->
 
-        <table width="100%" class="mt-1">
+        <table width="100%" hidden class="mt-1">
             <tr>
                 <td colspan="5">Detail</td>
             </tr>
@@ -311,7 +315,7 @@ if (!empty($bookings[0]['bp_id'])) {
             </tr>
         </table>
 
-        <table width="100%" class="mt-1">
+        <table width="100%" hidden class="mt-1">
             <tr>
                 <td colspan="6">Extra Charge</td>
             </tr>
@@ -352,7 +356,7 @@ if (!empty($bookings[0]['bp_id'])) {
             </tr>
         </table>
 
-        <table width="100%" class="mt-1">
+        <table width="100%" hidden class="mt-1">
             <tr>
                 <td colspan="6">Extra Charge</td>
             </tr>
@@ -392,6 +396,89 @@ if (!empty($bookings[0]['bp_id'])) {
                 <td>Amount 0</td>
             </tr>
         </table>
+
+        <div class="card-body invoice-padding pb-0">
+            <!-- Header starts -->
+            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0 mb-1">
+                <div>
+                    <span class="brand-logo"><img src="app-assets/images/logo/logo-500.png" height="150"></span>
+                </div>
+                <div>
+                    <span style="color: #000;">
+                        <?php echo $main_document; ?>
+                    </span>
+                </div>
+            </div>
+            <!-- Header ends -->
+            <!-- Header starts -->
+            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
+                <div class="col-6 mt-md-0 mt-2">
+                    <h3>Voucher No. <?php echo $voucher_no_agent; ?></h3>
+                    <h4>Booking No. <?php echo $book_full; ?></h4>
+                    <h4><?php echo $agent_name; ?></h4>
+                    <h4>Sender : <?php echo $sender; ?></h4>
+                    <input type="hidden" value="<?php echo $book_full; ?>" id="booking_full">
+                    <br>
+                    <?php
+                    $position_cus = !empty($customers['head']) ? array_search(1, $customers['head'], true) : '';
+                    echo !empty($customers['name'][$position_cus]) ? '<b>ชื่อลูกค้า : </b>' . $customers['name'][$position_cus] . '</br>' : '';
+                    // echo !empty($customers['whatsapp'][$position_cus]) ? $customers['whatsapp'][$position_cus] . '</br>' : '';
+                    // echo !empty($customers['email'][$position_cus]) ? $customers['email'][$position_cus] . '</br>' : '';
+                    echo !empty($customers['telephone'][$position_cus]) ? '<b>โทร : </b>' .  $customers['telephone'][$position_cus] . '</br>' : '';
+                    echo !empty($customers['nation_name'][$position_cus]) ? '<b>สัญชาติ : </b>' .  $customers['nation_name'][$position_cus] . '</br>' : '';
+                    // echo !empty($customers['address'][$position_cus]) ? $customers['address'][$position_cus] . '</br>' : '';
+                    ?>
+                </div>
+
+                <div class="mt-md-0 mt-2">
+                    <?php echo $_SESSION["supplier"]["fullname"]; ?>
+                    <table style="border: 1px solid #ddd;" cellspacing="0" cellpadding="6" class="w-100">
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Booking No:
+                            </td>
+                            <td align="right"><?php echo $book_full; ?></td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Created:
+                            </td>
+                            <td align="right"><?php echo date('j F Y', strtotime($created_at)); ?></td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Booker:
+                            </td>
+                            <td align="right"><?php echo $booker_name; ?></td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Payment :
+                            </td>
+                            <td align="right"><?php echo !empty($payment_name) ? $payment_name : 'ไม่ได้ระบุ'; ?></td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Travel Date:
+                            </td>
+                            <td align="right">
+                                <?php echo date('j F Y', strtotime($travel_date)); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#d9d9d9">
+                                Total (THB):
+                            </td>
+                            <td align="right">฿ <?php echo number_format($total_sum); ?></td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+            <!-- Header ends -->
+        </div>
+
+        <hr class="invoice-spacing" />
 
         <!-- Invoice Description starts -->
         <div class="table-responsive">

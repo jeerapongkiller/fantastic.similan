@@ -9,10 +9,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
     $travel = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';
     $manage_id = !empty($_POST['manage_id']) ? $_POST['manage_id'] : 0;
     $type = !empty($_POST['type']) ? $_POST['type'] : 'not';
+    // $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
+    // $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
+    // $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    // $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    // $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
+    // $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_bo = array();
     $first_manage_bo = array();
-    $bookings = $manageObj->showlistboats('manage', 0, $travel, 'all', 'all');
+    $bookings = $manageObj->showlistboats('manage', 0, $travel, 'all', 'all', 'all', 'all', 'all', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value booking --- #
@@ -133,7 +139,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                 <div class="divider-text"><h3 class="text-bold mb-0">จัดเรือ</h3></div>
             </div>
             <input type="hidden" id="before_managebo" name="before_managebo" value="<?php echo json_encode($manage_bo, true); ?>">
-            <table class="table">
+            <table class="table" id="list-group">
                 <thead class="table-dark">
                     <tr>
                         <th>

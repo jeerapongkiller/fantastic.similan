@@ -346,7 +346,7 @@
                 for (let index = 0; index < checked.length; index++) {
                     if (checked[index].checked == true) {
                         var id = checked[index].value;
-                        discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                        discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : discount;
                         cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
                         amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
 
@@ -387,7 +387,7 @@
                 text_html += '<tr>' +
                     '<td colspan="10"></td>' +
                     '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                    '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                    '<td class="text-center" id="price-multi-total"></td>' +
                     '</tr>'
 
                 if (discount > 0) {
@@ -428,6 +428,8 @@
 
                 $('#tbody-multi-booking').html(text_html);
 
+                document.getElementById('discount').value = discount;
+                document.getElementById('cot').value = cot;
                 document.getElementById('price_total').value = amount;
             }
 
@@ -472,7 +474,6 @@
         }
 
         function calculator_price() {
-            let checked = $(".checkbox-bookings");
             var type = 'multi';
             var vat_total = 0;
             var vat_cut = 0;
@@ -486,8 +487,11 @@
             var tr_vat = document.getElementById('tr-' + type + '-vat');
             var vat_text = document.getElementById('vat-' + type + '-text');
             var price_vat = document.getElementById('price-' + type + '-vat');
+            var price_total_1 = document.getElementById('price-' + type + '-total');
             var tr_withholding = document.getElementById('tr-' + type + '-withholding');
             var withholding_text = document.getElementById('withholding-' + type + '-text');
+            var discount = document.getElementById('discount');
+            var cot = document.getElementById('cot');
             var amount = document.getElementById('amount');
             tr_vat.hidden = vat.value > 0 ? false : true;
             vat_text.innerHTML = vat.value > 0 ? vat.value == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%' : '';
@@ -508,15 +512,26 @@
                 withholding_total = withholding.value > 0 ? Number(((total - vat_total) * withholding.value) / 100) : 0;
                 total = Number(total - withholding_total);
             }
+
             price_vat.innerHTML = Number(vat_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
             price_withholding.innerHTML = Number(withholding_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
+            price_total_1.innerHTML = Number(total).toLocaleString("en-US", {
+                maximumFractionDigits: 2
+            });
+
+            total = discount.value > 0 ? Number(total - discount.value) : total;
+            total = cot.value > 0 ? Number(total - cot.value) : total;
+
             price_amount.innerHTML = Number(total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
             amount.value = total;
         }
     </script>

@@ -17,9 +17,15 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     $cot_id = !empty($_POST['cot_id']) ? $_POST['cot_id'] : 0;
     $cot = !empty($_POST['cot']) ? preg_replace('(,)', '', $_POST['cot']) : 0;
     $discount = !empty($_POST['discount']) ? preg_replace('(,)', '', $_POST['discount']) : 0;
+    # --- get value booking management form --- #
+    $mange_transfer_id = !empty($_POST['mange_transfer_id']) ? $_POST['mange_transfer_id'] : 0;
+    $mange_transfer = !empty($_POST['mange_transfer']) ? $_POST['mange_transfer'] : 0;
+    $mange_boat_id = !empty($_POST['mange_boat_id']) ? $_POST['mange_boat_id'] : 0;
+    $mange_boat = !empty($_POST['mange_boat']) ? $_POST['mange_boat'] : 0;
     # --- get value booking product form --- #
     $bp_id = !empty($_POST['bp_id']) ? $_POST['bp_id'] : 0;
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';
+    $before_travel = !empty($_POST['travel']) ? $_POST['travel'] : '0000-00-00';
     $product_id = !empty($_POST['product_id']) ? $_POST['product_id'] : 0;
     $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : 0;
     $adult = !empty($_POST['adult']) ? $_POST['adult'] : 0;
@@ -90,6 +96,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     if ($agent == 'outside' && !empty($_POST['agent_outside'])) {
         $agent_out_id = $bookObj->insert_agent($_POST['agent_outside']);
     }
+
     $response = $bookObj->update_data($bo_id, $book_status, $voucher_no, $sender, ($agent == 'outside' && !empty($_POST['agent_outside'])) ? $agent_out_id : $agent, $book_type, $discount); // update data booking
 
     $response = ($response > 0 && $response != false) ? $bookObj->update_booking_product($bp_id, $travel_date, $adult, $child, $infant, $foc, $bp_note, $product_id, $category_id) : false; // update data booking product
@@ -105,32 +112,10 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     } elseif ($cus_id == 0 && (!empty($cus_name))) {
         $response = ($response > 0 && $response != false) ? $bookObj->insert_customer($cus_name, '0000-00-00', '', $cus_telephone, $address = '', 1, 0, $email = '', 1, $bo_id, 0) : $response;
     }
-    // if ($customers) {
-    //     if ($before_cus_id) {
-    //         for ($i = 0; $i < count($before_cus_id); $i++) {
-    //             if (!in_array($before_cus_id[$i], $cus_id)) {
-    //                 $response = ($response > 0 && $response != false) ? $bookObj->delete_customer($before_cus_id[$i]) : false; // delete data customers 
-    //             }
-    //         }
-    //     }
-    //     for ($i = 0; $i < count($customers); $i++) {
-    //         if ($customers[$i]['cus_id'] == '') {
-    //             $response = ($response > 0 && $response != false) ? $bookObj->insert_customer($customers[$i]['cus_name'], $customers[$i]['cus_birth_date'], $customers[$i]['id_card'], $customers[$i]['cus_telephone'], $address = '', !empty($customers[$i]['cus_age']) ? $customers[$i]['cus_age'] : 0, !empty($customers[$i]['cus_type']) ? $customers[$i]['cus_type'] : 0, $email = '', $head = 0, $bo_id, !empty($customers[$i]['cus_nationality_id']) ? $customers[$i]['cus_nationality_id'] : 0) : false; // insert data customers 
-    //         } else {
-    //             $response = ($response > 0 && $response != false) ? $bookObj->update_customer($customers[$i]['cus_id'], $customers[$i]['cus_name'], $customers[$i]['cus_birth_date'], $customers[$i]['id_card'], $customers[$i]['cus_telephone'], !empty($customers[$i]['cus_age']) ? $customers[$i]['cus_age'] : 0, !empty($customers[$i]['cus_type']) ? $customers[$i]['cus_type'] : 0, !empty($customers[$i]['cus_nationality_id']) ? $customers[$i]['cus_nationality_id'] : 0) : false; // update data customers
-    //         }
-    //     }
-    // }
 
     if ($bt_id > 0) {
         $response = ($response != false && $response > 0) ? $bookObj->update_booking_transfer($bt_id, $tran_adult, $tran_child, $tran_infant, $tran_foc, $start_pickup, $end_pickup, $hotel_pickup_outside, empty($hotel_dropoff_outside) ? $hotel_pickup_outside : $hotel_dropoff_outside, $room_no, $trans_note, $pickup, $dropoff, $hotel_pickup, !empty($hotel_dropoff) ? $hotel_dropoff : $hotel_pickup, $transfer_type, $pickup_type, $category_id) : false; // update booking transfer
     } elseif ($bt_id == 0) {
-        // if (!empty($hotel_pickup_outside)) {
-        //     $hotel_pickup = $bookObj->insert_hotel($hotel_pickup_outside, $pickup);
-        //     $hotel_dropoff = ($hotel_pickup != false && $hotel_pickup > 0) ? $hotel_pickup : $hotel_dropoff;
-        //     $hotel_pickup_outside = ($hotel_pickup != false && $hotel_pickup > 0) ? '' : $hotel_pickup_outside;
-        //     $hotel_dropoff_outside = ($hotel_pickup != false && $hotel_pickup > 0) ? '' : $hotel_dropoff_outside;
-        // }
         $response = ($response > 0 && $response != false) ? $bookObj->insert_booking_transfer($tran_adult, $tran_child, $tran_infant, $tran_foc, $start_pickup, $end_pickup, $hotel_pickup_outside, empty($hotel_dropoff_outside) ? $hotel_pickup_outside : $hotel_dropoff_outside, $room_no, $trans_note, $pickup, $dropoff, $hotel_pickup, !empty($hotel_dropoff) ? $hotel_dropoff : $hotel_pickup, $transfer_type, $pickup_type, $bp_id, $category_id) : false; // insert booking transfer
     }
 
@@ -145,6 +130,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     } else {
         $response = ($response > 0 && $response != false) ? $bookObj->update_booking_paid($cot_id, '0000-00-00', $cot, '', '', 0, 0, $cot > 0 ? 4 : 2, $fileArray = []) : $response; // update booking extra charge
     }
+
     if ($before_bec_id) {
         for ($i = 0; $i < count($before_bec_id); $i++) {
             if (!in_array($before_bec_id[$i], $bec_id)) {
@@ -152,6 +138,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
             }
         }
     }
+
     if ($extra_charge) {
         for ($i = 0; $i < count($extra_charge); $i++) {
             $bec_id = !empty($extra_charge[$i]['bec_id']) ? $extra_charge[$i]['bec_id'] : 0;
@@ -173,6 +160,11 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
                 $response = ($response > 0 && $response != false) ? $bookObj->update_booking_extra($bec_id, $extra, $extra_name, $extra_type, $extra_adult, $extra_rate_adult, $extra_child, $extra_rate_child, $extra_infant, $extra_rate_infant, $extra_num_private, $extra_rate_private) : $response; // update booking extra charge
             }
         }
+    }
+    
+    if ($travel_date != $before_travel) {
+        $response = $bookObj->delete_booking_manage_transfer($mange_transfer, $bt_id, $mange_transfer_id);
+        $response = $bookObj->delete_booking_manage_boat($mange_boat, $bo_id, $mange_boat_id);
     }
 
     echo $response != FALSE && $response > 0 ? $response : FALSE;

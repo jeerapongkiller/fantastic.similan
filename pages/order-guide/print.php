@@ -5,9 +5,15 @@ $orderObj = new Order();
 
 if (isset($_GET['action']) && $_GET['action'] == "print") {
     // get value from ajax
-    $search_period = $_GET['search_period'] != "" ? $_GET['search_period'] : 'all';
     $search_guide = $_GET['search_guide'] != "" ? $_GET['search_guide'] : 'all';
+    $search_boat = $_GET['search_boat'] != "" ? $_GET['search_boat'] : 'all';
     $date_travel_form = $_GET['date_travel_form'] != "" ? $_GET['date_travel_form'] : '0000-00-00';
+    $search_status = $_GET['search_status'] != "" ? $_GET['search_status'] : 'all';
+    $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
+    $search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+    $search_voucher_no = $_GET['search_voucher_no'] != "" ? $_GET['search_voucher_no'] : '';
+    $refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
+    $name = $_GET['name'] != "" ? $_GET['name'] : '';
 
     $search_guide_name = $search_guide != 'all' ? $orderObj->get_data('name', 'guides', $search_guide)['name'] : '';
 
@@ -26,7 +32,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
     $name_img .= $search_guide != 'all' ? ' [' . $search_guide_name . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, 'all', $search_guide);
+    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     # --- Check products --- #
     if (!empty($orders)) {
         foreach ($orders as $order) {
@@ -80,6 +86,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                 $first_cus[] = $order['cus_id'];
                 $cus_id[$order['id']][] = !empty($order['cus_id']) ? $order['cus_id'] : 0;
                 $cus_name[$order['id']][] = !empty($order['cus_name']) ? $order['cus_name'] : '';
+                $telephone[$order['id']][] = !empty($order['telephone']) ? $order['telephone'] : '';
                 $cus_id_card[$order['id']][] = !empty($order['id_card']) ? $order['id_card'] : '';
             }
 
@@ -198,7 +205,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                                         <td class="text-center"><?php echo $pickup_time[$mange_id[$i]][$a]; ?></td>
                                         <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                         <td><?php echo $agent[$mange_id[$i]][$a]; ?></td>
-                                        <td><?php echo $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
+                                        <td><?php echo !empty($telephone[$bo_id[$mange_id[$i]][$a]][0]) ? $cus_name[$bo_id[$mange_id[$i]][$a]][0] . ' <br>(' . $telephone[$bo_id[$mange_id[$i]][$a]][0] . ')' : $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
                                         <td><?php echo !empty($voucher_no[$mange_id[$i]][$a]) ? $voucher_no[$mange_id[$i]][$a] : $book_full[$mange_id[$i]][$a]; ?></td>
                                         <td style="padding: 5px;">
                                             <?php if ($pickup_type[$mange_id[$i]][$a] == 1) {
@@ -235,6 +242,19 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                             } ?>
                         </tbody>
                     </table>
+
+                    <div class="text-center mt-1 pb-2">
+                        <h4>
+                            <div class="badge badge-pill badge-light-warning">
+                                <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                Adult : <?php echo $total_adult; ?>
+                                Child : <?php echo $total_child; ?>
+                                Infant : <?php echo $total_infant; ?>
+                                FOC : <?php echo $total_foc; ?>
+                            </div>
+                        </h4>
+                    </div>
+
                     </br>
                 </div>
                 <input type="hidden" id="name_img" name="name_img" value="<?php echo $name_img; ?>">

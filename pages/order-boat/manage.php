@@ -1,11 +1,19 @@
 <?php
 require_once 'controllers/Order.php';
 
-$manageObj = new Order();
+$bookObj = new Order();
 $today = date("Y-m-d");
-$tomorrow = new DateTime('tomorrow');
-$get_date = !empty($_GET['date_travel_booking']) ? $_GET['date_travel_booking'] : $tomorrow->format("Y-m-d"); // $tomorrow->format("Y-m-d")
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
+// $today = '2024-09-29';
+// $tomorrow = '2024-09-30';
+$get_date = !empty($_GET['date_travel_booking']) ? $_GET['date_travel_booking'] : $tomorrow; // $tomorrow->format("Y-m-d")
 $search_boat = !empty($_GET['search_boat']) ? $_GET['search_boat'] : 'all';
+$search_status = $_GET['search_status'] != "" ? $_GET['search_status'] : 'all';
+$search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
+$search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+$search_voucher_no = $_GET['voucher_no'] != "" ? $_GET['voucher_no'] : '';
+$refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
+$name = $_GET['name'] != "" ? $_GET['name'] : '';
 # --- show list boats booking --- #
 $first_booking = array();
 $first_prod = array();
@@ -15,7 +23,7 @@ $first_ext = array();
 $first_bomanage = array();
 $first_bo = [];
 $first_trans = [];
-$bookings = $manageObj->showlistboats('list', 0, $get_date, $search_boat, 'all');
+$bookings = $bookObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
 # --- Check products --- #
 if (!empty($bookings)) {
     foreach ($bookings as $booking) {
@@ -139,7 +147,7 @@ if (!empty($bookings)) {
 }
 # --- show list boats manage --- #
 $first_manage = array();
-$manages = $manageObj->show_manage_boat($get_date, $search_boat);
+$manages = $bookObj->show_manage_boat($get_date, $search_boat);
 if (!empty($manages)) {
     foreach ($manages as $manage) {
         if (in_array($manage['id'], $first_manage) == false) {
@@ -176,7 +184,7 @@ if (!empty($manages)) {
     }
 }
 # --- show list programe --- #
-$programed = $manageObj->show_manage_programe($get_date);
+$programed = $bookObj->show_manage_programe($get_date);
 if (!empty($programed)) {
     foreach ($programed as $program) {
         if (in_array($program['id'], $first_program) == false) {
@@ -205,27 +213,34 @@ if (!empty($programed)) {
         </div>
 
         <div class="row">
-            <!-- Plan Card Manage Boat -->
-            <?php
-            if (!empty($mange['id'])) {
-                for ($i = 0; $i < count($mange['id']); $i++) {
-                    $cus_sum = (!empty($book['adult'][$mange['id'][$i]]) && !empty($book['child'][$mange['id'][$i]]) && !empty($book['infant'][$mange['id'][$i]]) && !empty($book['foc'][$mange['id'][$i]])) ? array_sum($book['adult'][$mange['id'][$i]]) + array_sum($book['child'][$mange['id'][$i]]) + array_sum($book['infant'][$mange['id'][$i]]) + array_sum($book['foc'][$mange['id'][$i]]) : 0;
-                    if ($cus_sum > 0) {
-            ?>
-                        <div class="col-lg-2 col-sm-3 col-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div>
-                                        <h2 class="fw-bolder mb-0"><?php echo number_format($cus_sum); ?></h2>
-                                        <h5 class="card-text"><?php echo $mange['boat_name'][$i]; ?></h5>
-                                    </div>
-                                </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+
                             </div>
                         </div>
-            <?php }
-                }
-            } ?>
-            <!-- /Plan Card Manage Boat Ends -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="content-body">
@@ -238,8 +253,71 @@ if (!empty($programed)) {
                         <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
+                                    <label for="search_status">Status</label>
+                                    <select class="form-control select2" id="search_status" name="search_status">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $bookstype = $bookObj->showliststatus();
+                                        foreach ($bookstype as $booktype) {
+                                            $selected = $search_status == $booktype['id'] ? 'selected' : '' ;
+                                        ?>
+                                            <option value="<?php echo $booktype['id']; ?>" <?php echo $selected; ?>><?php echo $booktype['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="search_agent">Agent</label>
+                                    <select class="form-control select2" id="search_agent" name="search_agent">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $agents = $bookObj->showlistagent();
+                                        foreach ($agents as $agent) {
+                                            $selected = $search_agent == $agent['id'] ? 'selected' : '' ;
+                                        ?>
+                                            <option value="<?php echo $agent['id']; ?>" <?php echo $selected; ?>><?php echo $agent['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label for="search_product">Programe</label>
+                                    <select class="form-control select2" id="search_product" name="search_product">
+                                        <option value="all">All</option>
+                                        <?php
+                                        $products = $bookObj->showlistproduct();
+                                        foreach ($products as $product) {
+                                            $selected = $search_product == $product['id'] ? 'selected' : '' ;
+                                        ?>
+                                            <option value="<?php echo $product['id']; ?>" <?php echo $selected; ?>><?php echo $product['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
                                     <label class="form-label" for="date_travel_booking">วันที่เที่ยว (Travel Date)</label></br>
                                     <input type="text" class="form-control date-picker" id="date_travel_booking" name="date_travel_booking" value="<?php echo $get_date; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="refcode">Booking No #</label>
+                                    <input type="text" class="form-control" id="refcode" name="refcode" value="<?php echo $refcode; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="voucher_no">Voucher No #</label>
+                                    <input type="text" class="form-control" id="voucher_no" name="voucher_no" value="<?php echo $search_voucher_no; ?>" />
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="name">Customer Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo $name; ?>" />
                                 </div>
                             </div>
                             <div class="col-md-4 col-12">
@@ -506,7 +584,7 @@ if (!empty($programed)) {
                                                     <option value="">กรุญาเลือกไกด์...</option>
                                                     <option value="outside">กรอกข้อมูลเพิ่มเติม</option>
                                                     <?php
-                                                    $guides = $manageObj->show_guides();
+                                                    $guides = $bookObj->show_guides();
                                                     foreach ($guides as $guide) {
                                                     ?>
                                                         <option value="<?php echo $guide['id']; ?>" data-name="<?php echo $guide['name']; ?>"><?php echo $guide['name']; ?></option>
@@ -537,7 +615,7 @@ if (!empty($programed)) {
                                                 <select class="form-control select2" id="color" name="color" onchange="chang_color('create');">
                                                     <option value=""></option>
                                                     <?php
-                                                    $colors = $manageObj->show_color();
+                                                    $colors = $bookObj->show_color();
                                                     foreach ($colors as $color) {
                                                     ?>
                                                         <option value="<?php echo $color['id']; ?>" data-color="<?php echo $color['hex_code']; ?>"><?php echo $color['name_th']; ?></option>

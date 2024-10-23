@@ -45,7 +45,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                             <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
                                                 <div class="col-md-3 col-12">
                                                     <div class="form-group">
-                                                        <label class="form-label" for="travel_date">วันที่เที่ยว (Travel Date)</label></br>
+                                                        <label class="form-label" for="travel_date">วันที่เดินทาง (Travel Date)</label></br>
                                                         <input type="text" class="form-control flatpickr-range" id="travel_date" name="travel_date" value="<?php echo $today; ?>" />
                                                     </div>
                                                 </div>
@@ -262,7 +262,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                         <thead class="bg-darken-2 text-white">
                                             <tr class="table-black">
                                                 <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
-                                                <td class="text-center"><b>วันที่เที่ยว</b></td>
+                                                <td class="text-center"><b>วันที่เดินทาง</b></td>
                                                 <td class="text-center"><b>ชื่อลูค้า</b></td>
                                                 <td class="text-center"><b>โปรแกรม</b></td>
                                                 <td class="text-center"><b>หมายเลข</b></td>
@@ -292,6 +292,8 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                         </tbody>
                                     </table>
                                 </div>
+                                <input type="hidden" id="discount" name="discount" value="">
+                                <input type="hidden" id="cot" name="cot" value="">
                                 <input type="hidden" id="price_total" name="price_total" value="">
                                 <div class="row">
                                     <div class="form-group col-md-12">

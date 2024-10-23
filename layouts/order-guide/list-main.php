@@ -117,22 +117,25 @@
         $(document).ready(function() {
             var jqForm = $('#order-guide-search-form'),
                 picker = $('#dob'),
+                DatePicker = $('.date-picker'),
                 dtPicker = $('#dob-bootstrap-val'),
                 select = $('.select2');
 
             // select2
-            select.each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent()
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    });
-            });
+            if (select.length) {
+                select.each(function() {
+                    var $this = $(this);
+                    $this.wrap('<div class="position-relative"></div>');
+                    $this
+                        .select2({
+                            placeholder: 'Select ...',
+                            dropdownParent: $this.parent()
+                        })
+                        .change(function() {
+                            $(this).valid();
+                        });
+                });
+            }
 
             // Picker
             if (picker.length) {
@@ -145,6 +148,20 @@
                 });
             }
 
+            if (DatePicker.length) {
+                DatePicker.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
+                });
+            }
+
             if (dtPicker.length) {
                 dtPicker.flatpickr({
                     onReady: function(selectedDates, dateStr, instance) {
@@ -154,8 +171,6 @@
                     }
                 });
             }
-
-            fun_search_period();
 
             // Ajax Search
             // --------------------------------------------------------------------
@@ -174,45 +189,6 @@
                 e.preventDefault();
             });
         });
-
-        function fun_search_period() {
-            var search_period = document.getElementById('search_period').value;
-            document.getElementById('div_custom_form').hidden = search_period == 'custom' ? false : true;
-            // document.getElementById('div_custom_to').hidden = search_period == 'custom' ? false : true;
-
-            const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            switch (search_period) {
-                case 'tomorrow':
-                    day = date.getDate() + 1;
-                    break;
-                case 'week':
-                    day = date.getDate() + 7;
-                    break;
-                case 'month':
-                    month = date.getMonth() + 2;
-                    break;
-                case 'year':
-                    year = date.getFullYear() + 1;
-                    break;
-            }
-            let currentDate = `${year}-${month}-${day}`;
-
-            $('#date_travel_form').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-        }
 
         function download_image() {
             var img_name = document.getElementById('name_img').value;

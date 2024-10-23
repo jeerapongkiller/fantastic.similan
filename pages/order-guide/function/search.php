@@ -7,12 +7,28 @@ $today = date("Y-m-d");
 
 if (isset($_POST['action']) && $_POST['action'] == "search") {
     // get value from ajax
-    $search_period = $_POST['search_period'] != "" ? $_POST['search_period'] : 'all';
     $search_guide = $_POST['search_guide'] != "" ? $_POST['search_guide'] : 'all';
+    $search_boat = $_POST['search_boat'] != "" ? $_POST['search_boat'] : 'all';
     $date_travel_form = $_POST['date_travel_form'] != "" ? $_POST['date_travel_form'] : '0000-00-00';
+    $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
+    $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
+    $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
+    $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $search_guide_name = $search_guide != 'all' ? $orderObj->get_data('name', 'guides', $search_guide) : '';
 
+    $href = "./?pages=order-guide/print&action=print";
+    $href .= "&date_travel_form=" . $date_travel_form;
+    $href .= "&search_boat=" . $search_boat;
+    $href .= "&search_status=" . $search_status;
+    $href .= "&search_agent=" . $search_agent;
+    $href .= "&search_product=" . $search_product;
+    $href .= "&search_voucher_no=" . $search_voucher_no;
+    $href .= "&refcode=" . $refcode;
+    $href .= "&name=" . $name;
+    $href .= "&action=print";
     # --- get data --- #
     $first_order = array();
     $first_bo = array();
@@ -28,7 +44,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $name_img .= $search_guide != 'all' ? ' [' . $search_guide_name['name'] . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, 'all', $search_guide);
+    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     if (!empty($orders)) {
         foreach ($orders as $order) {
             if ((in_array($order['mange_id'], $first_order) == false) && !empty($order['mange_id'])) {
@@ -81,6 +97,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                 $first_cus[] = $order['cus_id'];
                 $cus_id[$order['id']][] = !empty($order['cus_id']) ? $order['cus_id'] : 0;
                 $cus_name[$order['id']][] = !empty($order['cus_name']) ? $order['cus_name'] : '';
+                $telephone[$order['id']][] = !empty($order['telephone']) ? $order['telephone'] : '';
                 $cus_id_card[$order['id']][] = !empty($order['id_card']) ? $order['id_card'] : '';
             }
 
@@ -129,7 +146,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
 ?>
         <div class="content-header">
             <div class="pl-1 pt-0 pb-0">
-                <a href="./?pages=order-guide/print&action=print&<?php echo 'search_period=' . $search_period; ?>&<?php echo 'search_guide=' . $search_guide; ?>&<?php echo 'date_travel_form=' . $date_travel_form; ?>" target="_blank" class="btn btn-info">Print</a>
+                <a href='<?php echo $href; ?>' target="_blank" class="btn btn-info">Print</a>
                 <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
                 <a href="javascript:void(0);" class="btn btn-info disabled" hidden>Download as PDF</a>
             </div>
@@ -212,7 +229,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                             <td class="text-center"><?php echo $pickup_time[$mange_id[$i]][$a]; ?></td>
                                             <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                             <td><?php echo $agent[$mange_id[$i]][$a]; ?></td>
-                                            <td><?php echo $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
+                                            <td><?php echo !empty($telephone[$bo_id[$mange_id[$i]][$a]][0]) ? $cus_name[$bo_id[$mange_id[$i]][$a]][0] . ' <br>(' . $telephone[$bo_id[$mange_id[$i]][$a]][0] . ')' : $cus_name[$bo_id[$mange_id[$i]][$a]][0]; ?></td>
                                             <td><?php echo !empty($voucher_no[$mange_id[$i]][$a]) ? $voucher_no[$mange_id[$i]][$a] : $book_full[$mange_id[$i]][$a]; ?></td>
                                             <td style="padding: 5px;">
                                                 <?php if ($pickup_type[$mange_id[$i]][$a] == 1) {
@@ -253,7 +270,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                         <div class="text-center mt-1 pb-2">
                             <h4>
                                 <div class="badge badge-pill badge-light-warning">
-                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                    Adult : <?php echo $total_adult; ?>
+                                    Child : <?php echo $total_child; ?>
+                                    Infant : <?php echo $total_infant; ?>
+                                    FOC : <?php echo $total_foc; ?>
                                 </div>
                             </h4>
                         </div>

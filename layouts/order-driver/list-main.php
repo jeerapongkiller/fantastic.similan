@@ -247,7 +247,29 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-driver/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
 
         function download_image(type) {
             var img_name = type == 1 ? document.getElementById('name_img_pickup').value : document.getElementById('name_img_dropoff').value;

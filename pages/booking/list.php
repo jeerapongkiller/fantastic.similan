@@ -2,11 +2,16 @@
 require_once 'controllers/Booking.php';
 
 $bookObj = new Booking();
-$today = date("Y-m-d");
-$tomorrow = new DateTime('tomorrow');
-$nextday = date("Y-m-d", strtotime(" +1 day"));
 $times = date("H:i:s");
-// $bookings = $bookObj->showlist(1);
+$today = date("Y-m-d");
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
+$day3 = date("Y-m-d", strtotime(" +2 day"));
+$day4 = date("Y-m-d", strtotime(" +3 day"));
+$day5 = date("Y-m-d", strtotime(" +4 day"));
+$day6 = date("Y-m-d", strtotime(" +5 day"));
+$day7 = date("Y-m-d", strtotime(" +6 day"));
+// $today = '2024-09-29';
+// $tomorrow = '2024-09-30';
 ?>
 
 <div class="app-content content">
@@ -131,15 +136,76 @@ $times = date("H:i:s");
 
                 <!-- report booking start -->
                 <div>
-                    <h5>เรือ</h5>
+                    <h5>Booking</h5>
                     <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="day3-tab" data-toggle="tab" href="#day3" aria-controls="day3" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day3)); ?></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4" aria-controls="day4" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day4)); ?></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5" aria-controls="day5" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day5)); ?></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="day6-tab" data-toggle="tab" href="#day6" aria-controls="day6" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day6)); ?></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="day7-tab" data-toggle="tab" href="#day7" aria-controls="day7" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day7)); ?></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="day3" aria-labelledby="day3-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="day4" aria-labelledby="day4-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="day5" aria-labelledby="day5-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="day6" aria-labelledby="day6-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="day7" aria-labelledby="day7-tab" role="tabpanel">
+                                            
+                                        </div>
+                                        <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 hidden>เรือ</h5>
+                    <div class="row" hidden>
                         <div class="col-lg-6 col-12" id="boat-report-today">
                         </div>
                         <div class="col-lg-6 col-12" id="boat-report-tomorrow">
                         </div>
                     </div>
-                    <h5>รถ</h5>
-                    <div class="row">
+                    <h5 hidden>รถ</h5>
+                    <div class="row" hidden>
                         <div class="col-lg-6 col-12" id="driver-report-today">
                         </div>
                         <div class="col-lg-6 col-12" id="driver-report-tomorrow">
@@ -434,7 +500,7 @@ $times = date("H:i:s");
                                     <div class="row">
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label class="form-label" for="travel_date">Travel Date</label><br>
-                                            <input type="date" class="form-control" id="travel_date" name="travel_date" value="<?php echo $nextday; ?>" onchange="search_program();" />
+                                            <input type="date" class="form-control" id="travel_date" name="travel_date" value="<?php echo $tomorrow; ?>" onchange="search_program();" />
                                         </div>
                                         <div class="col-xl-2 col-md-4 col-12">
                                             <div class="form-group" id="frm-agent">

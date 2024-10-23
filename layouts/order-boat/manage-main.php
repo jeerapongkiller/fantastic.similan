@@ -323,7 +323,29 @@
                 e.preventDefault();
             });
 
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-boat/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
 
         function checkbox(type) {
             var checkbox_all = type == 'booking' ? document.getElementById('checkbo_all').checked : document.getElementById('checkmanage_all').checked;
@@ -396,6 +418,20 @@
                 success: function(response) {
                     $('#div-manage-boooking').html(response);
                     sum_checkbox();
+
+                    if (type !== 'next') {
+                        var tbody = document.querySelector('#list-group tbody');
+                        // สร้าง Dragula instance
+                        if (tbody) {
+                            dragula([tbody], {
+                                moves: function(el, container, handle) {
+                                    return handle.tagName.toLowerCase() === 'td'; // กำหนดให้ลากได้เฉพาะที่ td
+                                }
+                            }).on('drop', function(el, target, source, sibling) {
+                                // console.log('Dropped element:', el);
+                            });
+                        }
+                    }
                 }
             });
 

@@ -270,7 +270,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
             <table width="100%" class="mt-1">
                 <tr class="table-black">
                     <td class="text-center" style="border-radius: 15px 0px 0px 0px;" width="3%"><b>เลขที่</b></td>
-                    <td class="text-center"><b>วันที่เที่ยว</b></td>
+                    <td class="text-center"><b>วันที่เดินทาง</b></td>
                     <td class="text-center"><b>ชื่อลูค้า</b></td>
                     <td class="text-center"><b>โปรแกรม</b></td>
                     <td class="text-center"><b>หมายเลข</b></td>
@@ -335,8 +335,6 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                 <?php
                     }
                 }
-                $amount = !empty($discount) ? $sum_total - array_sum($discount) : $sum_total;
-                $amount = !empty($cot) ? $amount - array_sum($cot) : $amount;
                 if ($vat[0] == 1) {
                     $vat_total = $amount * 100 / 107;
                     $vat_cut = $vat_total;
@@ -359,10 +357,15 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                                 <b>ยอดรวม : </b>
                                 <p style="font-size: 10px; margin-bottom: 2px;">(Total)</p>
                             </dt>
-                            <dd class="col-sm-4 mt-50 text-nowrap">฿ <?php echo number_format($sum_total); ?></dd>
+                            <dd class="col-sm-4 mt-50 text-nowrap">฿ <?php echo number_format($amount); ?></dd>
                         </dl>
                     </td>
                 </tr>
+
+                <?php
+                $amount = !empty($discount) ? $amount - array_sum($discount) : $amount;
+                $amount = !empty($cot) ? $amount - array_sum($cot) : $amount;
+                ?>
 
                 <tr class="table-content">
                     <td colspan="9" rowspan="5">

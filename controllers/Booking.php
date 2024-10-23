@@ -156,7 +156,7 @@ class Booking extends DB
                     LEFT JOIN cars CAR 
                         ON MANGET.car_id = CAR.id
                     LEFT JOIN booking_order_boat BORDB
-                    ON BO.id = BORDB.booking_id
+                        ON BO.id = BORDB.booking_id
                     LEFT JOIN order_boat MANGE 
                         ON BORDB.manage_id = MANGE.id
                     LEFT JOIN colors COLOR 
@@ -180,6 +180,7 @@ class Booking extends DB
                     LEFT JOIN users BOOKER 
                         ON BO.booker_id = BOOKER.id
                     WHERE BO.id > 0
+                    AND BP.is_deleted = 0
         ";
 
         if (!empty($search_status) && $search_status != 'all') {
@@ -619,7 +620,11 @@ class Booking extends DB
                 DROF.id as dropoff_id, DROF.name as dropoff_name,
                 INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding, INV.branche_id as branche_id, INV.vat_id as vat_id, 
                 INV.currency_id as currency_id, INV.bank_account_id as inv_bank_account, INV.note as inv_note, 
-                COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full
+                COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
+                BOMANGE.id as bomange_id,
+                MANGET.id as manget_id,
+                BORDB.id as boman_id, 
+                MANGE.id as mange_id
             FROM bookings BO
             LEFT JOIN bookings_no BONO
                 ON BO.id = BONO.booking_id
@@ -671,6 +676,15 @@ class Booking extends DB
                 ON INV.booking_id = BO.id
             LEFT JOIN invoice_cover COVER
                 ON INV.cover_id = COVER.id
+            LEFT JOIN booking_order_transfer BOMANGE
+                ON BT.id = BOMANGE.booking_transfer_id
+            LEFT JOIN order_transfer MANGET 
+                ON BOMANGE.order_id = MANGET.id
+                AND MANGET.pickup = 1
+            LEFT JOIN booking_order_boat BORDB
+                ON BO.id = BORDB.booking_id
+            LEFT JOIN order_boat MANGE 
+                ON BORDB.manage_id = MANGE.id
             WHERE BO.id = ? AND BO.is_deleted = 0
         ";
 
@@ -2523,6 +2537,32 @@ class Booking extends DB
         $query = "DELETE FROM booking_paid_detail WHERE id = ?";
         $statement = $this->connection->prepare($query);
         $statement->bind_param("i", $id);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function delete_booking_manage_transfer(int $mange_id, int $bt_id, int $id)
+    {
+        $query = "DELETE FROM booking_order_transfer WHERE order_id = ? AND booking_transfer_id = ? AND id = ?";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("iii", $mange_id, $bt_id, $id);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function delete_booking_manage_boat(int $mange_id, int $bo_id, int $id)
+    {
+        $query = "DELETE FROM booking_order_boat WHERE manage_id = ? AND booking_id = ? AND id = ?";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("iii", $mange_id, $bo_id, $id);
         $statement->execute();
         if ($statement->execute()) {
             $this->response = true;

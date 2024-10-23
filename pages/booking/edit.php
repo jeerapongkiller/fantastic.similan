@@ -96,6 +96,10 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <input type="hidden" id="book_type_id" name="book_type_id" value="<?php echo $book_type; ?>">
                                             <input type="hidden" id="book_full" name="book_full" value="<?php echo $book_full; ?>">
                                             <input type="hidden" id="open-rates" name="open_rates" value="<?php echo $open_rates; ?>" />
+                                            <input type="hidden" name="mange_transfer_id" value="<?php echo $mange_transfer_id; ?>" /> <!-- manage transfer booking id -->
+                                            <input type="hidden" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
+                                            <input type="hidden" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
+                                            <input type="hidden" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
                                             <div class="row">
                                                 <div class="form-group col-md-3">
                                                     <label class="form-label" for="booking_no">Booking No.</label>
@@ -326,7 +330,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                            <div class="form-group col-md-4">
+                                                <div class="form-group col-md-4">
                                                     <div class="form-group">
                                                         <label class="form-label" for="discount">Discount (ส่วนลด)</label>
                                                         <input type="text" class="form-control numeral-mask" id="discount" name="discount" value="<?php echo number_format($discount); ?>" />
@@ -552,7 +556,10 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             </div>
                                             <div class="row">
                                                 <div class="form-group col-md-3 col-12">
-                                                    <table width="100%">
+                                                    <label class="form-label" for="tran_adult_pax">Adult (ผู้ใหญ่)</label>
+                                                    <input type="text" class="form-control numeral-mask" id="tran_adult_pax" name="tran_adult_pax" oninput="check_rate_transfer();" value="<?php echo $bt_adult; ?>" />
+                                                    <input type="hidden" id="tran_adult" name="tran_adult" class="form-control" value="0">
+                                                    <!-- <table width="100%">
                                                         <tr>
                                                             <td width="30%">
                                                                 <div class="form-group">
@@ -564,14 +571,18 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                             <td width="69%" name="td-transfer">
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="tran_adult">Rate Adult (ราคาผู้ใหญ่)</label>
-                                                                    <input type="text" id="tran_adult" name="tran_adult" class="form-control numeral-mask" value="<?php echo $btr_rate_adult; ?>" oninput="check_rate_transfer();">
+                                                                    <input type="text" id="tran_adult" name="tran_adult" class="form-control numeral-mask" value="<?php // echo $btr_rate_adult; 
+                                                                                                                                                                    ?>" oninput="check_rate_transfer();">
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                    </table>
+                                                    </table> -->
                                                 </div>
                                                 <div class="form-group col-md-3 col-12">
-                                                    <table width="100%">
+                                                    <label class="form-label" for="tran_child_pax">Children (เด็ก)</label>
+                                                    <input type="text" class="form-control numeral-mask" id="tran_child_pax" name="tran_child_pax" oninput="check_rate_transfer();" value="<?php echo $bt_child; ?>" />
+                                                    <input type="hidden" id="tran_child" name="tran_child" class="form-control" value="0">
+                                                    <!-- <table width="100%">
                                                         <tr>
                                                             <td width="30%">
                                                                 <div class="form-group">
@@ -579,34 +590,39 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                                     <input type="text" class="form-control numeral-mask" id="tran_child_pax" name="tran_child_pax" oninput="check_rate_transfer();" value="<?php echo $bt_child; ?>" />
                                                                 </div>
                                                             </td>
-                                                            <td width="1%" name="td-transfer"><i data-feather='x' class="m-1 font-medium-4"></i></td>
-                                                            <td width="69%" name="td-transfer">
+                                                            <td hidden width="1%" name="td-transfer"><i data-feather='x' class="m-1 font-medium-4"></i></td>
+                                                            <td hidden width="69%" name="td-transfer">
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="tran_child">Rate Children (ราคาเด็ก)</label>
-                                                                    <input type="text" id="tran_child" name="tran_child" class="form-control numeral-mask" value="<?php echo $btr_rate_child; ?>" oninput="check_rate_transfer();">
+                                                                    <input type="text" id="tran_child" name="tran_child" class="form-control numeral-mask" value="<?php // echo $btr_rate_child; 
+                                                                                                                                                                    ?>" oninput="check_rate_transfer();">
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                    </table>
+                                                    </table> -->
                                                 </div>
                                                 <div class="form-group col-md-3 col-12">
-                                                    <table width="100%">
+                                                    <label class="form-label" for="tran_infant_pax">Infant (ทารก)</label>
+                                                    <input type="text" class="form-control numeral-mask" id="tran_infant_pax" name="tran_infant_pax" oninput="check_rate_transfer();" value="<?php echo $bt_infant; ?>" />
+                                                    <input type="hidden" id="tran_infant" name="tran_infant" class="form-control" value="0">
+                                                    <!-- <table width="30%">
                                                         <tr>
-                                                            <td width="30%">
+                                                            <td width="100%">
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="tran_infant_pax">Infant (ทารก)</label>
                                                                     <input type="text" class="form-control numeral-mask" id="tran_infant_pax" name="tran_infant_pax" oninput="check_rate_transfer();" value="<?php echo $bt_infant; ?>" />
                                                                 </div>
                                                             </td>
-                                                            <td width="1%" name="td-transfer"><i data-feather='x' class="m-1 font-medium-4"></i></td>
-                                                            <td width="69%" name="td-transfer">
+                                                            <td hidden width="1%" name="td-transfer"><i data-feather='x' class="m-1 font-medium-4"></i></td>
+                                                            <td hidden width="69%" name="td-transfer">
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="tran_infant">Rate Infant (ราคาทารก)</label>
-                                                                    <input type="text" id="tran_infant" name="tran_infant" class="form-control numeral-mask" value="<?php echo $btr_rate_infant; ?>" oninput="check_rate_transfer();">
+                                                                    <input type="text" id="tran_infant" name="tran_infant" class="form-control numeral-mask" value="<?php // echo $btr_rate_infant; 
+                                                                                                                                                                    ?>" oninput="check_rate_transfer();">
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                    </table>
+                                                    </table> -->
                                                 </div>
                                                 <div class="form-group col-md-1 col-12">
                                                     <div class="form-group">
@@ -729,7 +745,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row" hidden>
                                                 <div class="form-group col-md-3">
                                                     <div class="form-group">
                                                         <label class="form-label" for="tran_total_price">Total Price (Transfer)</label>

@@ -9,10 +9,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $search_manage_id = !empty($_POST['manage_id']) ? $_POST['manage_id'] : 0;
     $date_travel_booking = !empty($_POST['date_travel_booking']) ? $_POST['date_travel_booking'] : $today;
     $search_product = !empty($_POST['search_product']) ? $_POST['search_product'] : 'all';
+    $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
+    $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
+    $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
+    $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_bo = array();
     # --- get data --- #
-    $boats = $manageObj->showlistboats('manage', $search_manage_id, $date_travel_booking, $search_product, 'all');
+    $boats = $manageObj->showlistboats('manage', $search_manage_id, $date_travel_booking, $search_product, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     # --- get value booking boat --- #
     if (!empty($boats)) {
         foreach ($boats as $boat) {

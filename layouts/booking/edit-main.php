@@ -1410,27 +1410,27 @@
         }
 
         function check_transfer_type() {
-            var transfer_join = document.getElementById('transfer_type_join');
-            var div_transfer_type = document.getElementById('div-transfer-type-form');
-            if (transfer_join.checked != true) {
-                document.getElementsByName('td-transfer')[0].hidden = true;
-                document.getElementsByName('td-transfer')[1].hidden = true;
-                document.getElementsByName('td-transfer')[2].hidden = true;
-                document.getElementsByName('td-transfer')[3].hidden = true;
-                document.getElementsByName('td-transfer')[4].hidden = true;
-                document.getElementsByName('td-transfer')[5].hidden = true;
+            // var transfer_join = document.getElementById('transfer_type_join');
+            // var div_transfer_type = document.getElementById('div-transfer-type-form');
+            // if (transfer_join.checked != true) {
+            //     document.getElementsByName('td-transfer')[0].hidden = true;
+            //     document.getElementsByName('td-transfer')[1].hidden = true;
+            //     document.getElementsByName('td-transfer')[2].hidden = true;
+            //     document.getElementsByName('td-transfer')[3].hidden = true;
+            //     document.getElementsByName('td-transfer')[4].hidden = true;
+            //     document.getElementsByName('td-transfer')[5].hidden = true;
 
-                document.getElementById('tran_total_price').readOnly = false;
-            } else {
-                document.getElementsByName('td-transfer')[0].hidden = false;
-                document.getElementsByName('td-transfer')[1].hidden = false;
-                document.getElementsByName('td-transfer')[2].hidden = false;
-                document.getElementsByName('td-transfer')[3].hidden = false;
-                document.getElementsByName('td-transfer')[4].hidden = false;
-                document.getElementsByName('td-transfer')[5].hidden = false;
+            //     document.getElementById('tran_total_price').readOnly = false;
+            // } else {
+            //     document.getElementsByName('td-transfer')[0].hidden = false;
+            //     document.getElementsByName('td-transfer')[1].hidden = false;
+            //     document.getElementsByName('td-transfer')[2].hidden = false;
+            //     document.getElementsByName('td-transfer')[3].hidden = false;
+            //     document.getElementsByName('td-transfer')[4].hidden = false;
+            //     document.getElementsByName('td-transfer')[5].hidden = false;
 
-                document.getElementById('tran_total_price').readOnly = true;
-            }
+            //     document.getElementById('tran_total_price').readOnly = true;
+            // }
 
             // check_rate_transfer();
         }

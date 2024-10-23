@@ -95,6 +95,7 @@ function diff_date($today, $diff_date)
                         $first_bot = array();
                         $first_boboat = array();
                         $first_pay = array();
+                        $first_extar = array();
                         $bookings = $repObj->showlist('0000-00-00', '0000-00-00', 'all', 'all');
                         foreach ($bookings as $booking) {
                             # --- get value booking --- #

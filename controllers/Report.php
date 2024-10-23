@@ -10,7 +10,7 @@ class Report extends DB
         parent::__construct();
     }
 
-    public function showlist($date_form, $date_to, $agent, $product)
+    public function showlist($status, $date_form, $date_to, $agent, $product)
     {
         $bind_types = "";
         $params = array();
@@ -115,9 +115,22 @@ class Report extends DB
                     ON ORBOAT.boat_id = BOAT.id
                 WHERE BO.is_deleted = 0
                 AND PROD.id > 0
+                AND BP.is_deleted = 0
         ";
 
         $query .= $date_form != '0000-00-00' ? $date_to != '0000-00-00' ? " AND BP.travel_date BETWEEN '$date_form' AND '$date_to' " : " AND BP.travel_date BETWEEN '$date_form' AND '$date_form' " : '';
+
+        if (!empty($status)) {
+            if ($status != 'all') {
+                $query .= " AND (";
+                for ($i = 0; $i < count($status); $i++) {
+                    $query .= $i == 0 ? " BSTA.id = " . $status[$i] : " OR BSTA.id = " . $status[$i];
+                }
+                $query .= " )";
+            } else {
+                $query .= " AND BSTA.id = 1";
+            }
+        }
 
         if (isset($agent) && $agent != "all") {
             $query .= " AND COMP.id = ?";
@@ -131,8 +144,24 @@ class Report extends DB
             array_push($params, $product);
         }
 
+        $query .= " ORDER BY BO.id DESC, BP.travel_date DESC, BOPA.id ASC";
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
+    public function showbookingstatus()
+    {
+        $query = "SELECT id, name, button_class
+            FROM booking_status 
+            WHERE id > 0
+        ";
+        $query .= " ORDER BY id ASC";
+        $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);

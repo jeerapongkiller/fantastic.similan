@@ -10,6 +10,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
     $date_travel = $_GET['date_travel'] != "" ? $_GET['date_travel'] : '0000-00-00';
     $search_car = $_GET['search_car'] != "" ? $_GET['search_car'] : 'all';
     $search_retrun = $_GET['retrun'] != "" ? $_GET['retrun'] : 0;
+    $search_status = $_GET['search_status'] != "" ? $_GET['search_status'] : 'all';
+    $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
+    $search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+    $search_voucher_no = $_GET['voucher_no'] != "" ? $_GET['voucher_no'] : '';
+    $refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
+    $name = $_GET['name'] != "" ? $_GET['name'] : '';
 
     $sum_ad = 0;
     $sum_chd = 0;
@@ -26,7 +32,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
     $first_bo = [];
     $first_trans = [];
     $frist_bomange = [];
-    $bookings = $manageObj->showlisttransfers('all', 1, $date_travel, $search_car, 'all');
+    $bookings = $manageObj->showlisttransfers('all', 1, $date_travel, $search_car, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
     # --- Check products --- #
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
@@ -52,6 +58,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                 $foc[$booking['id']] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
                 $cate_transfer[$booking['id']] = !empty($booking['category_transfer']) ? $booking['category_transfer'] : 0;
                 $cus_name[$booking['id']][] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
+                $telephone[$booking['id']][] = !empty($booking['telephone']) ? $booking['telephone'] : '';
                 $sender[$booking['id']] = !empty($booking['sender']) ? $booking['sender'] : '';
                 $note[$booking['id']] = !empty($booking['bp_note']) ? $booking['bp_note'] : '';
                 $bp_id[$booking['id']] = !empty($booking['bp_id']) ? $booking['bp_id'] : 0;
@@ -171,7 +178,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
 ?>
     <div id="div-driver-job-image" style="background-color: #FFF;">
         <!-- Header starts -->
-        <div class="card-body pb-0">
+        <!-- <div class="card-body pb-0">
             <div class="row">
                 <span class="col-6 brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
                 <span class="col-6 text-right" style="color: #000;">
@@ -185,7 +192,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                     <h5 class="m-0 pl-1 pr-1 text-danger"><?php echo date('j F Y', strtotime($date_travel)); ?></h5>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Header ends -->
         <!-- Body starts -->
         <?php
@@ -197,16 +204,38 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                 $mange_retrun = 1;
                 if ($bomange_bo[$mange['id'][$i]] && $return == true) {
         ?>
-                    <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
-                        <div class="col-4 text-left text-bold h4"></div>
-                        <div class="col-4 text-center text-bold h4"><?php echo !empty($mange['car'][$i]) ? $mange['car'][$i] : ''; ?></div>
-                        <div class="col-4 text-right mb-50"></div>
-                    </div>
+
 
                     <div class="table-responsive" id="order-job-search-table">
-
                         <table class="tableprint">
                             <thead class="">
+                                <tr>
+                                    <th colspan="12" style="background-color: #FFF;">
+
+                                        <div class="card-body pb-0">
+                                            <div class="row">
+                                                <span class="col-6 brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
+                                                <span class="col-6 text-right" style="color: #000;">
+                                                    โทร : 062-3322800 / 084-7443000 / 083-1757444 </br>
+                                                    Email : Fantasticsimilantravel11@gmail.com
+                                                </span>
+                                            </div>
+                                            <div class="text-center card-text">
+                                                <h4 class="font-weight-bolder">ใบจัดรถ</h4>
+                                                <div class="badge badge-pill badge-light-danger">
+                                                    <h5 class="m-0 pl-1 pr-1 text-danger"><?php echo date('j F Y', strtotime($date_travel)); ?></h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
+                                            <div class="col-4 text-left text-bold h4"></div>
+                                            <div class="col-4 text-center text-bold h4"><?php echo !empty($mange['car'][$i]) ? $mange['car'][$i] : ''; ?></div>
+                                            <div class="col-4 text-right mb-50"></div>
+                                        </div>
+
+                                    </th>
+                                </tr>
                                 <tr>
                                     <th colspan="4" style="border-bottom: 1px solid #fff;">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
                                     <th colspan="8" style="border-bottom: 1px solid #fff;">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
@@ -248,7 +277,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                         <td class="text-center"><?php echo !empty($voucher_no[$id]) ? $voucher_no[$id] : $book_full[$id]; ?></td>
                                         <td><?php echo $mange['pickup'][$i] == 1 ? !empty($outside[$id][1]) ? $outside[$id][1] . ' (' . $zone_name[$id][1] . ')' : $hotel_name[$id][1] . ' (' . $zone_name[$id][1] . ')' : $outside[$id][2]; ?></td>
                                         <td><?php echo $room_no[$id][$mange_retrun]; ?></td>
-                                        <td><?php echo $cus_name[$id][0]; ?></td>
+                                        <td><?php echo !empty($telephone[$id][0]) ? $cus_name[$id][0] . ' <br>(' . $telephone[$id][0] . ')' : $cus_name[$id][0]; ?></td>
                                         <td class="text-center"><?php echo $bt_adult[$id][$mange_retrun]; ?></td>
                                         <td class="text-center"><?php echo $bt_child[$id][$mange_retrun]; ?></td>
                                         <td class="text-center"><?php echo $bt_infant[$id][$mange_retrun]; ?></td>
@@ -256,19 +285,44 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                         <td><?php echo $note[$id]; ?></td>
                                     </tr>
                                 <?php } ?>
+                                <tr>
+                                    <td colspan="12" class="p-0" style="border: 0;">
+                                        <div class="text-center mt-50">
+                                            <h4>
+                                                <div class="badge badge-pill badge-light-warning">
+                                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                                    Adult : <?php echo $total_adult; ?>
+                                                    Child : <?php echo $total_child; ?>
+                                                    Infant : <?php echo $total_infant; ?>
+                                                    FOC : <?php echo $total_foc; ?>
+                                                </div>
+                                            </h4>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" class="p-0" style="border: 0;">
+                                        <div class="card-body invoice-padding py-0 bg-danger">
+                                            <p class="pt-50 mb-0 text-white">หมายเหตุ</p>
+                                            <p class="pb-50 mt-0 text-white">ถ้าลูกค้าช้า 5-10 นาทีกรุณาติดต่อกลับด่วน ***รบกวนเก็บวอเชอร์ลูกค้าก่อนขึ้นรถด้วยนะคะ (สำคัญมาก)*** Tel.0613851000, 0910343805</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
+                            <!-- <tfoot>
+                                <tr>
+                                    <td colspan="12" class="p-0" style="border: 0;">
+                                        <div class="card-body invoice-padding py-0 bg-danger">
+                                            <p class="text-center pt-50 pb-50 text-white">ถ้าลูกค้าช้า 5-10 นาทีกรุณาติดต่อกลับด่วน</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot> -->
                         </table>
 
-                        <div class="text-center mt-1 pb-2">
-                            <h4>
-                                <div class="badge badge-pill badge-light-warning">
-                                    <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
-                                </div>
-                            </h4>
-                        </div>
                     </div>
 
-                    <div class="pagebreak"></div>
+                    <!-- <div class="pagebreak"></div> -->
             <?php }
             } ?>
             <?php } elseif (!empty($programe_id) && $search_retrun == 2) {
@@ -321,7 +375,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                         <td><?php echo !empty($voucher_no[$id]) ? $voucher_no[$id] : $book_full[$id]; ?></td>
                                         <td><?php echo (!empty($outside[$id][2])) ? $outside[$id][2] . ' (' . $zone_name[$id][2] . ')' : $hotel_name[$id][2] . ' (' . $zone_name[$id][2] . ')'; ?></td>
                                         <td><?php echo (!empty($room_no[$id][$retrun])) ? $room_no[$id][$retrun] : ''; ?></td>
-                                        <td><?php echo !empty($cus_name[$id][0]) ? $cus_name[$id][0] : ''; ?></td>
+                                        <td><?php echo !empty($telephone[$id][0]) ? $cus_name[$id][0] . ' <br>(' . $telephone[$id][0] . ')' : $cus_name[$id][0]; ?></td>
                                         <td class="text-center"><?php echo $bt_adult[$id][$retrun]; ?></td>
                                         <td class="text-center"><?php echo $bt_child[$id][$retrun]; ?></td>
                                         <td class="text-center"><?php echo $bt_infant[$id][$retrun]; ?></td>
@@ -336,7 +390,11 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                     <div class="text-center mt-1 pb-2">
                         <h4>
                             <div class="badge badge-pill badge-light-warning">
-                                <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> | <?php echo $total_adult; ?> <?php echo $total_child; ?> <?php echo $total_infant; ?> <?php echo $total_foc; ?>
+                                <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
+                                Adult : <?php echo $total_adult; ?>
+                                Child : <?php echo $total_child; ?>
+                                Infant : <?php echo $total_infant; ?>
+                                FOC : <?php echo $total_foc; ?>
                             </div>
                         </h4>
                     </div>

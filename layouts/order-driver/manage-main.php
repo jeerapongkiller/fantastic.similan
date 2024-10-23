@@ -298,7 +298,30 @@
                 });
                 e.preventDefault();
             });
+
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-driver/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
 
         function checkbox(type, programe_id) {
             var checkbox_all = type == 'booking' ? document.getElementById('checkbo_all' + programe_id).checked : document.getElementById('checkmanage_all').checked;
@@ -367,7 +390,7 @@
                 document.getElementById('license').value = res.license[i];
                 document.getElementById('telephone').value = res.telephone[i];
                 document.getElementById('note').value = res.note[i];
-            
+
                 $("#car").val(res.car_id[i]).trigger("change");
                 $("#seat").val(res.seat[i]).trigger("change");
                 document.getElementById('delete_manage').disabled = false;
