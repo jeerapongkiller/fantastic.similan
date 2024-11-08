@@ -384,17 +384,24 @@
                 var arr_mange = document.getElementById('arr_mange' + manage_id).value;
                 var res = $.parseJSON(arr_mange);
 
+                $("#driver").val(res.driver_id[i]).trigger("change");
+
                 document.getElementById('manage_id').value = res.id[i];
                 document.getElementById('car').value = res.car_id[i];
+                document.getElementById('driver').value = res.driver_id[i];
                 document.getElementById('seat').value = res.seat[i];
                 document.getElementById('license').value = res.license[i];
                 document.getElementById('telephone').value = res.telephone[i];
                 document.getElementById('note').value = res.note[i];
+                document.getElementById('outside_driver').value = res.driver_id[i] == 0 ? res.driver_name[i] : '';
 
                 $("#car").val(res.car_id[i]).trigger("change");
                 $("#seat").val(res.seat[i]).trigger("change");
                 document.getElementById('delete_manage').disabled = false;
             } else {
+                $("#driver").val(0).trigger("change");
+                $("#car").val(0).trigger("change");
+                $("#seat").val(0).trigger("change");
                 document.getElementById('delete_manage').disabled = true;
                 document.getElementById('transfer-form').reset();
             }
@@ -406,6 +413,9 @@
                 var driver = document.getElementById('driver').value
                 document.getElementById('frm-driver').hidden = driver == 'outside' ? true : false;
                 document.getElementById('frm-driver-outside').hidden = driver == 'outside' ? false : true;
+            } else if (typeof type !== undefined && type == 'outside_driver') {
+                document.getElementById('frm-driver-outside').hidden = true;
+                document.getElementById('frm-driver').hidden = false;
             }
             if (type == 'car') {
                 var car = document.getElementById('car').value
@@ -419,6 +429,22 @@
                 var guide = document.getElementById('guide').value
                 document.getElementById('frm-guide').hidden = guide == 'outside' ? true : false;
                 document.getElementById('frm-guide-outside').hidden = guide == 'outside' ? false : true;
+            }
+        }
+
+        function check_driver() {
+            var driver = document.getElementById('driver');
+
+            document.getElementById('frm-driver').hidden = driver.value == 'outside' ? true : false;
+            document.getElementById('frm-driver-outside').hidden = driver.value == 'outside' ? false : true;
+
+            if (driver.value !== 'outside') {
+                document.getElementById('license').value = driver.options[driver.selectedIndex].getAttribute("data-license");
+                document.getElementById('seat').value = driver.options[driver.selectedIndex].getAttribute("data-seat");
+                document.getElementById('telephone').value = driver.options[driver.selectedIndex].getAttribute("data-telephone");
+                if (driver.options[driver.selectedIndex].getAttribute("data-seat") > 0) {
+                    $("#seat").val(driver.options[driver.selectedIndex].getAttribute("data-seat")).trigger("change");
+                }
             }
         }
 

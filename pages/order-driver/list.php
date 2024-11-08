@@ -141,11 +141,12 @@ foreach ($manages as $manage) {
         $mange['pickup'][] = !empty($manage['pickup']) ? $manage['pickup'] : 0;
         $mange['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
         $mange['car'][] = !empty($manage['car_id']) ? $manage['car_name'] : '';
+        $mange['registration'][] = !empty($manage['car_id']) ? $manage['registration'] : '';
         $mange['driver'][] = !empty($manage['driver']) ? $manage['driver'] : '';
         $mange['license'][] = !empty($manage['license']) ? $manage['license'] : '';
         $mange['telephone'][] = !empty($manage['telephone']) ? $manage['telephone'] : '';
         $mange['driver_id'][] = !empty($manage['driver_id']) ? $manage['driver_id'] : 0;
-        $mange['driver_name'][] = !empty($manage['driver_id']) ? $manage['driver_name'] : '';
+        $mange['driver_name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['outside_driver'];
         $mange['guide_id'][] = !empty($manage['guide_id']) ? $manage['guide_id'] : 0;
         $mange['guide_name'][] = !empty($manage['guide_id']) ? $manage['guide_name'] : '';
         $mange['car_id'][] = !empty($manage['car_id']) ? $manage['car_id'] : 0;
@@ -157,7 +158,7 @@ foreach ($manages as $manage) {
         $arr_trans['pickup'][] = !empty($manage['pickup']) ? $manage['pickup'] : 0;
         $arr_trans['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
         $arr_trans['driver_id'][] = !empty($manage['driver_id']) ? $manage['driver_id'] : 0;
-        $arr_trans['name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['driver'];
+        $arr_trans['name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['outside_driver'];
         $arr_trans['car'][] = !empty($manage['car_name']) ? $manage['car_name'] : '';
         $arr_trans['driver'][] = !empty($manage['driver']) ? $manage['driver'] : '';
         $arr_trans['license'][] = !empty($manage['license']) ? $manage['license'] : '';
@@ -376,15 +377,16 @@ foreach ($manages as $manage) {
                                 ?>
                                                 <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75">
                                                     <div class="col-4 text-left text-bold h4"></div>
-                                                    <div class="col-4 text-center text-bold h4"><?php echo !empty($mange['car'][$i]) ? $mange['car'][$i] : ''; ?></div>
+                                                    <div class="col-4 text-center text-bold h2"><?php echo !empty($mange['car'][$i]) ? !empty($mange['registration'][$i]) ? $mange['car'][$i] . ' (' . $mange['registration'][$i] . ')' : $mange['car'][$i] : ''; ?></div>
                                                     <div class="col-4 text-right mb-50"></div>
                                                 </div>
 
                                                 <table class="table table-striped text-uppercase table-vouchure-t2">
                                                     <thead class="bg-light">
                                                         <tr>
-                                                            <th colspan="6">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
-                                                            <th colspan="7">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
+                                                            <th colspan="3">คนขับ : <?php echo $mange['driver_name'][$i]; ?></th>
+                                                            <th colspan="4">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
+                                                            <th colspan="5">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
                                                         </tr>
                                                         <tr>
                                                             <th width="5%">เวลารับ</th>

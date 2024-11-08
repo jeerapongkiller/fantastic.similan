@@ -55,7 +55,7 @@ function diff_date($today, $diff_date)
                                         <div class="col-md-2 col-12">
                                             <div class="form-group">
                                                 <label for="search_travel">Travel Date</label>
-                                                <input type="text" class="form-control flatpickr-range" id="search_travel" name="search_travel" />
+                                                <input type="text" class="form-control flatpickr-range" id="search_travel" name="search_travel" value="<?php echo $today; ?>"/>
                                             </div>
                                         </div>
                                         <div class="col-md-3 col-12">

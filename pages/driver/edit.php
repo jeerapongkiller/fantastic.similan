@@ -5,8 +5,8 @@ $drvObj = new Driver();
 
 if (!empty($_GET['id']) && $_GET['id'] > 0) {
     $id = $_GET['id'];
-    $drv = $drvObj->get_data($id);
-    if ($drv == false) {
+    $driver = $drvObj->get_data($id);
+    if ($driver == false) {
         $close_conn = $drvObj->close();
         header('location:./?pages=driver/list');
     }
@@ -27,7 +27,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                         <div class="breadcrumb-wrapper">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./?pages=driver/list">Driver List</a></li>
-                                <li class="breadcrumb-item active"><?php echo $drv['first_name'] . ' ' . $drv['last_name']; ?></li>
+                                <li class="breadcrumb-item active"><?php echo $driver['name']; ?></li>
                             </ol>
                         </div>
                     </div>
@@ -46,126 +46,55 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                             </div> -->
                             <div class="card-body">
                                 <form id="driver-edit-form" name="driver-edit-form" method="post" enctype="multipart/form-data">
-                                    <input type="hidden" class="form-control" id="driver_id" name="driver_id" value="<?php echo $drv['id']; ?>" />
+                                    <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $driver['id']; ?>" />
                                     <div class="row">
                                         <div class="col-md-2 col-12">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <?php $is_approved_checked = $drv['is_approved'] == 1 ? 'checked' : ''; ?>
-                                                    <input type="checkbox" class="custom-control-input" id="is_approved" name="is_approved" value="1" <?php echo $is_approved_checked; ?> />
+                                                    <input type="checkbox" class="custom-control-input" id="is_approved" name="is_approved" value="1" <?php echo $driver['is_approved'] == 1 ? 'checked' : ''; ?> />
                                                     <label class="custom-control-label" for="is_approved">Active</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="id_card">ID Card</label>
-                                                <input type="text" class="form-control" id="id_card" name="id_card" value="<?php echo $drv['id_card']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="name">Name</label>
-                                                <input type="text" class="form-control" id="name" name="name" value="<?php echo $drv['name']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="birth_date">Birth Date</label>
-                                                <input type="text" id="birth_date" name="birth_date" class="form-control flatpickr-basic" value="<?php echo $drv['birth_date']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="d-block" for="gender">Gender</label>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="gender-male" name="gender" class="custom-control-input" value="1" <?php echo $drv['sex'] == 1 ? 'checked' : ''; ?> />
-                                                    <label class="custom-control-label" for="gender-male">Male</label>
-                                                </div>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="gender-female" name="gender" class="custom-control-input" value="2" <?php echo $drv['sex'] == 2 ? 'checked' : ''; ?> />
-                                                    <label class="custom-control-label" for="gender-female">Female</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="telephone">Telephone</label>
-                                                <input type="text" id="telephone" name="telephone" class="form-control" value="<?php echo $drv['telephone']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="issue_date">Issue Date (Driver License)</label>
-                                                <input type="text" id="issue_date" name="issue_date" class="form-control" value="<?php echo $drv['issue_date']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="expire_date">Expire Date (Driver License)</label>
-                                                <input type="text" id="expire_date" name="expire_date" class="form-control" value="<?php echo $drv['expire_date']; ?>" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-12">
-                                            <div class="form-group">
-                                                <label class="d-block" for="address">Address</label>
-                                                <textarea class="form-control" id="address" name="address" rows="2"><?php echo $drv['address']; ?></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-3 col-12">
                                             <div class="form-group">
-                                                <label>Image</label>
-                                                <?php if (!empty($drv['pic'])) { ?>
-                                                    <div class="form-group mt-1">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="delete_pic" name="delete_pic[]" value="1" />
-                                                            <label class="custom-control-label" for="delete_pic">Delete</label>
-                                                        </div>
-                                                    </div>
-                                                    <input type="hidden" id="before_pic" name="before_pic[]" class="form-control" value="<?php echo $drv['pic']; ?>" />
-                                                    <div class="d-flex align-items-center justify-content-center mt-2 mb-2">
-                                                        <img src="<?php echo $hostPageUrl; ?>/storage/uploads/drivers/pic/<?php echo $drv['pic']; ?>" class="img-fluid product-img" alt="Pic" />
-                                                    </div>
-                                                <?php } ?>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="pic" name="pic[]" />
-                                                    <label class="custom-file-label" for="pic">Choose image file</label>
-                                                </div>
+                                                <label class="form-label" for="name">ชื่อ</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="<?php echo $driver['name']; ?>" />
                                             </div>
                                         </div>
                                         <div class="col-md-3 col-12">
                                             <div class="form-group">
-                                                <label>Image (Driver License)</label>
-                                                <?php if (!empty($drv['pic_dl'])) { ?>
-                                                    <div class="form-group mt-1">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="delete_pic_dl" name="delete_pic_dl[]" value="1" />
-                                                            <label class="custom-control-label" for="delete_pic_dl">Delete</label>
-                                                        </div>
-                                                    </div>
-                                                    <input type="hidden" id="before_pic_dl" name="before_pic_dl[]" class="form-control" value="<?php echo $drv['pic_dl']; ?>" />
-                                                    <div class="d-flex align-items-center justify-content-center mt-2 mb-2">
-                                                        <img src="<?php echo $hostPageUrl; ?>/storage/uploads/drivers/pic-dl/<?php echo $drv['pic_dl']; ?>" class="img-fluid product-img" alt="Pic DL" />
-                                                    </div>
-                                                <?php } ?>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="pic_dl" name="pic_dl[]" />
-                                                    <label class="custom-file-label" for="pic_dl">Choose image file</label>
-                                                </div>
+                                                <label class="form-label" for="telephone">เบอร์โทร</label>
+                                                <input type="text" class="form-control" id="telephone" name="telephone" value="<?php echo $driver['telephone']; ?>" />
                                             </div>
                                         </div>
+                                        <div class="col-md-3 col-12">
+                                            <div class="form-group">
+                                                <label class="form-label" for="number_plate">ป้ายทะเบียน</label>
+                                                <input type="text" class="form-control" id="number_plate" name="number_plate" value="<?php echo $driver['number_plate']; ?>" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-3 col-12">
+                                            <label for="seat">ที่นั่ง</label>
+                                            <select class="form-control select2" id="seat" name="seat">
+                                                <option value="0" <?php echo $driver['seat'] == '0' ? 'selected' : ''; ?>>กรุญาเลือกจำนวนที่นั่ง...</option>
+                                                <option value="10" <?php echo $driver['seat'] == '10' ? 'selected' : ''; ?>>10</option>
+                                                <option value="12" <?php echo $driver['seat'] == '12' ? 'selected' : ''; ?>>12</option>
+                                                <option value="13" <?php echo $driver['seat'] == '13' ? 'selected' : ''; ?>>13</option>
+                                            </select>
+                                        </div>
                                     </div>
+                                    <hr />
                                     <div class="d-flex justify-content-between">
                                         <?php if ($_SESSION["supplier"]["role_id"] == 1 || $_SESSION["supplier"]["role_id"] == 2) { ?>
                                             <button type="button" class="btn btn-danger" onclick="deleteDriver(<?php echo $id; ?>);"><i data-feather='trash-2'></i> Delete</button>
-                                        <?php } ?>
+                                        <?php } else {
+                                            echo '<span></span>';
+                                        } ?>
                                         <button type="submit" class="btn btn-primary" name="submit" value="Submit">Submit</button>
                                     </div>
-                                    <div id="div-driver"></div>
                                 </form>
                             </div>
                         </div>

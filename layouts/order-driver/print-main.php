@@ -65,7 +65,7 @@
         td,
         th {
             border: 1px solid #333;
-            font-size: 16px;
+            font-size: 20px;
             padding: 5px 5px;
         }
 

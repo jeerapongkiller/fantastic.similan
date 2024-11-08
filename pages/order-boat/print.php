@@ -198,7 +198,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
             ?>
                     <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
                         <div class="col-4 text-left text-bold h4"></div>
-                        <div class="col-4 text-center text-bold h4"><?php echo $mange['boat_name'][$i]; ?></div>
+                        <div class="col-4 text-center text-bold h1"><?php echo $mange['boat_name'][$i]; ?></div>
                         <div class="col-4 text-right mb-50"></div>
                     </div>
 
@@ -245,7 +245,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                     $class_tr = ($a % 2 == 1) ? 'table-active' : '';
                             ?>
                                     <tr class="<?php echo $class_tr; ?>">
-                                        <td><?php echo $book['start_pickup'][$mange['id'][$i]][$a] != '00:00' ? $book['start_pickup'][$mange['id'][$i]][$a] . ' - ' . $book['end_pickup'][$mange['id'][$i]][$a] : ''; ?></td>
+                                        <td class="bg-primary bg-lighten-4"><?php echo $book['start_pickup'][$mange['id'][$i]][$a] != '00:00' ? $book['start_pickup'][$mange['id'][$i]][$a] . ' - ' . $book['end_pickup'][$mange['id'][$i]][$a] : ''; ?></td>
                                         <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                         <td><?php echo $book['comp_name'][$mange['id'][$i]][$a]; ?></td>
                                         <td><?php echo !empty($book['telephone'][$mange['id'][$i]][$a]) ? $book['cus_name'][$mange['id'][$i]][$a] . ' <br>(' . $book['telephone'][$mange['id'][$i]][$a] . ')' : $book['cus_name'][$mange['id'][$i]][$a]; ?></td>
@@ -259,10 +259,10 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                             } ?>
                                         </td>
                                         <td><?php echo $book['room_no'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo $book['adult'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo $book['child'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo $book['infant'][$mange['id'][$i]][$a]; ?></td>
-                                        <td class="text-center"><?php echo $book['foc'][$mange['id'][$i]][$a]; ?></td>
+                                        <td class="text-center bg-warning bg-lighten-3"><?php echo $book['adult'][$mange['id'][$i]][$a]; ?></td>
+                                        <td class="text-center bg-info bg-lighten-3"><?php echo $book['child'][$mange['id'][$i]][$a]; ?></td>
+                                        <td class="text-center bg-warning bg-lighten-3"><?php echo $book['infant'][$mange['id'][$i]][$a]; ?></td>
+                                        <td class="text-center bg-info bg-lighten-3"><?php echo $book['foc'][$mange['id'][$i]][$a]; ?></td>
                                         <!-- <td class="text-center"><?php echo !empty($bec_rate_total[$id]) ? number_format($book['total'][$mange['id'][$i]][$a] + array_sum($bec_rate_total[$id])) : number_format($book['total'][$mange['id'][$i]][$a]); ?></td> -->
                                         <td class="text-nowrap"><b class="text-danger"><?php echo $book['cot'][$mange['id'][$i]][$a] > 0 ? number_format($book['cot'][$mange['id'][$i]][$a]) : ''; ?></b></td>
                                         <td><b class="text-info">

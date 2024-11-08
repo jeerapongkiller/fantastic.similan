@@ -162,11 +162,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
             $mange['pickup'][] = !empty($manage['pickup']) ? $manage['pickup'] : 0;
             $mange['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
             $mange['car'][] = !empty($manage['car_id']) ? $manage['car_name'] : '';
+            $mange['registration'][] = !empty($manage['car_id']) ? $manage['registration'] : '';
             $mange['driver'][] = !empty($manage['driver']) ? $manage['driver'] : '';
             $mange['license'][] = !empty($manage['license']) ? $manage['license'] : '';
             $mange['telephone'][] = !empty($manage['telephone']) ? $manage['telephone'] : '';
             $mange['driver_id'][] = !empty($manage['driver_id']) ? $manage['driver_id'] : 0;
-            $mange['driver_name'][] = !empty($manage['driver_id']) ? $manage['driver_name'] : '';
+            $mange['driver_name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['outside_driver'];
             $mange['guide_id'][] = !empty($manage['guide_id']) ? $manage['guide_id'] : 0;
             $mange['guide_name'][] = !empty($manage['guide_id']) ? $manage['guide_name'] : '';
             $mange['car_id'][] = !empty($manage['car_id']) ? $manage['car_id'] : 0;
@@ -211,7 +212,6 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                             <thead class="">
                                 <tr>
                                     <th colspan="12" style="background-color: #FFF;">
-
                                         <div class="card-body pb-0">
                                             <div class="row">
                                                 <span class="col-6 brand-logo"><img src="app-assets/images/logo/logo-500.png" height="50"></span>
@@ -230,22 +230,23 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
 
                                         <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
                                             <div class="col-4 text-left text-bold h4"></div>
-                                            <div class="col-4 text-center text-bold h4"><?php echo !empty($mange['car'][$i]) ? $mange['car'][$i] : ''; ?></div>
+                                            <div class="col-4 text-center text-bold h1"><?php echo !empty($mange['car'][$i]) ? !empty($mange['registration'][$i]) ? $mange['car'][$i] . ' (' . $mange['registration'][$i] . ')' : $mange['car'][$i] : ''; ?></div>
                                             <div class="col-4 text-right mb-50"></div>
                                         </div>
 
                                     </th>
                                 </tr>
                                 <tr>
+                                    <th colspan="3" style="border-bottom: 1px solid #fff;">คนขับ : <?php echo $mange['driver_name'][$i]; ?></th>
                                     <th colspan="4" style="border-bottom: 1px solid #fff;">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
-                                    <th colspan="8" style="border-bottom: 1px solid #fff;">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
+                                    <th colspan="5" style="border-bottom: 1px solid #fff;">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
                                 </tr>
                                 <tr>
                                     <th width="5%">เวลารับ</th>
-                                    <th width="15%">โปรแกรม</th>
+                                    <th width="10%">โปรแกรม</th>
                                     <th width="10%">เอเยนต์</th>
                                     <th width="10%" class="text-center">V/C</th>
-                                    <th width="15%">โรงแรม</th>
+                                    <th width="20%">โรงแรม</th>
                                     <th width="6%">ห้อง</th>
                                     <th width="15%">ชื่อลูกค้า</th>
                                     <th width="1%" class="text-center">A</th>
@@ -271,17 +272,17 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['date_t
                                     $total_foc = $total_foc + $bt_foc[$id][$mange_retrun];
                                 ?>
                                     <tr>
-                                        <td><?php echo $start_pickup[$id][$mange_retrun] != '00:00' ? date('H:i', strtotime($start_pickup[$id][$mange_retrun])) . ' - ' . date('H:i', strtotime($end_pickup[$id][$mange_retrun])) : ''; ?></td>
+                                        <td class="bg-primary bg-lighten-4"><?php echo $start_pickup[$id][$mange_retrun] != '00:00' ? date('H:i', strtotime($start_pickup[$id][$mange_retrun])) . ' - ' . date('H:i', strtotime($end_pickup[$id][$mange_retrun])) : ''; ?></td>
                                         <td><?php echo $product_name[$id]; ?></td>
                                         <td><?php echo $agent_name[$id]; ?></td>
                                         <td class="text-center"><?php echo !empty($voucher_no[$id]) ? $voucher_no[$id] : $book_full[$id]; ?></td>
                                         <td><?php echo $mange['pickup'][$i] == 1 ? !empty($outside[$id][1]) ? $outside[$id][1] . ' (' . $zone_name[$id][1] . ')' : $hotel_name[$id][1] . ' (' . $zone_name[$id][1] . ')' : $outside[$id][2]; ?></td>
                                         <td><?php echo $room_no[$id][$mange_retrun]; ?></td>
                                         <td><?php echo !empty($telephone[$id][0]) ? $cus_name[$id][0] . ' <br>(' . $telephone[$id][0] . ')' : $cus_name[$id][0]; ?></td>
-                                        <td class="text-center"><?php echo $bt_adult[$id][$mange_retrun]; ?></td>
-                                        <td class="text-center"><?php echo $bt_child[$id][$mange_retrun]; ?></td>
-                                        <td class="text-center"><?php echo $bt_infant[$id][$mange_retrun]; ?></td>
-                                        <td class="text-center"><?php echo $bt_foc[$id][$mange_retrun]; ?></td>
+                                        <td class="text-center bg-warning bg-lighten-3"><?php echo $bt_adult[$id][$mange_retrun]; ?></td>
+                                        <td class="text-center bg-info bg-lighten-3"><?php echo $bt_child[$id][$mange_retrun]; ?></td>
+                                        <td class="text-center bg-warning bg-lighten-3"><?php echo $bt_infant[$id][$mange_retrun]; ?></td>
+                                        <td class="text-center bg-info bg-lighten-3"><?php echo $bt_foc[$id][$mange_retrun]; ?></td>
                                         <td><?php echo $note[$id]; ?></td>
                                     </tr>
                                 <?php } ?>

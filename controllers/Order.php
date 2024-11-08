@@ -14,7 +14,14 @@ class Order extends DB
     {
         $query = "SELECT *
             FROM cars
-            WHERE is_approved = 1
+            ORDER BY 
+                CASE
+                    WHEN name LIKE 'Phuket%' THEN 1
+                    WHEN name LIKE 'Khaolak%' THEN 2
+                    WHEN name LIKE 'Krabi%' THEN 3
+                    ELSE 4
+                END,
+                CAST(SUBSTRING(name, LOCATE(' ', name) + 1) AS UNSIGNED)
         ";
         $statement = $this->connection->prepare($query);
         $statement->execute();
@@ -171,7 +178,7 @@ class Order extends DB
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.driver as driver, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
+                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
@@ -569,23 +576,27 @@ class Order extends DB
     {
         $query = "SELECT manage.*,
                 BOMAN.arrange as arrange, BOMAN.booking_transfer_id as boman_bt,
-                CAR.id as car_id, CAR.name as car_name
+                CAR.id as car_id, CAR.name as car_name, CAR.car_registration as registration,
+                DRIVER.id as driver_id, DRIVER.name as driver_name
             FROM order_transfer manage
             LEFT JOIN booking_order_transfer BOMAN
                 ON manage.id = BOMAN.order_id
             LEFT JOIN cars CAR
                 ON manage.car_id = CAR.id
+            LEFT JOIN drivers DRIVER
+                ON manage.driver_id = DRIVER.id
             WHERE manage.id > 0
             AND manage.travel_date = ?
         ";
 
         $query .= " ORDER BY manage.pickup DESC,
-                    CASE 
-                        WHEN CAR.name LIKE 'PK%' THEN 1
-                        WHEN CAR.name LIKE 'KL%' THEN 2
-                        WHEN CAR.name LIKE 'KB%' THEN 3
+                    CASE
+                        WHEN CAR.name LIKE 'Phuket%' THEN 1
+                        WHEN CAR.name LIKE 'Khaolak%' THEN 2
+                        WHEN CAR.name LIKE 'Krabi%' THEN 3
                         ELSE 4
                     END,
+                    CAST(SUBSTRING(CAR.name, LOCATE(' ', CAR.name) + 1) AS UNSIGNED),
                     manage.id ASC";
 
         $statement = $this->connection->prepare($query);
@@ -623,15 +634,16 @@ class Order extends DB
         return $data;
     }
 
-    public function insert_manage_transfer(int $car, int $seat, string $driver, string $license, string $telephone, string $date_travel, string $note, int $pickup, int $dropoff)
+    public function insert_manage_transfer(string $outside_driver, int $car, int $seat, int $driver, string $license, string $telephone, string $date_travel, string $note, int $pickup, int $dropoff)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO `order_transfer`(`driver`, `license`, `telephone`, `travel_date`, `note`, `pickup`, `dropoff`, `seat`, `car_id`, `created_at`)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $query = "INSERT INTO `order_transfer`(`outside_driver`, `license`, `telephone`, `travel_date`, `note`, `pickup`, `dropoff`, `seat`, `driver_id`, `car_id`, `created_at`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
         $bind_types .= "s";
-        array_push($params, $driver);
+        array_push($params, $outside_driver);
 
         $bind_types .= "s";
         array_push($params, $license);
@@ -657,6 +669,9 @@ class Order extends DB
         $bind_types .= "i";
         array_push($params, $car);
 
+        $bind_types .= "i";
+        array_push($params, $driver);
+
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
 
@@ -667,7 +682,7 @@ class Order extends DB
         return $this->response;
     }
 
-    public function update_manage_transfer(int $car, int $seat, string $driver, string $license, string $telephone, string $note, int $id)
+    public function update_manage_transfer(string $outside_driver, int $car, int $seat, int $driver, string $license, string $telephone, string $note, int $id)
     {
         $bind_types = "";
         $params = array();
@@ -678,9 +693,13 @@ class Order extends DB
         $bind_types .= "i";
         array_push($params, $car);
 
-        $query .= " driver = ? ,";
-        $bind_types .= "s";
+        $query .= " driver_id = ? ,";
+        $bind_types .= "i";
         array_push($params, $driver);
+
+        $query .= " outside_driver = ? ,";
+        $bind_types .= "s";
+        array_push($params, $outside_driver);
 
         $query .= " license = ? ,";
         $bind_types .= "s";
@@ -868,7 +887,7 @@ class Order extends DB
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.driver as driver, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
+                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
@@ -1324,16 +1343,16 @@ class Order extends DB
     }
 
 
-    public function insert_driver(string $name)
+    public function insert_driver(string $name, string $telephone, string $license, int $seat)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO `drivers`(`name`, `is_approved`, `is_deleted`, `created_at`, `updated_at`)
-        VALUES (?, 1, 0, NOW(), NOW())";
+        $query = "INSERT INTO `drivers`(`name`, `telephone`, `number_plate`, `seat`, `is_approved`, `is_deleted`, `created_at`, `updated_at`)
+        VALUES (?, ?, ?, ?, 1, 0, NOW(), NOW())";
 
-        $bind_types .= "s";
-        array_push($params, $name);
+        $bind_types .= "sssi";
+        array_push($params, $name, $telephone, $license, $seat);
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -1377,7 +1396,7 @@ class Order extends DB
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name,
                     BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.driver as driver, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
+                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
@@ -1386,7 +1405,6 @@ class Order extends DB
                     GUIDE.id as guide_id, GUIDE.name as guide_name,
                     BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
                     -- MANGET.id as ortran_id, MANGET.driver as driver_name, MANGET.license as license, MANGET.telephone as ortran_telephone,
-                    -- CAR.id as car_id, CAR.name as car_name,
                     -- BOBOAT.id as boboat_id,
                     -- MANGE.id as mange_id, MANGE.time as manage_time,
                     -- COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
@@ -1439,7 +1457,6 @@ class Order extends DB
                     ON BT.id = BOMANGE.booking_transfer_id
                 LEFT JOIN order_transfer MANGET 
                     ON BOMANGE.order_id = MANGET.id
-                    -- AND MANGET.pickup = 1
                 LEFT JOIN cars CAR 
                     ON MANGET.car_id = CAR.id
                 LEFT JOIN booking_order_boat BORDB

@@ -228,7 +228,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                     $count_confirm = 0;
                     $count_noshow = 0;
                     $count_cancel = 0;
-                    $bookings = $bookObj->showlist($_SESSION["supplier"]["id"], 'all', 'all', 'all', 'all', '', '', '', '');
+                    $bookings = $bookObj->showlist($_SESSION["supplier"]["id"], 'all', 'all', 'all', 'all', $tomorrow, '', '', '');
                     # --- Check products --- #
                     if (!empty($bookings)) {
                         foreach ($bookings as $booking) {

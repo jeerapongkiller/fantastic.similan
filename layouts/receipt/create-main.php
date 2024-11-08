@@ -347,8 +347,7 @@
                             for (let index = 0; index < res_extar[id].id.length; index++) {
                                 amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
                                 text_html += '<tr>' +
-                                    '<td class="text-left" colspan="2"> ' + res_extar[id].name[index] + ' </td>' +
-                                    '<td class="text-left" colspan="3">  </td>' +
+                                    '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
                                     '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
                                     '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
                                     '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
@@ -359,6 +358,30 @@
                                     '</tr>';
                             }
                         }
+                    }
+
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                        '</tr>'
+
+                    if (discount > 0) {
+                        amount = amount - discount;
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+                            '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+                            '</tr>'
+                    }
+
+                    if (cot > 0) {
+                        amount = amount - cot;
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>Cash on tour</b></td>' +
+                            '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                            '</tr>'
                     }
 
                     if (res_invoice[cover_id].vat == 1) {
@@ -378,32 +401,6 @@
                         withholding_total = Number(withholding_total).toLocaleString("en-US", {
                             maximumFractionDigits: 2
                         });
-                    }
-
-                    text_html += '<tr>' +
-                        '<td colspan="10"></td>' +
-                        '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                        '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
-                            maximumFractionDigits: 2
-                        }) + '</td>' +
-                        '</tr>'
-
-                    if (discount > 0) {
-                        amount = amount - discount;
-                        text_html += '<tr>' +
-                            '<td colspan="10"></td>' +
-                            '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
-                            '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
-                            '</tr>'
-                    }
-
-                    if (cot > 0) {
-                        amount = amount - cot;
-                        text_html += '<tr>' +
-                            '<td colspan="10"></td>' +
-                            '<td class="text-center"><b>Cash on tour</b></td>' +
-                            '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
-                            '</tr>'
                     }
 
                     if (res_invoice[cover_id].vat > 0) {

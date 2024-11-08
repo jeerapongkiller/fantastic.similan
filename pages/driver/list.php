@@ -31,35 +31,24 @@ $drivers = $drvObj->showlist();
                             </div>
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="id_card">ID Card</label>
-                                    <input type="text" class="form-control" id="id_card" name="id_card" />
+                                    <label class="form-label" for="name">ชื่อ</label>
+                                    <input type="text" class="form-control" id="name" name="name" />
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="first_name">First Name</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" />
+                                    <label class="form-label" for="number_plate">ป้ายทะเบียน</label>
+                                    <input type="text" class="form-control" id="number_plate" name="number_plate" />
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" />
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="nickname">Nickname</label>
-                                    <input type="text" class="form-control" id="nickname" name="nickname" />
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-12">
-                                <div class="form-group">
-                                    <label for="sex">Gender</label>
-                                    <select class="form-control select2" id="sex" name="sex">
-                                        <option value="all">All</option>
-                                        <option value="1">Male</option>
-                                        <option value="2">Female</option>
+                                    <label for="seat">ที่นั่ง</label>
+                                    <select class="form-control select2" id="seat" name="seat">
+                                        <option value="all">all</option>
+                                        <option value="10">10</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
                                     </select>
                                 </div>
                             </div>
@@ -78,10 +67,10 @@ $drivers = $drvObj->showlist();
                             <thead class="thead-light">
                                 <tr>
                                     <th>Status</th>
-                                    <th>Full Name</th>
-                                    <th>Sex</th>
-                                    <th>Age</th>
-                                    <th>Telephone</th>
+                                    <th>ชื่อ</th>
+                                    <th>เบอร์โทร</th>
+                                    <th>ป้ายทะเบียน</th>
+                                    <th>ที่นั่ง</th>
                                     <th class="cell-fit"></th>
                                 </tr>
                             </thead>
@@ -91,7 +80,6 @@ $drivers = $drvObj->showlist();
                                     foreach ($drivers as $driver) {
                                         $is_approved = $driver['is_approved'] == 1 ? 'Active' : 'Inactive';
                                         $is_approved_class = $driver['is_approved'] == 1 ? 'badge-light-success' : 'badge-light-secondary';
-                                        $sex = $driver['sex'] == 1 ? 'Male' : 'Female';
                                     ?>
                                         <tr>
                                             <td>
@@ -100,9 +88,9 @@ $drivers = $drvObj->showlist();
                                                 </a>
                                             </td>
                                             <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $driver['name']; ?></a></td>
-                                            <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $sex; ?></a></td>
-                                            <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $drvObj->get_age($driver['birth_date']); ?></a></td>
                                             <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $driver['telephone']; ?></a></td>
+                                            <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $driver['number_plate']; ?></a></td>
+                                            <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"><?php echo $driver['seat']; ?></a></td>
                                             <td><a href="./?pages=driver/edit&id=<?php echo $driver['id']; ?>" style="color:#6E6B7B"></a></td>
                                         </tr>
                                     <?php } ?>

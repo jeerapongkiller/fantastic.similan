@@ -122,13 +122,13 @@ foreach ($manages as $manage) {
         $mange['id'][] = !empty($manage['id']) ? $manage['id'] : 0;
         $mange['seat'][] = !empty($manage['seat']) ? $manage['seat'] : 0;
         $mange['pickup'][] = !empty($manage['pickup']) ? $manage['pickup'] : 0;
-        $mange['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
+        // $mange['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
         $mange['car'][] = !empty($manage['car_id']) ? $manage['car_name'] : '';
         $mange['driver'][] = !empty($manage['driver']) ? $manage['driver'] : '';
         $mange['license'][] = !empty($manage['license']) ? $manage['license'] : '';
         $mange['telephone'][] = !empty($manage['telephone']) ? $manage['telephone'] : '';
         $mange['driver_id'][] = !empty($manage['driver_id']) ? $manage['driver_id'] : 0;
-        $mange['driver_name'][] = !empty($manage['driver_id']) ? $manage['driver_name'] : '';
+        $mange['driver_name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['outside_driver'];
         $mange['guide_id'][] = !empty($manage['guide_id']) ? $manage['guide_id'] : 0;
         $mange['guide_name'][] = !empty($manage['guide_id']) ? $manage['guide_name'] : '';
         $mange['car_id'][] = !empty($manage['car_id']) ? $manage['car_id'] : 0;
@@ -140,7 +140,7 @@ foreach ($manages as $manage) {
         $arr_trans['pickup'][] = !empty($manage['pickup']) ? $manage['pickup'] : 0;
         $arr_trans['dropoff'][] = !empty($manage['dropoff']) ? $manage['dropoff'] : 0;
         $arr_trans['driver_id'][] = !empty($manage['driver_id']) ? $manage['driver_id'] : 0;
-        $arr_trans['name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['driver'];
+        $arr_trans['name'][] = !empty($manage['driver_name']) ? $manage['driver_name'] : $manage['outside_driver'];
         $arr_trans['car'][] = !empty($manage['car_name']) ? $manage['car_name'] : '';
         $arr_trans['driver'][] = !empty($manage['driver']) ? $manage['driver'] : '';
         $arr_trans['license'][] = !empty($manage['license']) ? $manage['license'] : '';
@@ -329,9 +329,9 @@ foreach ($manages as $manage) {
                                         <table class="table table-bordered table-striped">
                                             <thead class="bg-light">
                                                 <tr>
-                                                    <!-- <th colspan="5">คนขับ : <?php echo !empty($mange['driver'][$i]) ? $mange['driver'][$i] : ''; ?></th> -->
-                                                    <th colspan="8">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
-                                                    <th colspan="7">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
+                                                    <th colspan="3">คนขับ : <?php echo $mange['driver_name'][$i]; ?></th>
+                                                    <th colspan="7">ป้ายทะเบียน : <?php echo $mange['license'][$i]; ?></th>
+                                                    <th colspan="4">โทรศัพท์ : <?php echo $mange['telephone'][$i]; ?></th>
                                                 </tr>
                                                 <tr>
                                                     <th class="cell-fit text-center">รถ</th>
@@ -520,7 +520,7 @@ foreach ($manages as $manage) {
                                             <div class="form-group" id="frm-car">
                                                 <label for="car">ชื่อรถ</label>
                                                 <select class="form-control select2" id="car" name="car" onchange="check_outside('car');">
-                                                    <option value="">กรุญาเลือกรถ...</option>
+                                                    <option value="0">กรุญาเลือกรถ...</option>
                                                     <option value="outside">กรอกข้อมูลเพิ่มเติม</option>
                                                     <?php
                                                     $cars = $manageObj->show_cars();
@@ -542,6 +542,32 @@ foreach ($manages as $manage) {
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-3 col-12">
+                                            <div class="form-group" id="frm-driver">
+                                                <label for="driver">ชื่อคนขับ</label>
+                                                <select class="form-control select2" id="driver" name="driver" onchange="check_driver();">
+                                                    <option value="0">กรุญาเลือกคนขับ...</option>
+                                                    <option value="outside">กรอกข้อมูลเพิ่มเติม</option>
+                                                    <?php
+                                                    $drivers = $manageObj->show_drivers();
+                                                    foreach ($drivers as $driver) {
+                                                    ?>
+                                                        <option value="<?php echo $driver['id']; ?>" data-name="<?php echo $driver['name']; ?>" data-seat="<?php echo $driver['seat']; ?>" data-license="<?php echo $driver['number_plate']; ?>" data-telephone="<?php echo $driver['telephone']; ?>"><?php echo $driver['name']; ?></option>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" id="frm-driver-outside" hidden>
+                                                <label class="form-label" for="outside_driver">กรอกข้อมูลเพิ่มเติม </label></br>
+                                                <div class="input-group input-group-merge mb-2">
+                                                    <input type="text" class="form-control" id="outside_driver" name="outside_driver" value="" />
+                                                    <div class="input-group-append" onclick="check_outside('outside_driver');">
+                                                        <span class="input-group-text cursor-pointer"><i data-feather='x'></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="form-group col-md-3 col-12">
                                             <label for="seat">ที่นั่ง</label>
                                             <select class="form-control select2" id="seat" name="seat">
@@ -551,12 +577,6 @@ foreach ($manages as $manage) {
                                                 <option value="13">13</option>
                                             </select>
                                         </div>
-                                        <!-- <div class="col-md-3 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="driver">คนขับ</label></br>
-                                                <input type="text" class="form-control" id="driver" name="driver" value="" />
-                                            </div>
-                                        </div> -->
                                         <div class="col-md-3 col-12">
                                             <div class="form-group">
                                                 <label class="form-label" for="license">ป้ายทะเบียน</label></br>

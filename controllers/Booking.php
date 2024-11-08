@@ -91,7 +91,7 @@ class Booking extends DB
                         PICK.id as pickup_id, PICK.name as pickup_name, 
                         DROF.id as dropoff_id, DROF.name as dropoff_name,
                         BOMANGE.id as bomange_id,
-                        MANGET.id as manget_id, MANGET.driver as driver, MANGET.license as license, MANGET.seat as seat,
+                        MANGET.id as manget_id, MANGET.license as license, MANGET.seat as seat,
                         CAR.id as car_id, CAR.name as car_name, CAR.name as car_name,
                         BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
                         MANGE.id as mange_id, MANGE.time as manage_time,

@@ -92,9 +92,6 @@
     <script type="text/javascript">
         $(document).ready(function() {
             var jqForm = $('#driver-create-form'),
-                picker_birth = $('#birth_date'),
-                picker_issue = $('#issue_date'),
-                picker_expire = $('#expire_date'),
                 dtPicker = $('#dob-bootstrap-val'),
                 select = $('.select2');
 
@@ -113,48 +110,6 @@
             });
 
             // Picker
-            if (picker_birth.length) {
-                picker_birth.flatpickr({
-                    onReady: function(selectedDates, dateStr, instance) {
-                        if (instance.isMobile) {
-                            $(instance.mobileInput).attr('step', null);
-                        }
-                    },
-                    altInput: true,
-                    altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: 'today'
-                });
-            }
-
-            if (picker_issue.length) {
-                picker_issue.flatpickr({
-                    onReady: function(selectedDates, dateStr, instance) {
-                        if (instance.isMobile) {
-                            $(instance.mobileInput).attr('step', null);
-                        }
-                    },
-                    altInput: true,
-                    altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: 'today'
-                });
-            }
-
-            if (picker_expire.length) {
-                picker_expire.flatpickr({
-                    onReady: function(selectedDates, dateStr, instance) {
-                        if (instance.isMobile) {
-                            $(instance.mobileInput).attr('step', null);
-                        }
-                    },
-                    altInput: true,
-                    altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: 'today'
-                });
-            }
-
             if (dtPicker.length) {
                 dtPicker.flatpickr({
                     onReady: function(selectedDates, dateStr, instance) {
@@ -178,18 +133,8 @@
 
                 jqForm.validate({
                     rules: {
-                        // 'id_card': {
-                        //     required: true,
-                        //     rangelength: [13, 13],
-                        //     regex: /^[0-9/]{13,13}$/,
-                        //     remote: {
-                        //         url: "pages/driver/function/check-id-card.php",
-                        //         type: "post"
-                        //     }
-                        // },
                         'name': {
-                            required: true,
-                            regex: /^[a-zA-Zก-ฮ/]/
+                            required: true
                         },
                         // 'last_name': {
                         //     required: true,
@@ -211,25 +156,9 @@
                         // 'expire_date': {
                         //     required: true
                         // },
-                        'pic[]': {
-                            extension: "jpg|jpeg|png",
-                            filesize: 2
-                        },
-                        'pic_dl[]': {
-                            extension: "jpg|jpeg|png",
-                            filesize: 2
-                        }
                     },
                     messages: {
-                        'id_card': {
-                            remote: "This id card is already taken! Try another."
-                        },
-                        'pic[]': {
-                            extension: "Please select only jpg, jpeg and png files"
-                        },
-                        'pic_dl[]': {
-                            extension: "Please select only jpg, jpeg and png files"
-                        }
+
                     },
                     submitHandler: function(form) {
                         // update ajax request data

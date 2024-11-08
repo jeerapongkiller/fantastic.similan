@@ -454,8 +454,7 @@
                         for (let index = 0; index < res_extar[id].id.length; index++) {
                             amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
                             text_html += '<tr>' +
-                                '<td class="text-left" colspan="2"> ' + res_extar[id].name[index] + ' </td>' +
-                                '<td class="text-left" colspan="3">  </td>' +
+                                '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
                                 '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
                                 '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
                                 '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
@@ -468,31 +467,10 @@
                     }
                 }
 
-                if (res_invoice[cover_id].vat == 1) {
-                    vat_total = Number(((amount * 100) / 107));
-                    vat_cut = vat_total;
-                    vat_total = Number(amount - vat_total);
-                    withholding_total = res_invoice[cover_id].withholding > 0 ? Number((vat_cut * res_invoice[cover_id].withholding) / 100) : 0;
-                    amount = Number(amount - withholding_total);
-                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    });
-                } else if (res_invoice[cover_id].vat == 2) {
-                    vat_total = Number(((amount * 7) / 100));
-                    amount = Number(amount) + Number(vat_total);
-                    withholding_total = res_invoice[cover_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[cover_id].withholding) / 100) : 0;
-                    amount = Number(amount - withholding_total);
-                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    });
-                }
-
                 text_html += '<tr>' +
                     '<td colspan="9"></td>' +
                     '<td colspan="2" class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                    '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
-                        maximumFractionDigits: 2
-                    }) + '</td>' +
+                    '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
                     '</tr>'
 
                 if (discount > 0) {
@@ -511,6 +489,25 @@
                         '<td colspan="2" class="text-center"><b>Cash on tour</b></td>' +
                         '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
                         '</tr>'
+                }
+
+                if (res_invoice[rec_id].vat == 1) {
+                    vat_total = Number(((amount * 100) / 107));
+                    vat_cut = vat_total;
+                    vat_total = Number(amount - vat_total);
+                    withholding_total = res_invoice[rec_id].withholding > 0 ? Number((vat_cut * res_invoice[rec_id].withholding) / 100) : 0;
+                    amount = Number(amount - withholding_total);
+                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                        maximumFractionDigits: 2
+                    });
+                } else if (res_invoice[rec_id].vat == 2) {
+                    vat_total = Number(((amount * 7) / 100));
+                    amount = Number(amount) + Number(vat_total);
+                    withholding_total = res_invoice[rec_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[rec_id].withholding) / 100) : 0;
+                    amount = Number(amount - withholding_total);
+                    withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                        maximumFractionDigits: 2
+                    });
                 }
 
                 if (res_invoice[rec_id].vat > 0) {

@@ -43,24 +43,13 @@ class Driver extends DB
         return $data;
     }
 
-    public function insert_data(int $is_approved, string $id_card, string $name, string $telephone, string $address, int $sex, string $birth_date, string $issue_date, string $expire_date, array $picFile, array $pic_dlFile)
+    public function insert_data(int $is_approved, string $name, string $telephone, string $number_plate, int $seat)
     {
-        // upload pic file
-        $picResponse = $this->uploadFile($picFile);
-        $countpic = count($picResponse);
-
-        // upload pic file
-        $pic_dlResponse = $this->uploadFile($pic_dlFile);
-        $countpic_dl = count($pic_dlResponse);
-
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO drivers (id_card, name, telephone, address, sex, birth_date, issue_date, expire_date, pic, pic_dl, is_approved, is_deleted, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
-
-        $bind_types .= "s";
-        array_push($params, $id_card);
+        $query = "INSERT INTO `drivers`(`name`, `telephone`, `number_plate`, `seat`, `is_approved`, `is_deleted`, `created_at`, `updated_at`)
+        VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())";
 
         $bind_types .= "s";
         array_push($params, $name);
@@ -69,29 +58,10 @@ class Driver extends DB
         array_push($params, $telephone);
 
         $bind_types .= "s";
-        array_push($params, $address);
+        array_push($params, $number_plate);
 
         $bind_types .= "i";
-        array_push($params, $sex);
-
-        $bind_types .= "s";
-        array_push($params, $birth_date);
-
-        $bind_types .= "s";
-        array_push($params, $issue_date);
-
-        $bind_types .= "s";
-        array_push($params, $expire_date);
-
-        for ($i = 0; $i < $countpic; $i++) {
-            $bind_types .= "s";
-            array_push($params, $picResponse['filename'][$i]);
-        }
-
-        for ($i = 0; $i < $countpic_dl; $i++) {
-            $bind_types .= "s";
-            array_push($params, $pic_dlResponse['filename'][$i]);
-        }
+        array_push($params, $seat);
 
         $bind_types .= "i";
         array_push($params, $is_approved);
@@ -106,24 +76,12 @@ class Driver extends DB
         return $this->response;
     }
 
-    public function update_data(int $is_approved, string $id_card, string $name, string $telephone, string $address, int $sex, string $birth_date, string $issue_date, string $expire_date, array $picFile, array $pic_dlFile, int $id)
+    public function update_data(int $is_approved, string $name, string $telephone, string $number_plate, int $seat, int $id)
     {
-        // upload pic file
-        $picResponse = $this->uploadFile($picFile);
-        $countpic = count($picResponse);
-
-        // upload pic file
-        $pic_dlResponse = $this->uploadFile($pic_dlFile);
-        $countpic_dl = count($pic_dlResponse);
-
         $bind_types = "";
         $params = array();
 
         $query = "UPDATE drivers SET";
-
-        $query .= " id_card = ?,";
-        $bind_types .= "s";
-        array_push($params, $id_card);
 
         $query .= " name = ?,";
         $bind_types .= "s";
@@ -133,37 +91,13 @@ class Driver extends DB
         $bind_types .= "s";
         array_push($params, $telephone);
 
-        $query .= " address = ?,";
+        $query .= " number_plate = ?,";
         $bind_types .= "s";
-        array_push($params, $address);
+        array_push($params, $number_plate);
 
-        $query .= " sex = ?,";
+        $query .= " seat = ?,";
         $bind_types .= "i";
-        array_push($params, $sex);
-
-        $query .= " birth_date = ?,";
-        $bind_types .= "s";
-        array_push($params, $birth_date);
-
-        $query .= " issue_date = ?,";
-        $bind_types .= "s";
-        array_push($params, $issue_date);
-
-        $query .= " expire_date = ?,";
-        $bind_types .= "s";
-        array_push($params, $expire_date);
-
-        for ($i = 0; $i < $countpic; $i++) {
-            $query .= " pic = ?,";
-            $bind_types .= "s";
-            array_push($params, $picResponse['filename'][$i]);
-        }
-
-        for ($i = 0; $i < $countpic_dl; $i++) {
-            $query .= " pic_dl = ?,";
-            $bind_types .= "s";
-            array_push($params, $pic_dlResponse['filename'][$i]);
-        }
+        array_push($params, $seat);
 
         $query .= " is_approved = ?,";
         $bind_types .= "i";
@@ -249,7 +183,7 @@ class Driver extends DB
         return $data;
     }
 
-    public function search($is_approved, string $id_card, string $first_name, string $last_name, string $nickname, $sex)
+    public function search($is_approved, string $name, string $number_plate, $seat)
     {
         $bind_types = "";
         $params = array();
@@ -265,34 +199,22 @@ class Driver extends DB
             array_push($params, $is_approved);
         }
 
-        if (!empty($id_card)) {
-            $query .= " AND id_card LIKE ?";
+        if (!empty($name)) {
+            $query .= " AND name LIKE ?";
             $bind_types .= "s";
-            array_push($params, '%' . $id_card . '%');
+            array_push($params, '%' . $name . '%');
         }
 
-        if (!empty($first_name)) {
-            $query .= " AND first_name LIKE ?";
+        if (!empty($number_plate)) {
+            $query .= " AND number_plate LIKE ?";
             $bind_types .= "s";
-            array_push($params, '%' . $first_name . '%');
+            array_push($params, '%' . $number_plate . '%');
         }
 
-        if (!empty($last_name)) {
-            $query .= " AND last_name LIKE ?";
-            $bind_types .= "s";
-            array_push($params, '%' . $last_name . '%');
-        }
-
-        if (!empty($nickname)) {
-            $query .= " AND nickname LIKE ?";
-            $bind_types .= "s";
-            array_push($params, '%' . $nickname . '%');
-        }
-
-        if (isset($sex) && $sex != "all") {
-            $query .= " AND sex = ?";
+        if (isset($seat) && $seat != "all") {
+            $query .= " AND seat = ?";
             $bind_types .= "i";
-            array_push($params, $sex);
+            array_push($params, $seat);
         }
 
         $statement = $this->connection->prepare($query);
@@ -309,12 +231,12 @@ class Driver extends DB
         $responseFilename = array();
         $countfiles = count($fileArray);
         for ($i = 0; $i < $countfiles; $i++) {
-            $fileTmpPath = !empty($fileArray['fileTmpPath'][$i]) ? $fileArray['fileTmpPath'][$i] : '' ;
-            $fileName = !empty($fileArray['fileName'][$i]) ? $fileArray['fileName'][$i] : '' ;
-            $fileSize = !empty($fileArray['fileSize'][$i]) ? $fileArray['fileSize'][$i] : '' ;
-            $fileBefore = !empty($fileArray['fileBefore'][$i]) ? $fileArray['fileBefore'][$i] : '' ;
-            $fileDelete = !empty($fileArray['fileDelete'][$i]) ? $fileArray['fileDelete'][$i] : '' ;
-            $uploadFileDir = !empty($fileArray['fileDir'][$i]) ? $fileArray['fileDir'][$i] : '' ;
+            $fileTmpPath = !empty($fileArray['fileTmpPath'][$i]) ? $fileArray['fileTmpPath'][$i] : '';
+            $fileName = !empty($fileArray['fileName'][$i]) ? $fileArray['fileName'][$i] : '';
+            $fileSize = !empty($fileArray['fileSize'][$i]) ? $fileArray['fileSize'][$i] : '';
+            $fileBefore = !empty($fileArray['fileBefore'][$i]) ? $fileArray['fileBefore'][$i] : '';
+            $fileDelete = !empty($fileArray['fileDelete'][$i]) ? $fileArray['fileDelete'][$i] : '';
+            $uploadFileDir = !empty($fileArray['fileDir'][$i]) ? $fileArray['fileDir'][$i] : '';
 
             if (!empty($fileName)) {
                 $fileNameCmps = explode(".", $fileName);
@@ -345,6 +267,6 @@ class Driver extends DB
     public function get_age(string $date)
     {
         $then = strtotime($date);
-        return(floor((time()-$then)/31556926));
+        return (floor((time() - $then) / 31556926));
     }
 }

@@ -282,8 +282,9 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $file_export = "Excel-" . date("dmY-Hs");
 
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-    ob_end_clean();
     header('Content-type: application/vnd.ms-excel');
     header('Content-Disposition: attachment;filename="' . $file_export . '.xlsx"');
+    ob_end_clean();
     $objWriter->save('php://output');
+    exit();
 }

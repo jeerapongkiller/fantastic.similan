@@ -568,5 +568,5 @@ if (isset($action) && !empty($id)) {
             </a>
         </div>
     </div>
-    <input type="hidden" name="name_img" id="name_img" value="<?php echo $name_img; ?>">
+    <input type="hidden" name="name_img" id="name_img" value="<?php echo $rec_full[0]; ?>">
 <?php } ?>

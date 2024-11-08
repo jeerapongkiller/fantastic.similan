@@ -39,7 +39,7 @@ class Report extends DB
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     CARC.id as cars_category_id, CARC.name as cars_category,
                     BOT.id as BOT_id, BOT.arrange as arrange,
-                    ORTRAN.id as ortran_id, ORTRAN.driver as driver_name, ORTRAN.license as license, ORTRAN.telephone as ortran_telephone, ORTRAN.travel_date as ortran_travel,
+                    ORTRAN.id as ortran_id, ORTRAN.license as license, ORTRAN.telephone as ortran_telephone, ORTRAN.travel_date as ortran_travel,
                     CAR.id as car_id, CAR.name as car_name,
                     HOTPIK.id as hotel_pickup_id, HOTPIK.name as hotel_pickup_name,
                     HOTDRO.id as hotel_dropoff_id, HOTDRO.name as hotel_dropoff_name,

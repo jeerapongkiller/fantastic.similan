@@ -40,7 +40,7 @@ class Receipt extends DB
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.driver as driver, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
+                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
@@ -66,6 +66,7 @@ class Receipt extends DB
                     ON BO.company_id = COMP.id
                 LEFT JOIN booking_paid BOPA
                     ON BO.id = BOPA.booking_id
+                    AND BOPA.booking_payment_id	= 4
                 LEFT JOIN booking_payment BOPAY
                     ON BOPA.booking_payment_id = BOPAY.id
                 LEFT JOIN booking_products BP
