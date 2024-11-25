@@ -44,7 +44,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $name_img .= $search_guide != 'all' ? ' [' . $search_guide_name['name'] . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
+    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
     if (!empty($orders)) {
         foreach ($orders as $order) {
             if ((in_array($order['mange_id'], $first_order) == false) && !empty($order['mange_id'])) {
@@ -54,14 +54,15 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                 $order_boat_name[] = empty($order['boat_id']) ? !empty($order['orboat_boat_name']) ? $order['orboat_boat_name'] : '' : $order['boat_name'];
                 $order_boat_refcode[] = !empty($order['boat_refcode']) ? $order['boat_refcode'] : '';
                 $order_capt_id[] = !empty($order['capt_id']) ? $order['capt_id'] : 0;
-                // $order_capt_name[] = empty($order['capt_id']) ? $order['captain_name'] : '';
+                $order_counter[] = !empty($order['manage_counter']) ? $order['manage_counter'] : '';
                 $order_guide_id[] = !empty($order['guide_id']) ? $order['guide_id'] : 0;
                 $order_guide_name[] = !empty($order['guide_id']) ? $order['guide_name'] : '';
                 $order_note[] = !empty($order['orboat_note']) ? $order['orboat_note'] : '';
                 $order_crew_name[] = !empty($order['crew_id']) ? $order['crew_name'] : '';
                 $order_price[] = !empty($order['orboat_price']) ? $order['orboat_price'] : '';
                 $color_hex[] = !empty($order['color_hex']) ? $order['color_hex'] : '';
-                $color_name[] = !empty($order['color_name']) ? $order['color_name'] : '';
+                $color_name[] = !empty($order['color_name_th']) ? $order['color_name_th'] : '';
+                $text_color[] = !empty($order['text_color']) ? $order['text_color'] : '';
             }
 
             if ((in_array($order['id'], $first_bo) == false)  && !empty($order['mange_id'])) {
@@ -187,8 +188,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                         <table class="table table-striped text-uppercase table-vouchure-t2">
                             <thead class="bg-light">
                                 <tr>
-                                    <th colspan="11">ไกด์ : <?php echo $order_guide_name[$i]; ?></th>
-                                    <th colspan="3" style="background-color: <?php echo $color_hex[$i]; ?>;">
+                                    <th colspan="5">ไกด์ : <?php echo $order_guide_name[$i]; ?></th>
+                                    <th colspan="6">เคาน์เตอร์ : <?php echo $order_counter[$i]; ?></th>
+                                    <th colspan="3" style="background-color: <?php echo $color_hex[$i]; ?>; <?php echo $text_color[$i] != '' ? 'color: ' . $text_color[$i] . ';' : ''; ?>">
                                         สี : <?php echo $color_name[$i]; ?>
                                     </th>
                                 </tr>

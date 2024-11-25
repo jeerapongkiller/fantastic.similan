@@ -23,7 +23,7 @@ $first_ext = array();
 $first_bomanage = array();
 $first_bo = [];
 $first_trans = [];
-$bookings = $bookObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
+$bookings = $bookObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
 # --- Check products --- #
 if (!empty($bookings)) {
     foreach ($bookings as $booking) {
@@ -159,7 +159,7 @@ if (!empty($manages)) {
             $mange['time'][] = !empty($manage['time']) ? date('H:i', strtotime($manage['time'])) : '00:00';
             $mange['boat_id'][] = !empty($manage['boat_id']) ? $manage['boat_id'] : 0;
             $mange['boat_name'][] = !empty($manage['boat_id']) ? !empty($manage['boat_name']) ? $manage['boat_name'] : '' : $manage['outside_boat'];
-            // $mange['guide_name'][] = !empty($manage['guide']) ? $manage['guide'] : '';
+            $mange['counter'][] = !empty($manage['counter']) ? $manage['counter'] : '';
             $mange['guide_id'][] = !empty($manage['guide_id']) ? $manage['guide_id'] : 0;
             $mange['guide_name'][] = !empty($manage['guide_name']) ? $manage['guide_name'] : '';
             $mange['captain_id'][] = !empty($manage['captain_id']) ? $manage['captain_id'] : 0;
@@ -259,7 +259,7 @@ if (!empty($programed)) {
                                         <?php
                                         $bookstype = $bookObj->showliststatus();
                                         foreach ($bookstype as $booktype) {
-                                            $selected = $search_status == $booktype['id'] ? 'selected' : '' ;
+                                            $selected = $search_status == $booktype['id'] ? 'selected' : '';
                                         ?>
                                             <option value="<?php echo $booktype['id']; ?>" <?php echo $selected; ?>><?php echo $booktype['name']; ?></option>
                                         <?php } ?>
@@ -274,7 +274,7 @@ if (!empty($programed)) {
                                         <?php
                                         $agents = $bookObj->showlistagent();
                                         foreach ($agents as $agent) {
-                                            $selected = $search_agent == $agent['id'] ? 'selected' : '' ;
+                                            $selected = $search_agent == $agent['id'] ? 'selected' : '';
                                         ?>
                                             <option value="<?php echo $agent['id']; ?>" <?php echo $selected; ?>><?php echo $agent['name']; ?></option>
                                         <?php } ?>
@@ -289,7 +289,7 @@ if (!empty($programed)) {
                                         <?php
                                         $products = $bookObj->showlistproduct();
                                         foreach ($products as $product) {
-                                            $selected = $search_product == $product['id'] ? 'selected' : '' ;
+                                            $selected = $search_product == $product['id'] ? 'selected' : '';
                                         ?>
                                             <option value="<?php echo $product['id']; ?>" <?php echo $selected; ?>><?php echo $product['name']; ?></option>
                                         <?php } ?>
@@ -350,8 +350,9 @@ if (!empty($programed)) {
                                     <table class="table table-bordered table-striped">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th colspan="7">เวลา : <?php echo $mange['time'][$i]; ?></th>
-                                                <th colspan="7">ไกด์ : <?php echo $mange['guide_name'][$i]; ?></th>
+                                                <th colspan="4">เวลา : <?php echo $mange['time'][$i]; ?></th>
+                                                <th colspan="6">ไกด์ : <?php echo $mange['guide_name'][$i]; ?></th>
+                                                <th colspan="4">เคาน์เตอร์ : <?php echo $mange['counter'][$i]; ?></th>
                                                 <th colspan="2" style="background-color: <?php echo $mange['color_hex'][$i]; ?>;">
                                                     สี : <?php echo $mange['color_name'][$i]; ?>
                                                 </th>
@@ -632,6 +633,12 @@ if (!empty($programed)) {
                                             <div class="form-group">
                                                 <label class="form-label" for="note">Note</label></br>
                                                 <textarea name="note" id="note" class="form-control" cols="30" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-12">
+                                            <div class="form-group">
+                                                <label class="form-label" for="counter">เคาน์เตอร์</label>
+                                                <input type="text" class="form-control" id="counter" name="counter" value="" />
                                             </div>
                                         </div>
                                     </div>

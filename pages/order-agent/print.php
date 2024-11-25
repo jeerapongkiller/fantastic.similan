@@ -16,7 +16,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
 
     $first_booking = array();
     $first_ext = array();
-    $bookings = $bookingObj->showlistboats('agent', $agent_id, $travel_date, 'all', 'all', 'all', 'all', 'all', '', '', '');
+    $bookings = $bookingObj->showlistboats('agent', $agent_id, $travel_date, 'all', 'all', 'all', 'all', 'all', '', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value booking --- #

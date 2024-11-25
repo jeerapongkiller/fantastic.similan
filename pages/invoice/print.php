@@ -118,6 +118,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
 
                 $arr_bo['id'][] = !empty($invoice['id']) ? $invoice['id'] : 0;
                 $arr_bo[$invoice['id']]['travel_date'] = !empty($invoice['travel_date']) ? $invoice['travel_date'] : '';
+                $arr_bo[$invoice['id']]['text_date'] = !empty($invoice['travel_date']) ? date("d/m/Y", strtotime($invoice['travel_date'])) : '';
                 $arr_bo[$invoice['id']]['cus_name'] = !empty($invoice['cus_name']) ? $invoice['cus_name'] : '';
                 $arr_bo[$invoice['id']]['product_name'] = !empty($invoice['product_name']) ? $invoice['product_name'] : '';
                 $arr_bo[$invoice['id']]['voucher_no'] = !empty($invoice['voucher_no']) ? $invoice['voucher_no'] : $invoice['book_full'];
@@ -300,7 +301,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                         $sum_total = $total[$i] + $sum_total; ?>
                         <tr class="table-content">
                             <td class="text-center"><?php echo $i + 1; ?></td>
-                            <td class="text-center"><?php echo $travel_date[$i]; ?></td>
+                            <td class="text-center"><?php echo date("d/m/Y", strtotime($travel_date[$i])); ?></td>
                             <td><?php echo $cus_name[$i]; ?></td>
                             <td><?php echo $product_name[$i]; ?></td>
                             <td class="text-center"><?php echo $voucher_no[$i]; ?></td>

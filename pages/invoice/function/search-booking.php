@@ -48,6 +48,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
 
                 $arr_bo[$booking['id']]['id'] = !empty($booking['id']) ? $booking['id'] : 0;
                 $arr_bo[$booking['id']]['travel_date'] = !empty($booking['travel_date']) ? $booking['travel_date'] : '';
+                $arr_bo[$booking['id']]['text_date'] = !empty($booking['travel_date']) ? date("d/m/Y", strtotime($booking['travel_date'])) : '';
                 $arr_bo[$booking['id']]['cus_name'] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
                 $arr_bo[$booking['id']]['product_name'] = !empty($booking['product_name']) ? $booking['product_name'] : '';
                 $arr_bo[$booking['id']]['voucher_no'] = !empty($booking['voucher_no']) ? $booking['voucher_no'] : $booking['book_full'];

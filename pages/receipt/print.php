@@ -151,6 +151,7 @@ if (isset($action) && !empty($id)) {
 
                 $arr_bo['id'][] = !empty($receipt['id']) ? $receipt['id'] : 0;
                 $arr_bo[$receipt['id']]['travel_date'] = !empty($receipt['travel_date']) ? $receipt['travel_date'] : '';
+                $arr_bo[$receipt['id']]['text_date'] = !empty($receipt['travel_date']) ? date("d/m/Y", strtotime($receipt['travel_date'])) : '';
                 $arr_bo[$receipt['id']]['cus_name'] = !empty($receipt['cus_name']) ? $receipt['cus_name'] : '';
                 $arr_bo[$receipt['id']]['product_name'] = !empty($receipt['product_name']) ? $receipt['product_name'] : '';
                 $arr_bo[$receipt['id']]['voucher_no'] = !empty($receipt['voucher_no']) ? $receipt['voucher_no'] : $receipt['book_full'];
@@ -369,7 +370,7 @@ if (isset($action) && !empty($id)) {
                     <tr class="default-td">
                         <td class="text-center"><?php echo $i + 1; ?></td>
                         <td class="text-center"><?php echo $inv_full[0] . '/' . $inv_no[$i]; ?></td>
-                        <td class="text-center"><?php echo $travel_date[$i]; ?></td>
+                        <td class="text-center"><?php echo date("d/m/Y", strtotime($travel_date[$i])); ?></td>
                         <td><?php echo $cus_name[$i]; ?></td>
                         <td><?php echo $product_name[$i]; ?></td>
                         <td class="text-center"><?php echo $voucher_no[$i]; ?></td>

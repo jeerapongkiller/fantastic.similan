@@ -169,28 +169,28 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="day3" aria-labelledby="day3-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="day4" aria-labelledby="day4-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="day5" aria-labelledby="day5-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="day6" aria-labelledby="day6-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="day7" aria-labelledby="day7-tab" role="tabpanel">
-                                            
+
                                         </div>
                                         <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -499,8 +499,8 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                     <input type="hidden" id="book_time" name="book_time" value="<?php echo $times; ?>" />
                                     <div class="row">
                                         <div class="form-group col-xl-2 col-md-4 col-12">
-                                            <label class="form-label" for="travel_date">Travel Date</label><br>
-                                            <input type="date" class="form-control" id="travel_date" name="travel_date" value="<?php echo $tomorrow; ?>" onchange="search_program();" />
+                                            <label for="travel_date">Travel Date</label>
+                                            <input type="text" class="form-control flatpickr-basic" id="travel_date" name="travel_date" value="<?php echo $tomorrow; ?>" />
                                         </div>
                                         <div class="col-xl-2 col-md-4 col-12">
                                             <div class="form-group" id="frm-agent">

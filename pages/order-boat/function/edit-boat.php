@@ -21,6 +21,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (!empty($_POST['man
     // $outside_crew_first = !empty($_POST['outside_crew_first']) ? $_POST['outside_crew_first'] : '';
     // $outside_crew_second = !empty($_POST['outside_crew_second']) ? $_POST['outside_crew_second'] : '';
     $note = !empty($_POST['note']) ? $_POST['note'] : '';
+    $counter = !empty($_POST['counter']) ? $_POST['counter'] : '';
 
     # --- insert captain (outside) --- #
     if (!empty($_POST['outside_boat']) && ($_POST['boats'] == 'outside')) {
@@ -43,7 +44,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (!empty($_POST['man
     //     $crew_second_id = $manageObj->insert_crew($_POST['outside_crew_second']);
     // }
 
-    $response = $manageObj->update_manage_boat($time, $note, $boat_id, $guide_id, $color_id, $id);
+    $response = $manageObj->update_manage_boat($time, $counter, $note, $boat_id, $guide_id, $color_id, $id);
 
     echo $response;
 } else {

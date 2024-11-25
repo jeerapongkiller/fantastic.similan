@@ -376,6 +376,46 @@
             document.getElementById('park_total').innerHTML = numberWithCommas(total)
         }
 
+        function checkbox(mange_id) {
+            var checkbox_all = document.getElementById('checkall' + mange_id).checked;
+            var checkbox = document.getElementsByClassName('checkbox-' + mange_id);
+
+            if (checkbox_all == true && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    checkbox[index].checked = true;
+                    submit_check_in('check', checkbox[index]);
+                }
+            } else if (checkbox_all == false && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    checkbox[index].checked = false;
+                    submit_check_in('uncheck', checkbox[index]);
+                }
+            }
+        }
+
+        function submit_check_in(type, input) {
+            if (input.value) {
+                var action = type == 'only' ? input.dataset.check == 0 ? 'create' : 'delete' : '';
+                action = action == '' ? type == 'check' ? 'create' : 'delete' : '';
+
+                var formData = new FormData();
+                formData.append('action', action);
+                formData.append('bo_id', input.value);
+                $.ajax({
+                    url: "pages/order-job/function/check-in.php",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        console.log(response);
+                        // input.dataset.check = response;
+                        // location.reload();
+                    }
+                });
+            }
+        }
+
         function download_image() {
             var img_name = document.getElementById('name_img').value;
             var node = document.getElementById('order-job-image-table');

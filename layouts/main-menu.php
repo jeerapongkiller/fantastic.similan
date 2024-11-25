@@ -34,6 +34,8 @@
                     </li>
                     <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/list"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-boat/list"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">ใบงานเรือ</span></a>
                     </li>
+                    <li class="nav-item" hidden><a class="d-flex align-items-center" href="./?pages=order-boat/check-in"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">Check IN</span></a>
+                    </li>
                 </ul>
             </li>
             <!-- <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/"))) ? 'active' : ''; ?>">

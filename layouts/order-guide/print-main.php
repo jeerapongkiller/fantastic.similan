@@ -27,7 +27,7 @@
         td,
         th {
             border: 1px solid #333;
-            font-size: 12px;
+            font-size: 18px;
             padding: 5px 5px;
         }
 
@@ -76,7 +76,7 @@
         td,
         th {
             border: 1px solid #333;
-            font-size: 12px;
+            font-size: 18px;
             padding: 5px 5px;
         }
 

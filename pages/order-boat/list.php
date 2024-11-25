@@ -34,7 +34,7 @@ $first_ext = array();
 $first_bomanage = array();
 $first_bo = [];
 $first_trans = [];
-$bookings = $manageObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name);
+$bookings = $manageObj->showlistboats('list', 0, $get_date, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
 # --- Check products --- #
 if (!empty($bookings)) {
     foreach ($bookings as $booking) {
@@ -164,11 +164,12 @@ if (!empty($manages)) {
             $mange['id'][] = !empty($manage['id']) ? $manage['id'] : 0;
             $mange['color_id'][] = !empty($manage['color_id']) ? $manage['color_id'] : 0;
             $mange['color_name'][] = !empty($manage['color_name_th']) ? $manage['color_name_th'] : '';
+            $mange['text_color'][] = !empty($manage['text_color']) ? $manage['text_color'] : '';
             $mange['color_hex'][] = !empty($manage['color_hex']) ? $manage['color_hex'] : '';
             $mange['time'][] = !empty($manage['time']) ? date('H:i', strtotime($manage['time'])) : '00:00';
             $mange['boat_id'][] = !empty($manage['boat_id']) ? $manage['boat_id'] : 0;
             $mange['boat_name'][] = !empty($manage['boat_id']) ? !empty($manage['boat_name']) ? $manage['boat_name'] : '' : $manage['outside_boat'];
-            // $mange['guide_name'][] = !empty($manage['guide']) ? $manage['guide'] : '';
+            $mange['counter'][] = !empty($manage['counter']) ? $manage['counter'] : '';
             $mange['guide_id'][] = !empty($manage['guide_id']) ? $manage['guide_id'] : 0;
             $mange['guide_name'][] = !empty($manage['guide_name']) ? $manage['guide_name'] : '';
             $mange['captain_id'][] = !empty($manage['captain_id']) ? $manage['captain_id'] : 0;
@@ -218,7 +219,6 @@ if (!empty($programed)) {
             </div>
             <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
                 <div class="form-group breadcrumb-right">
-                    <button type="button" class="btn btn-success waves-effect waves-float waves-light btn-page-block-spinner" data-toggle="modal" data-target="#modal-boat" onclick="modal_boat('<?php echo date('j F Y', strtotime($get_date)); ?>', 0, 0);"><i data-feather='plus'></i> เปิดเรือ</button>
                 </div>
             </div>
         </div>
@@ -391,8 +391,9 @@ if (!empty($programed)) {
                                 <table class="table table-striped text-uppercase table-vouchure-t2">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th colspan="11">ไกด์ : <?php echo $mange['guide_name'][$i]; ?></th>
-                                            <th colspan="3" style="background-color: <?php echo $mange['color_hex'][$i]; ?>;">
+                                            <th colspan="5">ไกด์ : <?php echo $mange['guide_name'][$i]; ?></th>
+                                            <th colspan="6">เคาน์เตอร์ : <?php echo $mange['counter'][$i]; ?></th>
+                                            <th colspan="3" style="background-color: <?php echo $mange['color_hex'][$i]; ?>; <?php echo $mange['text_color'][$i] != '' ? 'color: ' . $mange['text_color'][$i] . ';' : ''; ?>">
                                                 สี : <?php echo $mange['color_name'][$i]; ?>
                                             </th>
                                         </tr>

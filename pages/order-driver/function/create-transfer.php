@@ -8,7 +8,7 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && (!empty($_POST['c
     // get value from ajax
     $car = !empty($_POST['car']) ? $_POST['car'] : 0;
     $seat = !empty($_POST['seat']) ? $_POST['seat'] : 0;
-    $driver = !empty($_POST['driver']) ? $_POST['driver'] : 0;
+    $driver = !empty($_POST['driver'] && $_POST['driver'] != 'outside') ? $_POST['driver'] : 0;
     $license = !empty($_POST['license']) ? $_POST['license'] : '';
     $telephone = !empty($_POST['telephone']) ? $_POST['telephone'] : '';
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';

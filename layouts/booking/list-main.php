@@ -205,6 +205,7 @@
                 jqForm = $('#booking-search-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
+                basicPickr = $('.flatpickr-basic'),
                 pageBlockSpinner = $('.btn-page-block-spinner'),
                 select = $('.select2');
 
@@ -256,6 +257,21 @@
                             $(instance.mobileInput).attr('step', null);
                         }
                     }
+                });
+            }
+
+            // Default
+            if (basicPickr.length) {
+                basicPickr.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
                 });
             }
 

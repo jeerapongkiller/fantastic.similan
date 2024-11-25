@@ -403,10 +403,10 @@
                     discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
                     cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
                     amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
-
+                    
                     text_html += '<tr>' +
                         '<td class="text-center">' + Number(no++) + '<input type="hidden" name="bo_id[]" value="' + id + '"></td>' +
-                        '<td class="text-center"> ' + res[id].travel_date + ' </td>' +
+                        '<td class="text-center"> ' + res[id].text_date + ' </td>' +
                         '<td> ' + res[id].cus_name + ' </td>' +
                         '<td> ' + res[id].product_name + ' </td>' +
                         '<td class="text-center"> ' + res[id].voucher_no + ' </td>' +

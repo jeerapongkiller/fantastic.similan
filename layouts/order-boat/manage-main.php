@@ -459,6 +459,7 @@
                 // document.getElementById('crew_first').value = res.crewf_id[i];
                 // document.getElementById('crew_second').value = res.crews_id[i];
                 document.getElementById('note').value = res.note[i];
+                document.getElementById('counter').value = res.counter[i];
                 document.getElementById('outside_boat').value = res.outside_boat[i];
 
                 // $("#programe").val(res.product_id[i]).trigger("change");

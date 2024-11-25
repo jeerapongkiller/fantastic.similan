@@ -667,10 +667,10 @@ class Order extends DB
         array_push($params, $seat);
 
         $bind_types .= "i";
-        array_push($params, $car);
+        array_push($params, $driver);
 
         $bind_types .= "i";
-        array_push($params, $driver);
+        array_push($params, $car);
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -859,7 +859,7 @@ class Order extends DB
 
     // Management Boat
     // --------------------------------------------------------------------
-    public function showlistboats($type, int $id, string $travel_date, $boat, $guide, $status, $agent, $product, $voucher_no, $refcode, $name)
+    public function showlistboats($type, int $id, string $travel_date, $boat, $guide, $status, $agent, $product, $voucher_no, $refcode, $name, $hotel)
     {
         $bind_types = "";
         $params = array();
@@ -891,11 +891,12 @@ class Order extends DB
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
-                    MANGE.id as mange_id, MANGE.time as manage_time,
-                    COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
+                    MANGE.id as mange_id, MANGE.time as manage_time, MANGE.counter as manage_counter,
+                    COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, COLOR.text_color as text_color, 
                     GUIDE.id as guide_id, GUIDE.name as guide_name,
+                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
+                    CHECKIN.id as check_id
                     -- CAPT.id as captain_id, CAPT.name as captain_name,
-                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
                     -- CREWF.id as crewf_id, CREWF.name as crewf_name,
                     -- CREWS.id as crews_id, CREWS.name as crews_name
                 FROM bookings BO
@@ -967,6 +968,8 @@ class Order extends DB
                 --     ON MANGE.crew_first_id = CREWF.id
                 -- LEFT JOIN crews CREWS
                 --     ON MANGE.crew_second_id = CREWS.id
+                LEFT JOIN check_in CHECKIN
+                    ON BO.id = CHECKIN.booking_id
                 WHERE BO.id > 0
                 AND BO.booking_status_id != 3
                 AND BP.is_deleted = 0
@@ -978,6 +981,7 @@ class Order extends DB
         $query .= (isset($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
         $query .= (isset($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
         $query .= (isset($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
+        $query .= (isset($hotel)) ? " AND BT.hotel_pickup LIKE '%" . $hotel . "%' " : "";
 
         if (!empty($type) && $type == 'list') {
             if (isset($travel_date) && $travel_date != '0000-00-00') {
@@ -1027,9 +1031,10 @@ class Order extends DB
                 array_push($params, $id);
             }
 
-            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
         }
 
+        echo $query;
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
         $statement->execute();
@@ -1044,7 +1049,7 @@ class Order extends DB
         $query = "SELECT manage.*,
                 bo_manage.id as bomanage_id,
                 boat.id as boat_id, boat.name as boat_name, boat.refcode as boat_refcode,
-                color.id as color_id, color.name as color_name, color.name_th as color_name_th, color.hex_code as color_hex,
+                color.id as color_id, color.name as color_name, color.name_th as color_name_th, color.hex_code as color_hex, color.text_color as text_color, 
                 -- captain.id as captain_id, captain.name as captain_name,
                 guide.id as guide_id, guide.name as guide_name
                 -- crewf.id as crewf_id, crewf.name as crewf_name,
@@ -1129,19 +1134,22 @@ class Order extends DB
         return $data;
     }
 
-    public function insert_manage_boat(string $travel_date, string $time, string $note, int $boat_id, int $guide_id, int $color_id)
+    public function insert_manage_boat(string $travel_date, string $time, string $counter, string $note, int $boat_id, int $guide_id, int $color_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO order_boat(`travel_date`, `time`, `note`, `boat_id`, `guide_id`, `color_id`, `created_at`)
-        VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        $query = "INSERT INTO order_boat(`travel_date`, `time`, `counter`, `note`, `boat_id`, `guide_id`, `color_id`, `created_at`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
         $bind_types .= "s";
         array_push($params, $travel_date);
 
         $bind_types .= "s";
         array_push($params, $time);
+
+        $bind_types .= "s";
+        array_push($params, $counter);
 
         $bind_types .= "s";
         array_push($params, $note);
@@ -1165,7 +1173,7 @@ class Order extends DB
         return $this->response;
     }
 
-    public function update_manage_boat(string $time, string $note, int $boat_id, int $guide_id, int $color_id, int $id)
+    public function update_manage_boat(string $time, string $counter, string $note, int $boat_id, int $guide_id, int $color_id, int $id)
     {
         $bind_types = "";
         $params = array();
@@ -1175,6 +1183,10 @@ class Order extends DB
         $query .= " time = ? ,";
         $bind_types .= "s";
         array_push($params, $time);
+
+        $query .= " counter = ? ,";
+        $bind_types .= "s";
+        array_push($params, $counter);
 
         $query .= " note = ? ,";
         $bind_types .= "s";
@@ -1618,6 +1630,40 @@ class Order extends DB
 
         if ($statement->execute()) {
             $this->response = $this->connection->insert_id;
+        }
+
+        return $this->response;
+    }
+
+    public function insert_check(int $bo_id)
+    {
+        $bind_types = "";
+        $params = array();
+
+        $query = "INSERT INTO `check_in`(`booking_id`, `created_at`) 
+        VALUES (?, NOW())";
+
+        $bind_types .= "i";
+        array_push($params, $bo_id);
+
+        $statement = $this->connection->prepare($query);
+        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
+
+        if ($statement->execute()) {
+            $this->response = $this->connection->insert_id;
+        }
+
+        return $this->response;
+    }
+
+    public function delete_check(int $bo_id)
+    {
+        $query = "DELETE FROM `check_in` WHERE `booking_id` = ? ";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("i", $bo_id);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
         }
 
         return $this->response;

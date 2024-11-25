@@ -17,7 +17,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
 
     $first_booking = array();
     $first_company = array();
-    $bookings = $orderObj->showlistboats('agent', 0, $travel_date, 'all', 'all', 'all', 'all', 'all', '', '', '');
+    $bookings = $orderObj->showlistboats('agent', 0, $travel_date, 'all', 'all', 'all', 'all', 'all', '', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value agent --- #

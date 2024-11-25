@@ -18,7 +18,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
 
     $first_bo = array();
     $first_manage_bo = array();
-    $bookings = $manageObj->showlistboats('manage', 0, $travel, 'all', 'all', 'all', 'all', 'all', '', '', '');
+    $bookings = $manageObj->showlistboats('manage', 0, $travel, 'all', 'all', 'all', 'all', 'all', '', '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             # --- get value booking --- #

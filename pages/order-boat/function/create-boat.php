@@ -22,6 +22,7 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && (!empty($_POST['b
     // $outside_crew_second = !empty($_POST['outside_crew_second']) ? $_POST['outside_crew_second'] : '';
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : '0000-00-00';
     $note = !empty($_POST['note']) ? $_POST['note'] : '';
+    $counter = !empty($_POST['counter']) ? $_POST['counter'] : '';
 
     # --- insert captain (outside) --- #
     if (!empty($_POST['outside_boat']) && ($_POST['boats'] == 'outside')) {
@@ -44,7 +45,7 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && (!empty($_POST['b
     //     $crew_second_id = $manageObj->insert_crew($_POST['outside_crew_second']);
     // }
     
-    $manage_id = $manageObj->insert_manage_boat($travel_date, $time, $note, $boat_id, $guide_id, $color_id);
+    $manage_id = $manageObj->insert_manage_boat($travel_date, $time, $counter, $note, $boat_id, $guide_id, $color_id);
 
     $response['travel_date'] = $travel_date;
     $response['id'] = $manage_id;
