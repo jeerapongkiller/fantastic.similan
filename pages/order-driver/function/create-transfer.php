@@ -20,10 +20,10 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && (!empty($_POST['c
     if (!empty($_POST['outside_car']) && ($_POST['car'] == 'outside')) {
         $car = $manageObj->insert_car($_POST['outside_car']);
     }
-    // # --- insert driver (outside) --- #
-    // if (!empty($_POST['outside_driver']) && ($_POST['driver'] == 'outside')) {
-    //     $driver = $manageObj->insert_driver($_POST['outside_driver'], $telephone, $license, $seat);
-    // }
+    # --- insert driver (outside) --- #
+    if (!empty($_POST['outside_driver']) && ($_POST['driver'] == 'outside')) {
+        $driver = $manageObj->insert_driver($_POST['outside_driver'], $telephone, $license, $seat);
+    }
 
     $manage_id = $manageObj->insert_manage_transfer($outside_driver, $car, $seat, $driver, $license, $telephone, $travel_date, $note, $pickup, $dropoff);
 

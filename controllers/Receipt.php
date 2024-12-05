@@ -148,7 +148,7 @@ class Receipt extends DB
                 array_push($params, $agent);
             }
 
-            $query .= " ORDER BY COMP.name ASC, INV.no ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, INV.no ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
         if (isset($type) && $type == "receipts") {
@@ -166,7 +166,7 @@ class Receipt extends DB
                 array_push($params, $rec_id);
             }
 
-            $query .= " ORDER BY COMP.name ASC, INV.no ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, INV.no ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
         $statement = $this->connection->prepare($query);

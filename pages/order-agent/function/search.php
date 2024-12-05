@@ -5,15 +5,14 @@ require_once '../../../controllers/Order.php';
 $orderObj = new Order();
 $today = date("Y-m-d");
 
+function check_in($var)
+{
+    return ($var > 0);
+}
+
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['travel_date'])) {
     // get value from ajax
     $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
-    // $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
-    // $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
-    // $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
-    // $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
-    // $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
-    // $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_booking = array();
     $first_company = array();
@@ -25,6 +24,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
                 $first_company[] = $booking['comp_id'];
                 $agent_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
                 $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
+                $confirm_id[] = !empty($booking['confirm_id']) ? $booking['confirm_id'] : 0;
             }
             # --- get value booking --- #
             if ((in_array($booking['id'], $first_booking) == false) && !empty($booking['comp_id'])) {
@@ -47,10 +47,20 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
         <div class="col-4 text-right mb-50"></div>
     </div>
 
-    <?php if (!empty($agent_id)) { ?>
+    <?php if (!empty($agent_id)) {
+        if (!empty($agent_id) && !empty($confirm_id)) {
+            $checkall = count($agent_id) == count(array_filter($confirm_id, "check_in")) ? 'checked' : '';
+        }
+    ?>
         <table class="table table-striped text-uppercase table-vouchure-t2">
             <thead class="bg-light">
                 <tr>
+                    <th class="text-center" width="1%">
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input dt-checkboxes" type="checkbox" id="checkall<?php echo strtotime($travel_date); ?>" onclick="checkbox(<?php echo strtotime($travel_date); ?>);" <?php echo !empty($checkall) ? $checkall : ''; ?> />
+                            <label class="custom-control-label" for="checkall<?php echo strtotime($travel_date); ?>"></label>
+                        </div>
+                    </th>
                     <th>ชื่อเอเยนต์</th>
                     <th class="text-center">Booking</th>
                     <th class="text-center">Total</th>
@@ -63,15 +73,21 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
             </thead>
             <tbody>
                 <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
-                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
-                        <td><?php echo $agent_name[$i]; ?></td>
-                        <td class="text-center"><?php echo !empty($bo_id[$agent_id[$i]]) ? count($bo_id[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($total_tourist[$agent_id[$i]]) ? array_sum($total_tourist[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($infant[$agent_id[$i]]) ? array_sum($infant[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($foc[$agent_id[$i]]) ? array_sum($foc[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo !empty($cot[$agent_id[$i]]) ? number_format(array_sum($cot[$agent_id[$i]])) : 0; ?></td>
+                    <tr <?php echo $confirm_id[$i] > 0 ? 'class="table-success"' : ''; ?>>
+                        <td class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input dt-checkboxes checkbox-<?php echo strtotime($travel_date); ?>" type="checkbox" id="checkbox<?php echo strtotime($travel_date) . '-' . $agent_id[$i]; ?>" data-travel="<?php echo $travel_date; ?>" data-check="<?php echo $confirm_id[$i]; ?>" data-confirm="<?php echo $confirm_id[$i]; ?>" value="<?php echo $agent_id[$i]; ?>" onclick="submit_check_in('only', this);" <?php echo $confirm_id[$i] > 0 ? 'checked' : ''; ?> />
+                                <label class="custom-control-label" for="checkbox<?php echo strtotime($travel_date) . '-' . $agent_id[$i]; ?>"></label>
+                            </div>
+                        </td>
+                        <td onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo $agent_name[$i]; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($bo_id[$agent_id[$i]]) ? count($bo_id[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($total_tourist[$agent_id[$i]]) ? array_sum($total_tourist[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($infant[$agent_id[$i]]) ? array_sum($infant[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($foc[$agent_id[$i]]) ? array_sum($foc[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center" onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail"><?php echo !empty($cot[$agent_id[$i]]) ? number_format(array_sum($cot[$agent_id[$i]])) : 0; ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

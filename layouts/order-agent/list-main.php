@@ -212,7 +212,11 @@
                 data: formData,
                 success: function(response) {
                     if (response != 'false') {
-                        $('#' + tabs).html(response);
+                        if (tabs != 'custom') {
+                            $('#' + tabs).html(response);
+                        } else {
+                            $('#div-agent-custom').html(response);
+                        }
                     }
                 }
             });
@@ -254,6 +258,52 @@
                 dateFormat: 'Y-m-d',
                 defaultDate: currentDate
             });
+        }
+
+        function checkbox(travel) {
+            var checkbox_all = document.getElementById('checkall' + travel).checked;
+            var checkbox = document.getElementsByClassName('checkbox-' + travel);
+
+            if (checkbox_all == true && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    if (checkbox[index].checked != true) {
+                        checkbox[index].checked = true;
+                        submit_check_in('check', checkbox[index]);
+                    }
+                }
+            } else if (checkbox_all == false && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    checkbox[index].checked = false;
+                    submit_check_in('uncheck', checkbox[index]);
+                }
+            }
+        }
+
+        function submit_check_in(type, input) {
+            if (input.value) {
+                var action = type == 'only' ? input.dataset.check == 0 ? 'create' : 'delete' : '';
+                action = action == '' ? type == 'check' ? 'create' : 'delete' : action;
+
+                var formData = new FormData();
+                formData.append('action', action);
+                formData.append('agent_id', input.value);
+                formData.append('travel_date', input.dataset.travel);
+                $.ajax({
+                    url: "pages/order-agent/function/confirm-agent.php",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        search_start_date('today', '<?php echo $today; ?>');
+                        search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+                        search_start_date('custom', $('#travel_date').val());
+                        // console.log(response);
+                        // input.dataset.check = response;
+                        // location.reload();
+                    }
+                });
+            }
         }
 
         function download_image() {

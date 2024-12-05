@@ -80,6 +80,13 @@ if (isset($_POST['action']) && $_POST['action'] == "create") {
     $payments = !empty($_POST['payments']) ? $_POST['payments'] : '';
     # --- get value extra chang from --- #
     $extra_charge = !empty($_POST['extra-charge']) ? $_POST['extra-charge'] : '';
+    # --- check confirm agent --- #
+    if (($agent != 'outside' && $agent > 0) && ($travel_date != '0000-00-00')) {
+        $confirm_id = $bookObj->get_values('id', 'confirm_agent', 'agent_id = ' . $agent . ' AND travel_date	= "' . $travel_date . '"');
+        if ($confirm_id != false && $confirm_id['id'] > 0) {
+            $response = $bookObj->delete_confirm($confirm_id['id']);
+        }
+    }
 
     if ($quick > 0) {
         # --- chack insert agent --- #

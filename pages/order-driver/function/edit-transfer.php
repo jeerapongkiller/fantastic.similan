@@ -20,6 +20,10 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (!empty($_POST['car
     if (!empty($_POST['outside_car']) && ($_POST['car'] == 'outside')) {
         $car = $manageObj->insert_car($_POST['outside_car']);
     }
+    # --- insert driver (outside) --- #
+    if (!empty($_POST['outside_driver']) && ($_POST['driver'] == 'outside')) {
+        $driver = $manageObj->insert_driver($_POST['outside_driver'], $telephone, $license, $seat);
+    }
 
     $response = $manageObj->update_manage_transfer($outside_driver, $car, $seat, $driver, $license, $telephone, $note, $id);
 

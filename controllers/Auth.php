@@ -54,7 +54,7 @@ class Auth extends DB
                     $_SESSION["supplier"]["permission"][] = $permission['permission_id'];
                 }
 
-                $this->response = $login['staff_id'] == 0 ? "true" : "false";
+                $this->response = $login['id'];
             }
             
         }

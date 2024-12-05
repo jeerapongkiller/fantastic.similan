@@ -182,13 +182,78 @@
                     data: serializedData + "&action=search",
                     success: function(response) {
                         if (response != 'false') {
+                            search_start_date('custom', $('#date_travel_form').val());
                             $("#order-guide-search-table").html(response);
                         }
                     }
                 });
                 e.preventDefault();
             });
+
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-guide/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
+
+        function checkbox(mange_id) {
+            var checkbox_all = document.getElementById('checkall' + mange_id).checked;
+            var checkbox = document.getElementsByClassName('checkbox-' + mange_id);
+
+            if (checkbox_all == true && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    checkbox[index].checked = true;
+                    submit_check_in('check', checkbox[index]);
+                }
+            } else if (checkbox_all == false && checkbox.length > 0) {
+                for (let index = 0; index < checkbox.length; index++) {
+                    checkbox[index].checked = false;
+                    submit_check_in('uncheck', checkbox[index]);
+                }
+            }
+        }
+
+        function submit_check_in(type, input) {
+            if (input.value) {
+                var action = type == 'only' ? input.dataset.check == 0 ? 'create' : 'delete' : '';
+                action = action == '' ? type == 'check' ? 'create' : 'delete' : action;
+
+                var formData = new FormData();
+                formData.append('action', action);
+                formData.append('bo_id', input.value);
+                $.ajax({
+                    url: "pages/order-guide/function/check-in.php",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        // search_start_date('custom', $('#date_travel_form').val());
+                        // console.log(response);
+                        // input.dataset.check = response;
+                        // location.reload();
+                    }
+                });
+            }
+        }
 
         function download_image() {
             var img_name = document.getElementById('name_img').value;

@@ -49,7 +49,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $name_img .= $search_boat != 'all' ? ' [' . $search_boat_name . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, '');
+    $orders = $orderObj->showlistboats('job', 0, $date_travel_form, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, '');
     if (!empty($orders)) {
         foreach ($orders as $order) {
             if ((in_array($order['mange_id'], $first_order) == false) && !empty($order['mange_id'])) {
@@ -221,12 +221,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                     <th class="text-center" width="1%">C</th>
                                     <th class="text-center" width="1%">Inf</th>
                                     <th class="text-center" width="1%">FOC</th>
-                                    <!-- <th class="text-center" width="1%">รวม</th> -->
                                     <th width="5%">COT</th>
                                     <th width="5%">Remark</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="<?php echo "tbody-" . $mange_id[$i] ?>">
                                 <?php
                                 $total_tourist = 0;
                                 $total_adult = 0;
@@ -245,7 +244,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         <tr>
                                             <td class="text-center">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input dt-checkboxes checkbox-<?php echo $mange_id[$i]; ?>" type="checkbox" data-check="<?php echo $check_id[$mange_id[$i]][$a]; ?>" id="checkbox<?php echo $id; ?>" value="<?php echo $id; ?>" onclick="submit_check_in('only', this);" <?php echo $check_id[$mange_id[$i]][$a] > 0 ? 'checked' : ''; ?> />
+                                                    <input class="custom-control-input dt-checkboxes checkbox-<?php echo $mange_id[$i]; ?>" type="checkbox" data-check="<?php echo $check_id[$mange_id[$i]][$a]; ?>" data-mange="<?php echo $mange_id[$i]; ?>" id="checkbox<?php echo $id; ?>" value="<?php echo $id; ?>" onclick="submit_check_in('only', this);" <?php echo $check_id[$mange_id[$i]][$a] > 0 ? 'checked' : ''; ?> />
                                                     <label class="custom-control-label" for="checkbox<?php echo $id; ?>"></label>
                                                 </div>
                                             </td>

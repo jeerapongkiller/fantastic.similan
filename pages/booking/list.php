@@ -261,12 +261,12 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                 $rate_adult[] = !empty($booking['rate_adult']) ? $booking['rate_adult'] : 0;
                                 $rate_child[] = !empty($booking['rate_child']) ? $booking['rate_child'] : 0;
                                 $created_at[] = !empty(!empty($booking['created_at'])) ? $booking['created_at'] : '0000-00-00';
-                                // $payment[] = !empty($booking['bookpay_name']) ? !empty($booking['paid_id']) ? '<span class="badge badge-pill badge-light-success text-capitalized"> ' . $booking['bookpay_name'] . '<br> ชำระเงินแล้ว </span>' : '<span class="badge badge-pill ' . $booking['bookpay_name_class'] . ' text-capitalized"> ' . $booking['bookpay_name'] . ' </span>' : '<span class="badge badge-pill badge-light-primary text-capitalized"> Add Payment </span></br>';
                                 $rate_total[] = !empty($booking['rate_total']) ? $booking['rate_total'] : 0;
                                 $transfer_type[] = !empty($booking['transfer_type']) ? $booking['transfer_type'] : 0;
                                 $btr_rate_adult[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_adult'] * $booking['btr_rate_adult'] : 0;
                                 $btr_rate_child[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_child'] * $booking['btr_rate_child'] : 0;
                                 $btr_rate_infant[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_infant'] * $booking['btr_rate_infant'] : 0;
+                                $confirm_id[] = !empty($booking['confirm_id']) ? $booking['confirm_id'] : 0;
                                 switch ($booking['booksta_id']) {
                                     case '1':
                                         $count_confirm = $count_confirm + 1;

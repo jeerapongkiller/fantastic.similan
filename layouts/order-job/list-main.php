@@ -191,6 +191,7 @@
                     data: serializedData + "&action=search",
                     success: function(response) {
                         if (response != 'false') {
+                            search_start_date('custom', $('#date_travel_form').val());
                             $("#order-jobs-search-table").html(response);
                         }
                     }
@@ -246,7 +247,30 @@
                     }
                 });
             }
+
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
+
+        function search_start_date(type, date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('type', type);
+            formData.append('date', date);
+            $.ajax({
+                url: "pages/order-job/function/search-report.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + type).html(response);
+                    }
+                }
+            });
+        }
 
         function modal_customer(orboat_id) {
             if (typeof orboat_id !== 'undefined') {
@@ -396,7 +420,7 @@
         function submit_check_in(type, input) {
             if (input.value) {
                 var action = type == 'only' ? input.dataset.check == 0 ? 'create' : 'delete' : '';
-                action = action == '' ? type == 'check' ? 'create' : 'delete' : '';
+                action = action == '' ? type == 'check' ? 'create' : 'delete' : action;
 
                 var formData = new FormData();
                 formData.append('action', action);
@@ -408,7 +432,8 @@
                     contentType: false,
                     data: formData,
                     success: function(response) {
-                        console.log(response);
+                        search_start_date('custom', $('#date_travel_form').val());
+                        // console.log(response);
                         // input.dataset.check = response;
                         // location.reload();
                     }

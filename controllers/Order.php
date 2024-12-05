@@ -436,7 +436,7 @@ class Order extends DB
                     BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside, BT.hotel_dropoff as outside_dropoff,
                     PICKUP.id as pickup_id, PICKUP.name_th as pickup_name,
                     DROPOFF.id as dropoff_id, DROPOFF.name_th as dropoff_name,
-                    ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name,
+                    ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name, ZONE_P.provinces as province_id,
                     ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
                     BOMANGE.id as bomange_id, BOMANGE.arrange as arrange,
                     MANGE.id as mange_id, MANGE.pickup as mange_pickup, MANGE.dropoff as mange_dropoff, MANGE.note as mange_note, MANGE.license as license, MANGE.seat as seat,
@@ -493,6 +493,7 @@ class Order extends DB
                     ON MANGEB.boat_id = BOAT.id
                 WHERE BO.id > 0
                 AND BO.booking_status_id != 3
+                AND BO.booking_status_id != 4
                 AND CATE.transfer > 0
                 AND BT.pickup_type = 1
         ";
@@ -506,7 +507,7 @@ class Order extends DB
 
         if (!empty($type) && $type == 'manage') {
 
-            $query .= " AND BP.is_deleted = 0";
+            $query .= " AND BP.is_deleted = 0 ";
 
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
@@ -542,7 +543,7 @@ class Order extends DB
 
         if (!empty($type) && $type == 'all') {
 
-            $query .= " AND BP.is_deleted = 0";
+            $query .= " AND BP.is_deleted = 0 ";
 
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
@@ -895,10 +896,8 @@ class Order extends DB
                     COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, COLOR.text_color as text_color, 
                     GUIDE.id as guide_id, GUIDE.name as guide_name,
                     BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
-                    CHECKIN.id as check_id
-                    -- CAPT.id as captain_id, CAPT.name as captain_name,
-                    -- CREWF.id as crewf_id, CREWF.name as crewf_name,
-                    -- CREWS.id as crews_id, CREWS.name as crews_name
+                    CHECKIN.id as check_id,
+                    CONFIRM.id as confirm_id
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -958,32 +957,39 @@ class Order extends DB
                     ON BORDB.manage_id = MANGE.id
                 LEFT JOIN colors COLOR 
                     ON MANGE.color_id = COLOR.id
-                -- LEFT JOIN captains CAPT
-                --     ON MANGE.captain_id = CAPT.id
                 LEFT JOIN guides GUIDE
                     ON MANGE.guide_id = GUIDE.id
                 LEFT JOIN boats BOAT
                     ON MANGE.boat_id = BOAT.id
-                -- LEFT JOIN crews CREWF
-                --     ON MANGE.crew_first_id = CREWF.id
-                -- LEFT JOIN crews CREWS
-                --     ON MANGE.crew_second_id = CREWS.id
                 LEFT JOIN check_in CHECKIN
                     ON BO.id = CHECKIN.booking_id
-                WHERE BO.id > 0
-                AND BO.booking_status_id != 3
-                AND BP.is_deleted = 0
         ";
 
-        $query .= (isset($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
-        $query .= (isset($agent) && $agent != 'all') ? " AND COMP.id = " . $agent : "";
-        $query .= (isset($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
-        $query .= (isset($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
-        $query .= (isset($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
-        $query .= (isset($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
-        $query .= (isset($hotel)) ? " AND BT.hotel_pickup LIKE '%" . $hotel . "%' " : "";
+        $query .= ($type == 'job') ? " AND CHECKIN.type = 1" : "";
+        $query .= ($type == 'guide') ? " AND CHECKIN.type = 2" : "";
 
-        if (!empty($type) && $type == 'list') {
+        $query .= " LEFT JOIN confirm_agent CONFIRM
+                        ON COMP.id = CONFIRM.agent_id ";
+
+        $query .= ($type == 'agent' && (isset($travel_date) && $travel_date != '0000-00-00')) ? " AND CONFIRM.travel_date = '$travel_date'" : "";
+
+        $query .= " WHERE BO.id > 0
+                        AND BO.booking_status_id != 3
+                        AND BO.booking_status_id != 4
+                        AND BP.is_deleted = 0 ";
+
+        $query .= (!empty($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
+        $query .= (!empty($agent) && $agent != 'all') ? " AND COMP.id = " . $agent : "";
+        $query .= (!empty($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
+        $query .= (!empty($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
+        $query .= (!empty($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
+        $query .= (!empty($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
+        $query .= (!empty($hotel)) ? " AND BT.hotel_pickup LIKE '%" . $hotel . "%' " : "";
+
+        if (!empty($type) && ($type == 'list' || $type == 'job' || $type == 'guide')) {
+
+            // $query .= ($type == 'list') ? " AND BO.booking_status_id != 4 " : "";
+
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= " AND BP.travel_date  = ?";
                 $bind_types .= "s";
@@ -999,7 +1005,7 @@ class Order extends DB
                 $bind_types .= "i";
                 array_push($params, $boat);
             }
-            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
+            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC"; // , CHECKIN.id ASC
         }
 
         if (!empty($type) && $type == 'manage') {
@@ -1020,7 +1026,6 @@ class Order extends DB
         }
 
         if (!empty($type) && $type == 'agent') {
-
             if (isset($travel_date) && $travel_date != '0000-00-00') {
                 $query .= !empty(substr($travel_date, 11, 20)) ? " AND BP.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 11, 20) . "'" : " AND BP.travel_date = '" . $travel_date . "' ";
             }
@@ -1034,7 +1039,6 @@ class Order extends DB
             $query .= " ORDER BY COMP.name ASC, BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC";
         }
 
-        echo $query;
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
         $statement->execute();
@@ -1635,16 +1639,22 @@ class Order extends DB
         return $this->response;
     }
 
-    public function insert_check(int $bo_id)
+    public function insert_check(int $bo_id, int $type)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO `check_in`(`booking_id`, `created_at`) 
-        VALUES (?, NOW())";
+        $query = "INSERT INTO `check_in`(`booking_id`, `type`, `login_id`, `created_at`) 
+        VALUES (?, ?, ?, NOW())";
 
         $bind_types .= "i";
         array_push($params, $bo_id);
+
+        $bind_types .= "i";
+        array_push($params, $type);
+
+        $bind_types .= "i";
+        array_push($params, $_SESSION["supplier"]["id"]);
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -1656,11 +1666,51 @@ class Order extends DB
         return $this->response;
     }
 
-    public function delete_check(int $bo_id)
+    public function delete_check(int $bo_id, int $type)
     {
-        $query = "DELETE FROM `check_in` WHERE `booking_id` = ? ";
+        $query = "DELETE FROM `check_in` WHERE `booking_id` = ? AND `type` = ? ";
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("i", $bo_id);
+        $statement->bind_param("ii", $bo_id, $type);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function insert_confirm(int $agent_id, string $travel_date)
+    {
+        $bind_types = "";
+        $params = array();
+
+        $query = "INSERT INTO `confirm_agent`(`travel_date`, `agent_id`, `login_id`, `created_at`) 
+        VALUES (?, ?, ?, NOW())";
+
+        $bind_types .= "s";
+        array_push($params, $travel_date);
+
+        $bind_types .= "i";
+        array_push($params, $agent_id);
+
+        $bind_types .= "i";
+        array_push($params, $_SESSION["supplier"]["id"]);
+
+        $statement = $this->connection->prepare($query);
+        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
+
+        if ($statement->execute()) {
+            $this->response = $this->connection->insert_id;
+        }
+
+        return $this->response;
+    }
+
+    public function delete_confirm(int $agent_id, string $travel_date)
+    {
+        $query = "DELETE FROM `confirm_agent` WHERE `agent_id` = ? AND `travel_date` = ? ";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("is", $agent_id, $travel_date);
         $statement->execute();
         if ($statement->execute()) {
             $this->response = true;

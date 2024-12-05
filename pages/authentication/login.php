@@ -103,8 +103,8 @@ require_once 'controllers/Auth.php';
         $auth = new Auth();
         $response = $auth->check_login($username_signin, $password_signin);
 
-        if ($response == "true") {
-            $redirect_page = 'booking/list';
+        if ($response != false && $response > 0) {
+            $redirect_page = ($_SESSION["supplier"]["department_id"] == 5) ? 'order-job/list' : 'booking/list';
             header('location:./?pages=' . $redirect_page);
         } else {
             echo '

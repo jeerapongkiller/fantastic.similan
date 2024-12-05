@@ -9,7 +9,7 @@ class DB
     private $host = 'localhost';
     private $username = 'root';
     private $password = '';
-    private $database = 'fantastic.similan';
+    private $database = 'fantastic_similan';
     protected $connection;
 
     public function __construct()

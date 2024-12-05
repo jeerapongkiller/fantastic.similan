@@ -24,6 +24,7 @@ if ($bookings[0]['id'] > 0) {
     $book_type_name = !empty(!empty($bookings[0]['booking_type_id'])) ? $bookings[0]['booktye_name'] : '';
     $book_status = !empty(!empty($bookings[0]['booking_status_id'])) ? $bookings[0]['booking_status_id'] : 0;
     $book_status_name = !empty(!empty($bookings[0]['booksta_name'])) ? $bookings[0]['booksta_name'] : 0;
+    $confirm_id = !empty($bookings[0]['confirm_id']) ? $bookings[0]['confirm_id'] : 0;
     $created_at = date('j F Y', strtotime($bookings[0]['created_at']));
     $guests_type = $agent_id == 0 ? 'Supplier' : 'Agent';
     # --- get value manage boat and transfer --- #

@@ -455,12 +455,6 @@ if (!empty($programed)) {
                                                             <?php if (!empty($bec_id[$id])) {
                                                                 for ($e = 0; $e < count($bec_name[$id]); $e++) {
                                                                     echo $e == 0 ? $bec_name[$id][$e] : ' : ' . $bec_name[$id][$e];
-                                                                    // if ($bec_type[$id][$e] == 1) {
-                                                                    //     echo 'A ' . $bec_adult[$id][$e] . ' X ' . $bec_rate_adult[$id][$e];
-                                                                    //     echo !empty($bec_child[$id][$e]) ? ' C ' . $bec_child[$id][$e] . ' X ' . $bec_rate_child[$id][$e] : '';
-                                                                    // } elseif ($bec_type[$id][$e] == 2) {
-                                                                    //     echo $bec_privates[$id][$e] . ' X ' . $bec_rate_total[$id][$e] . ' ';
-                                                                    // }
                                                                 }
                                                             }
                                                             echo !empty($book['note'][$mange['id'][$i]][$a]) ? ' / ' . $book['note'][$mange['id'][$i]][$a] : ''; ?>

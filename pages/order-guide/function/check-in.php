@@ -9,14 +9,14 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && !empty($_POST['bo
     // get value from ajax
     $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : 0;
 
-    $response = $manageObj->insert_check($bo_id, 1); // 1 = Job
+    $response = $manageObj->insert_check($bo_id, 2); // 2 = Guide
 
     echo $response;
 } elseif (isset($_POST['action']) && $_POST['action'] == "delete" && !empty($_POST['bo_id'])) {
     // get value from ajax
     $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : 0;
 
-    $response = $manageObj->delete_check($bo_id, 1); // 1 = Job
+    $response = $manageObj->delete_check($bo_id, 2); // 2 = Guide
 
     echo 0;
 } else {

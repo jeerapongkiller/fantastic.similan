@@ -4,6 +4,7 @@ require_once 'controllers/Order.php';
 $orderObj = new Order();
 
 $today = date("Y-m-d");
+$tomorrow = date("Y-m-d", strtotime(" +1 day"));
 $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
 
 function check_in($var)
@@ -17,6 +18,38 @@ function check_in($var)
     <div class="content-wrapper">
         <div class="content-header row">
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+
+                            </div>
+                            <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="content-body">
             <!-- order job list start -->
             <section class="app-user-list">
@@ -138,7 +171,7 @@ function check_in($var)
                         $sum_chd = 0;
                         $sum_inf = 0;
                         # --- get data --- #
-                        $orders = $orderObj->showlistboats('list', 0, $get_date, 'all', 'all', 'all', 'all', 'all', 'all', '', '', '', '', '');
+                        $orders = $orderObj->showlistboats('job', 0, $get_date, 'all', 'all', 'all', 'all', 'all', 'all', '', '', '', '', '');
                         if (!empty($orders)) {
                             foreach ($orders as $order) {
                                 if ((in_array($order['mange_id'], $first_order) == false) && !empty($order['mange_id'])) {
@@ -316,7 +349,7 @@ function check_in($var)
                                                     <th width="5%">Remark</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="<?php echo "tbody-" . $mange_id[$i] ?>">
                                                 <?php
                                                 $total_tourist = 0;
                                                 $total_adult = 0;
@@ -335,7 +368,7 @@ function check_in($var)
                                                         <tr>
                                                             <td class="text-center">
                                                                 <div class="custom-control custom-checkbox">
-                                                                    <input class="custom-control-input dt-checkboxes checkbox-<?php echo $mange_id[$i]; ?>" type="checkbox" data-check="<?php echo $check_id[$mange_id[$i]][$a]; ?>" id="checkbox<?php echo $id; ?>" value="<?php echo $id; ?>" onclick="submit_check_in('only', this);" <?php echo $check_id[$mange_id[$i]][$a] > 0 ? 'checked' : ''; ?> />
+                                                                    <input class="custom-control-input dt-checkboxes checkbox-<?php echo $mange_id[$i]; ?>" type="checkbox" data-check="<?php echo $check_id[$mange_id[$i]][$a]; ?>" data-mange="<?php echo $mange_id[$i]; ?>" id="checkbox<?php echo $id; ?>" value="<?php echo $id; ?>" onclick="submit_check_in('only', this);" <?php echo $check_id[$mange_id[$i]][$a] > 0 ? 'checked' : ''; ?> />
                                                                     <label class="custom-control-label" for="checkbox<?php echo $id; ?>"></label>
                                                                 </div>
                                                             </td>

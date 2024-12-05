@@ -32,7 +32,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
     $name_img .= $search_guide != 'all' ? ' [' . $search_guide_name . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
+    $orders = $orderObj->showlistboats('guide', 0, $date_travel_form, $search_boat, $search_guide, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
     # --- Check products --- #
     if (!empty($orders)) {
         foreach ($orders as $order) {
@@ -57,6 +57,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
             if ((in_array($order['id'], $first_bo) == false)  && !empty($order['mange_id'])) {
                 $first_bo[] = $order['id'];
                 $bo_id[$order['mange_id']][] = !empty($order['id']) ? $order['id'] : 0;
+                $check_id[$order['mange_id']][] = !empty($order['check_id']) ? $order['check_id'] : 0;
                 $book_full[$order['mange_id']][] = !empty($order['book_full']) ? $order['book_full'] : '';
                 $agent[$order['mange_id']][] = !empty($order['comp_name']) ? $order['comp_name'] : '';
                 $voucher_no[$order['mange_id']][] = !empty($order['voucher_no_agent']) ? $order['voucher_no_agent'] : '';
@@ -163,12 +164,13 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                         <thead>
                             <tr>
                                 <td colspan="6">ไกด์ : <?php echo $order_guide_name[$i]; ?></td>
-                                <td colspan="6">เคาน์เตอร์ : <?php echo $order_counter[$i]; ?></td>
+                                <td colspan="7">เคาน์เตอร์ : <?php echo $order_counter[$i]; ?></td>
                                 <td colspan="3" style="background-color: <?php echo $color_hex[$i]; ?>; <?php echo $text_color[$i] != '' ? 'color: ' . $text_color[$i] . ';' : ''; ?>">
                                     สี : <?php echo $color_name[$i]; ?>
                                 </td>
                             </tr>
                             <tr>
+                                <th class="text-center" width="3%"></th>
                                 <th class="text-center" width="1%"></th>
                                 <th width="5%">เวลารับ</th>
                                 <th width="5%">Driver</th>
@@ -203,7 +205,8 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                                     $class_tr = ($a % 2 == 1) ? 'table-active' : '';
                             ?>
                                     <tr class="<?php echo $class_tr; ?>">
-                                        <td><?php echo $a + 1; ?></td>
+                                        <td class="text-center"><?php echo $check_id[$mange_id[$i]][$a] > 0 ? '<i data-feather="check"></i>' : ''; ?></td>
+                                        <td class="text-center"><?php echo $a + 1; ?></td>
                                         <td class="text-center"><?php echo $pickup_time[$mange_id[$i]][$a]; ?></td>
                                         <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                         <td><?php echo $agent[$mange_id[$i]][$a]; ?></td>

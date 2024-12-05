@@ -91,6 +91,10 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <h5>Booking Detail</h5>
                                         </div>
                                         <div class="card-body mt-2">
+                                            <?php // $confirm_id = $bookObj->get_values('id', 'confirm_agent', 'agent_id = ' . $agent_id . ' AND travel_date	= "' . $travel_date . '"');
+                                            // print_r($confirm_id);
+                                             // $get_value = $bookObj->get_value('id', 'confirm_agent', $confirm_id);
+                                                   // echo 'confirm id : ' . $get_value['id']; ?>
                                             <input type="hidden" id="bo_id" name="bo_id" value="<?php echo $bo_id; ?>">
                                             <input type="hidden" id="agent_id" name="agent_id" value="<?php echo $agent_id; ?>">
                                             <input type="hidden" id="book_type_id" name="book_type_id" value="<?php echo $book_type; ?>">
@@ -100,6 +104,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <input type="hidden" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
                                             <input type="hidden" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
                                             <input type="hidden" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
+                                            <input type="hidden" name="confirm_id" value="<?php echo $confirm_id; ?>" /> <!-- confirm agent id -->
                                             <div class="row">
                                                 <div class="form-group col-md-3">
                                                     <label class="form-label" for="booking_no">Booking No.</label>

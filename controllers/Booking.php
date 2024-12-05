@@ -97,13 +97,8 @@ class Booking extends DB
                         MANGE.id as mange_id, MANGE.time as manage_time,
                         COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex,
                         GUIDE.id as guide_id, GUIDE.name as guide_name,
-                        BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
-                        -- MANGET.id as ortran_id, MANGET.driver as driver_name, MANGET.license as license, MANGET.telephone as ortran_telephone,
-                        -- CAR.id as car_id, CAR.name as car_name,
-                        -- BOBOAT.id as boboat_id,
-                        -- ORBOAT.id as orboat_id, ORBOAT.note as orboat_note,
-                        -- COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
-                        -- BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
+                        BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
+                        CONFIRM.id as confirm_id
                     FROM bookings BO
                     LEFT JOIN bookings_no BONO
                         ON BO.id = BONO.booking_id
@@ -147,7 +142,6 @@ class Booking extends DB
                         ON BT.pickup_id = PICK.id
                     LEFT JOIN zones DROF
                         ON BT.dropoff_id = DROF.id
-
                     LEFT JOIN booking_order_transfer BOMANGE
                         ON BT.id = BOMANGE.booking_transfer_id
                     LEFT JOIN order_transfer MANGET 
@@ -165,18 +159,8 @@ class Booking extends DB
                         ON MANGE.guide_id = GUIDE.id
                     LEFT JOIN boats BOAT
                         ON MANGE.boat_id = BOAT.id
-                    -- LEFT JOIN order_transfer MANGET 
-                    --     ON BT.manage_id = MANGET.id
-                    -- LEFT JOIN cars CAR 
-                    --     ON MANGET.car_id = CAR.id
-                    -- LEFT JOIN booking_order_boat BOBOAT
-                    --     ON BO.id = BOBOAT.booking_id
-                    -- LEFT JOIN order_boat ORBOAT
-                    --     ON BOBOAT.manage_id = ORBOAT.id
-                    -- LEFT JOIN colors COLOR 
-                    --     ON ORBOAT.color_id = COLOR.id
-                    -- LEFT JOIN boats BOAT
-                    --     ON ORBOAT.boat_id = BOAT.id
+                    LEFT JOIN confirm_agent CONFIRM
+                        ON COMP.id = CONFIRM.agent_id
                     LEFT JOIN users BOOKER 
                         ON BO.booker_id = BOOKER.id
                     WHERE BO.id > 0
@@ -624,7 +608,8 @@ class Booking extends DB
                 BOMANGE.id as bomange_id,
                 MANGET.id as manget_id,
                 BORDB.id as boman_id, 
-                MANGE.id as mange_id
+                MANGE.id as mange_id,
+                CONFIRM.id as confirm_id
             FROM bookings BO
             LEFT JOIN bookings_no BONO
                 ON BO.id = BONO.booking_id
@@ -685,6 +670,9 @@ class Booking extends DB
                 ON BO.id = BORDB.booking_id
             LEFT JOIN order_boat MANGE 
                 ON BORDB.manage_id = MANGE.id
+            LEFT JOIN confirm_agent CONFIRM
+                ON COMP.id = CONFIRM.agent_id
+                AND CONFIRM.travel_date = BP.travel_date
             WHERE BO.id = ? AND BO.is_deleted = 0
         ";
 
@@ -718,6 +706,20 @@ class Booking extends DB
         } else {
             $data = false;
         }
+
+        return $data;
+    }
+
+    public function get_values(string $select, string $from, string $where)
+    {
+        $query = "SELECT $select
+            FROM $from 
+            WHERE $where
+        ";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_assoc();
 
         return $data;
     }
@@ -2563,6 +2565,19 @@ class Booking extends DB
         $query = "DELETE FROM booking_order_boat WHERE manage_id = ? AND booking_id = ? AND id = ?";
         $statement = $this->connection->prepare($query);
         $statement->bind_param("iii", $mange_id, $bo_id, $id);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function delete_confirm(int $id)
+    {
+        $query = "DELETE FROM `confirm_agent` WHERE `id` = ? ";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("i", $id);
         $statement->execute();
         if ($statement->execute()) {
             $this->response = true;

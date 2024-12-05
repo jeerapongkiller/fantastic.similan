@@ -17,6 +17,7 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     $cot_id = !empty($_POST['cot_id']) ? $_POST['cot_id'] : 0;
     $cot = !empty($_POST['cot']) ? preg_replace('(,)', '', $_POST['cot']) : 0;
     $discount = !empty($_POST['discount']) ? preg_replace('(,)', '', $_POST['discount']) : 0;
+    $confirm_id = !empty($_POST['confirm_id']) ? $_POST['confirm_id'] : 0;
     # --- get value booking management form --- #
     $mange_transfer_id = !empty($_POST['mange_transfer_id']) ? $_POST['mange_transfer_id'] : 0;
     $mange_transfer = !empty($_POST['mange_transfer']) ? $_POST['mange_transfer'] : 0;
@@ -44,13 +45,6 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
     $cus_id = !empty($_POST['cus_id']) ? $_POST['cus_id'] : 0;
     $cus_name = !empty($_POST['cus_name']) ? $_POST['cus_name'] : '';
     $cus_telephone = !empty($_POST['cus_telephone']) ? $_POST['cus_telephone'] : '';
-    // $customers = !empty($_POST['itinerary']) ? $_POST['itinerary'] : '';
-    // $before_cus_id = !empty($_POST['before_cus_id']) ? $_POST['before_cus_id'] : '';
-    // if ($customers) {
-    //     for ($i = 0; $i < count($customers); $i++) {
-    //         $cus_id[] = !empty($customers[$i]['cus_id']) ? $customers[$i]['cus_id'] : 0;
-    //     }
-    // }
     # --- get value Transfer from --- #
     $bt_id = !empty($_POST['bt_id']) ? $_POST['bt_id'] : 0;
     $pickup_type = !empty($_POST['pickup_type']) ? $_POST['pickup_type'] : 0;
@@ -166,6 +160,8 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
         $response = $bookObj->delete_booking_manage_transfer($mange_transfer, $bt_id, $mange_transfer_id);
         $response = $bookObj->delete_booking_manage_boat($mange_boat, $bo_id, $mange_boat_id);
     }
+
+    $response = $bookObj->delete_confirm($confirm_id);
 
     echo $response != FALSE && $response > 0 ? $response : FALSE;
 } else {

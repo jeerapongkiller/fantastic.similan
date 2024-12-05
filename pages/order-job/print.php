@@ -31,7 +31,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
     $name_img .= $search_boat != 'all' ? ' [' . $search_boat_name . '] ' : '';
     $name_img .= $date_travel_form != '0000-00-00' ? ' [' . date('j F Y', strtotime($date_travel_form)) . '] ' : '';
     # --- get data --- #
-    $orders = $orderObj->showlistboats('list', 0, $date_travel_form, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
+    $orders = $orderObj->showlistboats('job', 0, $date_travel_form, $search_boat, 'all', $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '');
     # --- Check products --- #
     if (!empty($orders)) {
         foreach ($orders as $order) {
@@ -205,7 +205,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                             ?>
                                     <tr class="<?php echo $class_tr; ?>">
                                         <td class="text-center"><?php echo $check_id[$mange_id[$i]][$a] > 0 ? '<i data-feather="check"></i>' : ''; ?></td>
-                                        <td><?php echo $a + 1; ?></td>
+                                        <td class="text-center"><?php echo $a + 1; ?></td>
                                         <td class="text-center"><?php echo $pickup_time[$mange_id[$i]][$a]; ?></td>
                                         <td style="padding: 5px;"><?php echo (!empty($managet['car'][$id][1])) ? $managet['car'][$id][1] : ''; ?></td>
                                         <td><?php echo $agent[$mange_id[$i]][$a]; ?></td>
