@@ -339,7 +339,7 @@ if (isset($action) && !empty($id)) {
                 <td class="text-center" style="border-radius: 15px 0px 0px 0px;" width="3%"><b>เลขที่</b></td>
                 <td class="text-center"><b>เลขใบแจ้งหนี้</b></td>
                 <td class="text-center"><b>วันที่เดินทาง</b></td>
-                <td class="text-center"><b>ชื่อลูค้า</b></td>
+                <td class="text-center"><b>ชื่อลูกค้า</b></td>
                 <td class="text-center"><b>โปรแกรม</b></td>
                 <td class="text-center"><b>หมายเลข</b></td>
                 <td class="text-center" colspan="2"><b>จํานวน</b></td>

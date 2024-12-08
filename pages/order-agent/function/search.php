@@ -12,7 +12,7 @@ function check_in($var)
 
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['travel_date'])) {
     // get value from ajax
-    $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
+    $travel_date = $_POST['travel_date'] != "0000-00-00" ? $_POST['travel_date'] : '0000-00-00';
 
     $first_booking = array();
     $first_company = array();

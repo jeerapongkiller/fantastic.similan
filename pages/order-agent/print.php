@@ -92,12 +92,12 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
         <table>
             <thead>
                 <tr>
-                    <th class="text-center" width="5%">เวลารับ</th>
-                    <th width="14%">โปรแกรม</th>
-                    <th width="15%">ชื่อลูกค้า</th>
+                    <th class="text-center" width="5%">Time</th>
+                    <th width="14%">Programe</th>
+                    <th width="15%">Name</th>
                     <th class="text-center" width="7%">V/C</th>
-                    <th width="20%">โรงแรม</th>
-                    <th width="5%">ห้อง</th>
+                    <th width="20%">Hotel</th>
+                    <th width="5%">Room</th>
                     <th class="text-center" width="1%">A</th>
                     <th class="text-center" width="1%">C</th>
                     <th class="text-center" width="1%">Inf</th>

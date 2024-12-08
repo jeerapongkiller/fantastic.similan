@@ -263,7 +263,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                             <tr class="table-black">
                                                 <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
                                                 <td class="text-center"><b>วันที่เดินทาง</b></td>
-                                                <td class="text-center"><b>ชื่อลูค้า</b></td>
+                                                <td class="text-center"><b>ชื่อลูกค้า</b></td>
                                                 <td class="text-center"><b>โปรแกรม</b></td>
                                                 <td class="text-center"><b>หมายเลข</b></td>
                                                 <td class="text-center" colspan="2"><b>จํานวน</b></td>

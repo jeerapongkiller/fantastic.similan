@@ -605,7 +605,7 @@ if (isset($action) && $action == "preview" && (!empty($id) || !empty($cover_id))
                     </td>
                     <td class="text-center" bgcolor="#333" style="color: #fff;" width="8%"><b>Voucher No.</b>
                     </td>
-                    <td class="text-center" bgcolor="#333" style="color: #fff;" width="15%"><b>ชื่อลูค้า</b><br>
+                    <td class="text-center" bgcolor="#333" style="color: #fff;" width="15%"><b>ชื่อลูกค้า</b><br>
                         <small>Customer's Name</small>
                     </td>
                     <td class="text-center" bgcolor="#333" style="color: #fff;" width="15%"><b>โปรแกรม</b><br>

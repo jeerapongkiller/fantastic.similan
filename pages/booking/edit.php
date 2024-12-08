@@ -1511,7 +1511,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                         </dl>
                                                         <dl class="row" style="margin-bottom: 0;">
                                                             <dt class="col-sm-4 text-right">
-                                                                ชื่อลูค้า <br>
+                                                                ชื่อลูกค้า <br>
                                                                 <small>(Customer Name)</small>
                                                             </dt>
                                                             <dd class="col-sm-8"><?php echo $customers['name'][0]; ?></dd>

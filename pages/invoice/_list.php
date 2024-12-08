@@ -523,7 +523,7 @@ function diff_date($today, $diff_date)
                                                 </dl>
                                                 <dl class="row" style="margin-bottom: 0;">
                                                     <dt class="col-sm-4 text-right">
-                                                        ชื่อลูค้า <br>
+                                                        ชื่อลูกค้า <br>
                                                         <small>(Customer Name)</small>
                                                     </dt>
                                                     <dd class="col-sm-8" id="cus_name_text"></dd>
@@ -592,7 +592,7 @@ function diff_date($today, $diff_date)
                                                 </td>
                                                 <td class="text-center" bgcolor="#333" style="color: #fff;" width="6%"><b>Voucher No.</b>
                                                 </td>
-                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="18%"><b>ชื่อลูค้า</b><br>
+                                                <td class="text-center" bgcolor="#333" style="color: #fff;" width="18%"><b>ชื่อลูกค้า</b><br>
                                                     <small>Customer's Name</small>
                                                 </td>
                                                 <td class="text-center" bgcolor="#333" style="color: #fff;" width="18%"><b>โปรแกรม</b><br>

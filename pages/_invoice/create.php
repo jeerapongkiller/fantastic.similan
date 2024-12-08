@@ -419,7 +419,7 @@ $search_agent = !empty($_GET['search_agent']) ? $_GET['search_agent'] : 'all';
                                                         </dl>
                                                         <dl class="row" style="margin-bottom: 0;">
                                                             <dt class="col-sm-4 text-right">
-                                                                ชื่อลูค้า <br>
+                                                                ชื่อลูกค้า <br>
                                                                 <small>(Customer Name)</small>
                                                             </dt>
                                                             <dd class="col-sm-8" id="cus_name_text"></dd>
@@ -486,7 +486,7 @@ $search_agent = !empty($_GET['search_agent']) ? $_GET['search_agent'] : 'all';
                                                         </td>
                                                         <td class="text-center" bgcolor="#333" style="color: #fff;" width="10%"><b>Booking No.</b>
                                                         </td>
-                                                        <td class="text-center" bgcolor="#333" style="color: #fff;" width="17%"><b>ชื่อลูค้า</b><br>
+                                                        <td class="text-center" bgcolor="#333" style="color: #fff;" width="17%"><b>ชื่อลูกค้า</b><br>
                                                             <small>Customer's Name</small>
                                                         </td>
                                                         <td class="text-center" bgcolor="#333" style="color: #fff;" width="17%"><b>โปรแกรม</b><br>
