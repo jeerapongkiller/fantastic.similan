@@ -32,6 +32,7 @@ $first_booking = array();
 $first_prod = array();
 $first_cus = array();
 $first_program = array();
+$first_ext = array();
 $frist_bt[1] = [];
 $frist_bt[2] = [];
 $first_manage = [];
@@ -89,6 +90,23 @@ if (!empty($bookings)) {
             $book['infant'][$booking['mange_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
             $book['foc'][$booking['mange_id']][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
             // echo 'v/c : ' . $booking['voucher_no_agent'] . ' car_name : ' . $booking['car_name'] . '<br>';
+        }
+
+        # --- get value booking extra chang --- #
+        if ((in_array($booking['bec_id'], $first_ext) == false) && !empty($booking['bec_id'])) {
+            $first_ext[] = $booking['bec_id'];
+            $bec_id[$booking['id']][] = !empty($booking['bec_id']) ? $booking['bec_id'] : 0;
+            $bec_name[$booking['id']][] = !empty($booking['bec_name']) ? $booking['bec_name'] : $booking['extra_name'];
+            $bec_type[$booking['id']][] = !empty($booking['bec_type']) ? $booking['bec_type'] : 0;
+            $bec_adult[$booking['id']][] = !empty($booking['bec_adult']) ? $booking['bec_adult'] : 0;
+            $bec_child[$booking['id']][] = !empty($booking['bec_child']) ? $booking['bec_child'] : 0;
+            $bec_infant[$booking['id']][] = !empty($booking['bec_infant']) ? $booking['bec_infant'] : 0;
+            $bec_privates[$booking['id']][] = !empty($booking['bec_privates']) ? $booking['bec_privates'] : 0;
+            $bec_rate_adult[$booking['id']][] = !empty($booking['bec_rate_adult']) ? $booking['bec_rate_adult'] : 0;
+            $bec_rate_child[$booking['id']][] = !empty($booking['bec_rate_child']) ? $booking['bec_rate_child'] : 0;
+            $bec_rate_infant[$booking['id']][] = !empty($booking['bec_rate_infant']) ? $booking['bec_rate_infant'] : 0;
+            $bec_rate_private[$booking['id']][] = !empty($booking['bec_rate_private']) ? $booking['bec_rate_private'] : 0;
+            $bec_rate_total[$booking['id']][] = $booking['bec_type'] > 0 ? $booking['bec_type'] == 1 ? (($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) + ($booking['bec_infant'] * $booking['bec_rate_infant'])) : ($booking['bec_privates'] * $booking['bec_rate_private']) : 0;
         }
 
         # --- get value booking transfer --- #
@@ -430,7 +448,13 @@ foreach ($manages as $manage) {
                                                                 <td class="text-center"><?php echo $bt_child[$id][$mange_retrun]; ?></td>
                                                                 <td class="text-center"><?php echo $bt_infant[$id][$mange_retrun]; ?></td>
                                                                 <td class="text-center"><?php echo $bt_foc[$id][$mange_retrun]; ?></td>
-                                                                <td><?php echo $note[$id]; ?></td>
+                                                                <td><?php if (!empty($bec_id[$id])) {
+                                                                        for ($e = 0; $e < count($bec_name[$id]); $e++) {
+                                                                            echo $e == 0 ? $bec_name[$id][$e] : ' : ' . $bec_name[$id][$e];
+                                                                        }
+                                                                    }
+                                                                    echo $note[$id]; ?>
+                                                                </td>
                                                             </tr>
                                                         <?php } ?>
                                                     </tbody>
@@ -585,7 +609,13 @@ foreach ($manages as $manage) {
                                                                 <td class="text-center"><?php echo $bt_child[$id][$retrun]; ?></td>
                                                                 <td class="text-center"><?php echo $bt_infant[$id][$retrun]; ?></td>
                                                                 <td class="text-center"><?php echo $bt_foc[$id][$retrun]; ?></td>
-                                                                <td><?php echo $note[$id]; ?></td>
+                                                                <td><?php if (!empty($bec_id[$id])) {
+                                                                        for ($e = 0; $e < count($bec_name[$id]); $e++) {
+                                                                            echo $e == 0 ? $bec_name[$id][$e] : ' : ' . $bec_name[$id][$e];
+                                                                        }
+                                                                    }
+                                                                    echo $note[$id]; ?>
+                                                                </td>
                                                             </tr>
                                                     <?php }
                                                     } ?>

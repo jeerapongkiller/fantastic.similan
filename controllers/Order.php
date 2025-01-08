@@ -438,6 +438,9 @@ class Order extends DB
                     DROPOFF.id as dropoff_id, DROPOFF.name_th as dropoff_name,
                     ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name, ZONE_P.provinces as province_id,
                     ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
+                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
+                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
+                    EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     BOMANGE.id as bomange_id, BOMANGE.arrange as arrange,
                     MANGE.id as mange_id, MANGE.pickup as mange_pickup, MANGE.dropoff as mange_dropoff, MANGE.note as mange_note, MANGE.license as license, MANGE.seat as seat,
                     CAR.id as car_id, CAR.name as car_name,
@@ -479,6 +482,10 @@ class Order extends DB
                     ON BT.pickup_id = ZONE_P.id
                 LEFT JOIN zones ZONE_D
                     ON BT.dropoff_id = ZONE_D.id
+                LEFT JOIN booking_extra_charge BEC
+                    ON BO.id = BEC.booking_id
+                LEFT JOIN extra_charges EXTRA
+                    ON BEC.extra_charge_id = EXTRA.id
                 LEFT JOIN booking_order_transfer BOMANGE
                     ON BT.id = BOMANGE.booking_transfer_id
                 LEFT JOIN order_transfer MANGE 

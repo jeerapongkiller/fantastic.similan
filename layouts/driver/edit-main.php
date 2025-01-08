@@ -232,6 +232,7 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
+                                // console.log(response);
                                 if (response != false && response > 0) {
                                     Swal.fire({
                                         title: "The information has been updated.",

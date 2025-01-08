@@ -66,8 +66,14 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                 </tr>
             </thead>
             <tbody>
-                <?php if ($mange_zone[66]['name']) {
-                    for ($i = 0; $i < count($mange_zone[66]['name']); $i++) {
+                <?php if (isset($mange_zone[66]['name']) || isset($mange_zone[65]['name']) || isset($mange_zone[64]['name'])) {
+                    $count = max(
+                        isset($mange_zone[66]['name']) ? count($mange_zone[66]['name']) : 0,
+                        isset($mange_zone[65]['name']) ? count($mange_zone[65]['name']) : 0,
+                        isset($mange_zone[64]['name']) ? count($mange_zone[64]['name']) : 0
+                    );
+
+                    for ($i = 0; $i < $count; $i++) {
                         $zone[66][$i] = (!empty($mange_zone[66]['id'][$i]) && !empty($mange_trans[$mange_zone[66]['id'][$i]]['total'])) ? array_sum($mange_trans[$mange_zone[66]['id'][$i]]['total']) : 0;
                         $zone[65][$i] = (!empty($mange_zone[65]['id'][$i]) && !empty($mange_trans[$mange_zone[65]['id'][$i]]['total'])) ? array_sum($mange_trans[$mange_zone[65]['id'][$i]]['total']) : 0;
                         $zone[64][$i] = (!empty($mange_zone[64]['id'][$i]) && !empty($mange_trans[$mange_zone[64]['id'][$i]]['total'])) ? array_sum($mange_trans[$mange_zone[64]['id'][$i]]['total']) : 0;

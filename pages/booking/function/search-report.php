@@ -54,7 +54,8 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                     $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
                     $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
                     $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                    $total[] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                    $total[] = $booking['booking_type_id'] == 1 ? $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
+                    $private[] = $booking['booking_type_id'] == 2 ?  $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
 
                     $mange_boat[$booking['mange_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
                     $mange_boat[$booking['mange_id']]['adult'][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
@@ -145,13 +146,17 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                                 <small class="card-text text-muted mb-0">Booking</small>
                                 <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['bo_id']) ? count($mange_trans[$id]['bo_id']) : 0; ?></h4>
                             </div>
-                            <div class="col-2 border-top border-right py-50 pb-1">
+                            <div class="col-1 border-top border-right py-50 pb-1">
                                 <small class="card-text text-muted mb-0">Total</small>
-                                <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['adult']) ? array_sum($mange_trans[$id]['adult']) : 0; ?></h4>
+                                <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['total']) ? array_sum($mange_trans[$id]['total']) : 0; ?></h4>
+                            </div>
+                            <div class="col-1 border-top border-right py-50 pb-1">
+                                <small class="card-text text-muted mb-0">Total</small>
+                                <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['total']) ? array_sum($mange_trans[$id]['total']) : 0; ?></h4>
                             </div>
                             <div class="col-1 border-top border-right py-50 pb-1">
                                 <small class="card-text text-muted mb-0">AD</small>
-                                <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['total']) ? array_sum($mange_trans[$id]['total']) : 0; ?></h4>
+                                <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_trans[$id]['adult']) ? array_sum($mange_trans[$id]['adult']) : 0; ?></h4>
                             </div>
                             <div class="col-1 border-top border-right py-50 pb-1">
                                 <small class="card-text text-muted mb-0">CHD</small>
@@ -179,9 +184,13 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                 <small class="card-text text-muted mb-0">Booking</small>
                 <h1 class="font-weight-bolder text-primary mb-0"><?php echo !empty($bo_id) ? count($bo_id) : 0; ?></h1>
             </div>
-            <div class="col-2 border-top border-right py-50 pb-1">
+            <div class="col-1 border-top border-right py-50 pb-1">
                 <small class="card-text text-muted mb-0">Total</small>
                 <h1 class="font-weight-bolder text-primary mb-0"><?php echo !empty($total) ? array_sum($total) : 0; ?></h1>
+            </div>
+            <div class="col-1 border-top border-right py-50 pb-1">
+                <small class="card-text text-muted mb-0">Private</small>
+                <h1 class="font-weight-bolder text-primary mb-0"><?php echo !empty($private) ? array_sum($private) : 0; ?></h1>
             </div>
             <div class="col-1 border-top border-right py-50 pb-1">
                 <small class="card-text text-muted mb-0">AD</small>

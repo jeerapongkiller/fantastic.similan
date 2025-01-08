@@ -308,7 +308,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                             <td class="text-center"><?php echo $adult[$i]; ?></td>
                             <td class="text-center"><?php echo $child[$i]; ?></td>
                             <td class="text-center"><?php echo $rate_adult[$i] != '-' ? number_format($rate_adult[$i]) : $rate_adult[$i]; ?></td>
-                            <td class="text-center"><?php echo $rate_child[$i] != '-' ? number_format($rate_child[$i]) : $rate_child[$i]; ?></td>
+                            <td class="text-center"><?php echo ($rate_child[$i] != '-' && $child[$i] > 0) ? number_format($rate_child[$i]) : 0; ?></td>
                             <td class="text-center"><?php echo $discount[$i] != '-' ? number_format($discount[$i]) : $discount[$i]; ?></td>
                             <td class="text-center"><?php echo $total[$i] != '-' ? number_format($total[$i]) : $total[$i]; ?></td>
                             <td class="text-center"><?php echo $cot[$i] != '-' ? number_format($cot[$i]) : $cot[$i]; ?></td>
