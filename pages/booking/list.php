@@ -10,8 +10,6 @@ $day4 = date("Y-m-d", strtotime(" +3 day"));
 $day5 = date("Y-m-d", strtotime(" +4 day"));
 $day6 = date("Y-m-d", strtotime(" +5 day"));
 $day7 = date("Y-m-d", strtotime(" +6 day"));
-// $today = '2024-09-29';
-// $tomorrow = '2024-09-30';
 ?>
 
 <div class="app-content content">
@@ -135,80 +133,63 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                 <!-- bookings filter end -->
 
                 <!-- report booking start -->
-                <div>
-                    <h5>Booking</h5>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="day3-tab" data-toggle="tab" href="#day3" aria-controls="day3" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day3)); ?></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4" aria-controls="day4" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day4)); ?></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5" aria-controls="day5" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day5)); ?></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="day6-tab" data-toggle="tab" href="#day6" aria-controls="day6" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day6)); ?></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="day7-tab" data-toggle="tab" href="#day7" aria-controls="day7" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day7)); ?></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day3-tab" data-toggle="tab" href="#day3" aria-controls="day3" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day3)); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4" aria-controls="day4" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day4)); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5" aria-controls="day5" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day5)); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day6-tab" data-toggle="tab" href="#day6" aria-controls="day6" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day6)); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day7-tab" data-toggle="tab" href="#day7" aria-controls="day7" role="tab" aria-selected="false"><?php echo date('j F', strtotime($day7)); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="day3" aria-labelledby="day3-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="day3" aria-labelledby="day3-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="day4" aria-labelledby="day4-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="day4" aria-labelledby="day4-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="day5" aria-labelledby="day5-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="day5" aria-labelledby="day5-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="day6" aria-labelledby="day6-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="day6" aria-labelledby="day6-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="day7" aria-labelledby="day7-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="day7" aria-labelledby="day7-tab" role="tabpanel">
 
-                                        </div>
-                                        <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+                                    </div>
+                                    <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <h5 hidden>เรือ</h5>
-                    <div class="row" hidden>
-                        <div class="col-lg-6 col-12" id="boat-report-today">
-                        </div>
-                        <div class="col-lg-6 col-12" id="boat-report-tomorrow">
-                        </div>
-                    </div>
-                    <h5 hidden>รถ</h5>
-                    <div class="row" hidden>
-                        <div class="col-lg-6 col-12" id="driver-report-today">
-                        </div>
-                        <div class="col-lg-6 col-12" id="driver-report-tomorrow">
                         </div>
                     </div>
                 </div>
@@ -219,10 +200,9 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                     <?php
                     # --- get data --- #
                     $first_book = array();
-                    $first_btr = array();
+                    $first_bpr = array();
                     $first_pay = array();
                     $first_ext = array();
-                    $frist_bomange = array();
                     $total_sum = 0;
                     $revenue = 0;
                     $count_confirm = 0;
@@ -236,7 +216,6 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                             if (in_array($booking['id'], $first_book) == false) {
                                 $first_book[] = $booking['id'];
                                 $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
-                                $bo_type[] = !empty($booking['booktye_id']) ? $booking['booktye_id'] : 0;
                                 $bp_id[] = !empty($booking['bp_id']) ? $booking['bp_id'] : 0;
                                 $book_full[] = !empty($booking['book_full']) ? $booking['book_full'] : '';
                                 $voucher_no[] = !empty(!empty($booking['voucher_no_agent'])) ? $booking['voucher_no_agent'] : '';
@@ -245,101 +224,36 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                 $product_name[] = !empty(!empty($booking['product_name'])) ? $booking['product_name'] : '';
                                 $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
                                 $cus_name[] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
-                                $hotel_pickup[] = !empty($booking['hotel_pickup']) ? $booking['hotel_pickup'] : $booking['hotel_pickup_name'];
+                                $hotel_pickup[] = !empty($booking['hotel_pickup']) ? $booking['hotel_pickup'] : '';
+                                $hotel_dropoff[] = !empty($booking['hotel_dropoff']) ? $booking['hotel_dropoff'] : '';
                                 $pickup_name[] = !empty($booking['pickup_name']) ? $booking['pickup_name'] : '';
+                                $dropoff_name[] = !empty($booking['dropoff_name']) ? $booking['dropoff_name'] : '';
+                                $pickup_type[] = !empty($booking['pickup_type']) ? $booking['pickup_type'] : 0;
                                 $room_no[] = !empty($booking['room_no']) ? $booking['room_no'] : '';
                                 $start_pickup[] = !empty($booking['start_pickup']) ? !empty($booking['end_pickup']) ? date('H:i', strtotime($booking['start_pickup'])) . '-' . date('H:i', strtotime($booking['end_pickup'])) : date('H:i', strtotime($booking['start_pickup'])) : '';
                                 $booker_name[] = !empty($booking['booker_id']) ? $booking['booker_fname'] . ' ' . $booking['booker_lname'] : '';
                                 $status_by_name[] = !empty($booking['status_by']) ? $booking['stabyFname'] . ' ' . $booking['stabyLname'] : '';
-                                $status[] = '<span class="badge badge-pill ' . $booking['booksta_class'] . ' text-capitalized"> ' . $booking['booksta_name'] . ' </span>';
-                                $category_transfer[] = !empty(!empty($booking['category_transfer'])) ? $booking['category_transfer'] : 0;
-                                $adult[] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                                $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                                $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                                $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                                $note[] = !empty($booking['bp_note']) ? $booking['bp_note'] : '';
-                                $rate_adult[] = !empty($booking['rate_adult']) ? $booking['rate_adult'] : 0;
-                                $rate_child[] = !empty($booking['rate_child']) ? $booking['rate_child'] : 0;
+                                $status[] = !empty($booking['is_deleted']) ? '<span class="badge badge-pill badge-light-danger text-capitalized">Delete</span>' : '<span class="badge badge-pill ' . $booking['booksta_class'] . ' text-capitalized"> ' . $booking['booksta_name'] . ' </span>';
+                                $note[] = !empty($booking['note']) ? $booking['note'] : '';
                                 $created_at[] = !empty(!empty($booking['created_at'])) ? $booking['created_at'] : '0000-00-00';
-                                $rate_total[] = !empty($booking['rate_total']) ? $booking['rate_total'] : 0;
-                                $transfer_type[] = !empty($booking['transfer_type']) ? $booking['transfer_type'] : 0;
-                                $btr_rate_adult[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_adult'] * $booking['btr_rate_adult'] : 0;
-                                $btr_rate_child[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_child'] * $booking['btr_rate_child'] : 0;
-                                $btr_rate_infant[] = !empty($booking['transfer_type']) && $booking['transfer_type'] == 1 ? $booking['bt_infant'] * $booking['btr_rate_infant'] : 0;
-                                $confirm_id[] = !empty($booking['confirm_id']) ? $booking['confirm_id'] : 0;
-                                switch ($booking['booksta_id']) {
-                                    case '1':
-                                        $count_confirm = $count_confirm + 1;
-                                        break;
-                                    case '3':
-                                        $count_cancel = $count_cancel + 1;
-                                        break;
-                                    case '4':
-                                        $count_noshow = $count_noshow + 1;
-                                        break;
-                                }
-                                # --- Programe --- #
-                                $prod_id[] = !empty($booking['product_id']) ? $booking['product_id'] : 0;
-                                $prod_name[$booking['product_id']] = !empty($booking['product_name']) ? $booking['product_name'] : '';
-                                $prod_adult[$booking['product_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                                $prod_child[$booking['product_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                                $prod_infant[$booking['product_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                                $prod_foc[$booking['product_id']][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                                # --- order boat --- #
-                                if (!empty(!empty($booking['mange_id'])) && !empty($booking['mange_id']) > 0) {
-                                    # --- Boat --- #
-                                    $mange_id[$booking['mange_id']][] = !empty($booking['id']) ? $booking['id'] : 0;
-                                    $boat_id[$booking['mange_id']][] = !empty($booking['boat_id']) ? $booking['boat_id'] : 0;
-                                    $boat_name[$booking['boat_id']] = !empty($booking['boat_name']) ? $booking['boat_name'] : '';
-                                    $capt_name[$booking['boat_id']] = !empty($booking['capt_name']) ? $booking['capt_name'] : '';
-                                    $boat_order_id[$booking['mange_id']][] = !empty($booking['boat_id']) ? $booking['boat_id'] : 0;
-                                    $boat_product[$booking['mange_id']] = !empty($booking['product_id']) ? $booking['product_id'] : 0;
-                                    $boat_adult[$booking['mange_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                                    $boat_child[$booking['mange_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                                    $boat_infant[$booking['mange_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                                    $boat_foc[$booking['mange_id']][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                                }
                             }
-                            # --- get value manage transfer --- #
-                            if (!empty($booking['manget_id']) && (in_array($booking['bomange_id'], $frist_bomange) == false)) {
-                                $frist_bomange[] = $booking['bomange_id'];
-                                $manget_id[$booking['manget_id']] = !empty($booking['manget_id']) ? $booking['manget_id'] : 0;
-                                $ortran_product[$booking['manget_id']] = !empty($booking['product_id']) ? $booking['product_id'] : 0;
-                                $car_name[$booking['manget_id']] = !empty($booking['car_name']) ? $booking['car_name'] : '';
-                                $car_adult[$booking['manget_id']][] = !empty($booking['bt_adult']) ? $booking['bt_adult'] : 0;
-                                $car_child[$booking['manget_id']][] = !empty($booking['bt_child']) ? $booking['bt_child'] : 0;
-                                $car_infant[$booking['manget_id']][] = !empty($booking['bt_infant']) ? $booking['bt_infant'] : 0;
-                                $car_foc[$booking['manget_id']][] = !empty($booking['bt_foc']) ? $booking['bt_foc'] : 0;
+                            # --- get value booking --- #
+                            if (in_array($booking['bpr_id'], $first_bpr) == false) {
+                                $first_bpr[] = $booking['bpr_id'];
+                                $adult[$booking['id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                                $child[$booking['id']][] = !empty($booking['child']) ? $booking['child'] : 0;
                             }
                             # --- get value booking extra chang --- #
                             if ((in_array($booking['bec_id'], $first_ext) == false) && !empty($booking['bec_id'])) {
                                 $first_ext[] = $booking['bec_id'];
-                                $bec_id[$booking['id']][] = !empty($booking['bec_id']) ? $booking['bec_id'] : 0;
                                 $bec_name[$booking['id']][] = !empty($booking['bec_name']) ? $booking['bec_name'] : $booking['extra_name'];
-                                $bec_type[$booking['id']][] = !empty($booking['bec_type']) ? $booking['bec_type'] : 0;
-                                $bec_adult[$booking['id']][] = !empty($booking['bec_adult']) ? $booking['bec_adult'] : 0;
-                                $bec_child[$booking['id']][] = !empty($booking['bec_child']) ? $booking['bec_child'] : 0;
-                                $bec_infant[$booking['id']][] = !empty($booking['bec_infant']) ? $booking['bec_infant'] : 0;
-                                $bec_privates[$booking['id']][] = !empty($booking['bec_privates']) ? $booking['bec_privates'] : 0;
-                                $bec_rate_adult[$booking['id']][] = !empty($booking['bec_rate_adult']) ? $booking['bec_rate_adult'] : 0;
-                                $bec_rate_child[$booking['id']][] = !empty($booking['bec_rate_child']) ? $booking['bec_rate_child'] : 0;
-                                $bec_rate_infant[$booking['id']][] = !empty($booking['bec_rate_infant']) ? $booking['bec_rate_infant'] : 0;
-                                $bec_rate_private[$booking['id']][] = !empty($booking['bec_rate_private']) ? $booking['bec_rate_private'] : 0;
-                                $bec_rate_total[$booking['id']][] = $booking['bec_type'] > 0 ? $booking['bec_type'] == 1 ? (($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) + ($booking['bec_infant'] * $booking['bec_rate_infant'])) : ($booking['bec_privates'] * $booking['bec_rate_private']) : 0;
-                            }
-                            # --- get value booking transfer rate --- #
-                            if ((in_array($booking['btr_id'], $first_btr) == false) && (!empty($booking['transfer_type']) && $booking['transfer_type'] == 2)) {
-                                $first_btr[] = $booking['btr_id'];
-                                $rate_private[$booking['id']][] = $booking['rate_private'];
                             }
                             # --- get value booking payment --- #
                             if ((in_array($booking['bopa_id'], $first_pay) == false) && !empty($booking['bopa_id'])) {
                                 $first_pay[] = $booking['bopa_id'];
                                 $bopay_id[$booking['id']] = !empty($booking['bopay_id']) ? $booking['bopay_id'] : 0;
-                                $bopay_name[$booking['id']] = !empty($booking['bopay_name']) ? $booking['bopay_name'] : '';
                                 $bopay_name_class[$booking['id']] = !empty($booking['bopay_name_class']) ? $booking['bopay_name_class'] : '';
                                 $bopay_paid_name[$booking['id']] = $booking['bopay_id'] == 4 || $booking['bopay_id'] == 5 ? $booking['bopay_name'] . '</br>(' . number_format($booking['total_paid']) . ')' : $booking['bopay_name'];
-                                $bopay_total_paid[$booking['id']] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
                             }
                         }
                     }
@@ -360,16 +274,11 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                         <th>ห้อง</th>
                                         <th class="text-center">A</th>
                                         <th class="text-center">C</th>
-                                        <!-- <th rowspan="2" class="text-center">รวม</th> -->
                                         <th>เวลารับ</th>
                                         <th>VOUCHER NO.</th>
                                         <th>Remark</th>
                                         <th>BOKING NO.</th>
                                     </tr>
-                                    <!-- <tr>
-                                        <th>Adult</th>
-                                        <th>Child</th>
-                                    </tr> -->
                                 </thead>
                                 <?php if ($bookings) { ?>
                                     <tbody>
@@ -410,7 +319,15 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 </td>
                                                 <td>
                                                     <a <?php echo $href; ?>>
-                                                        <?php echo !empty($pickup_name[$i]) ? $hotel_pickup[$i] . ' (' . $pickup_name[$i] . ')' : $hotel_pickup[$i]; ?></a>
+                                                        <?php if ($pickup_type[$i] == 1) {
+                                                            echo !empty($pickup_name[$i]) ? $hotel_pickup[$i] . ' (' . $pickup_name[$i] . ')' : $hotel_pickup[$i];
+                                                        } elseif ($pickup_type[$i] == 2) {
+                                                            echo '-';
+                                                        } elseif ($pickup_type[$i] == 3) {
+                                                            echo !empty($dropoff_name[$i]) ? $hotel_dropoff[$i] . ' (' . $dropoff_name[$i] . ')' : $hotel_dropoff[$i];
+                                                            echo '</br><small class="text-warning">เอารถขากลับ</small>';
+                                                        }
+                                                        ?></a>
                                                     </a>
                                                 </td>
                                                 <td>
@@ -420,25 +337,14 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 </td>
                                                 <td class="text-center">
                                                     <a <?php echo $href; ?>>
-                                                        <?php echo $adult[$i]; ?></a>
+                                                        <?php echo !empty($adult[$bo_id[$i]]) ? array_sum($adult[$bo_id[$i]]) : '-'; ?></a>
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
                                                     <a <?php echo $href; ?>>
-                                                        <?php echo $child[$i]; ?></a>
+                                                        <?php echo !empty($child[$bo_id[$i]]) ? array_sum($child[$bo_id[$i]]) : '-'; ?></a>
                                                     </a>
                                                 </td>
-                                                <!-- <td class="text-center">
-                                                    <a <?php echo $href; ?>>
-                                                        <?php
-                                                        // $total_sum = $rate_total[$i];
-                                                        // $total_sum = $transfer_type[$i] == 1 ? $total_sum + ($btr_rate_adult[$i] + $btr_rate_child[$i] + $btr_rate_infant[$i]) : $total_sum;
-                                                        // $total_sum = $transfer_type[$i] == 2 ? $total_sum + array_sum($rate_private[$bo_id[$i]]) : $total_sum;
-                                                        // $total_sum = !empty($bec_id[$bo_id[$i]]) ? $total_sum + array_sum($bec_rate_total[$bo_id[$i]]) : $total_sum;
-                                                        // $total_sum = !empty($discount[$i]) ? $total_sum - $discount[$i] : $total_sum;
-                                                        // echo number_format($total_sum);
-                                                        ?></a>
-                                                    </a> -->
                                                 <td>
                                                     <a <?php echo $href; ?>>
                                                         <?php echo $start_pickup[$i]; ?>
@@ -489,20 +395,14 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                             </div>
                             <form id="booking-create-form" name="booking-create-form" method="post" enctype="multipart/form-data">
                                 <div class="modal-body">
-                                    <div id="div-show"></div>
-                                    <input type="hidden" id="bo_id" name="bo_id" value="0" />
-                                    <input type="hidden" id="bp_id" name="bp_id" value="0" />
-                                    <input type="hidden" id="pror_id" name="pror_id" value="0" />
-                                    <input type="hidden" id="open-rates" name="open_rates" value="<?php echo $open_rates; ?>" />
-                                    <!-- <input type="hidden" id="book_status" name="book_status" value="" /> -->
                                     <input type="hidden" id="book_date" name="book_date" value="<?php echo $today; ?>" />
                                     <input type="hidden" id="book_time" name="book_time" value="<?php echo $times; ?>" />
                                     <div class="row">
-                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                        <div class="form-group col-xl-3 col-md-4 col-12">
                                             <label for="travel_date">Travel Date</label>
                                             <input type="text" class="form-control flatpickr-basic" id="travel_date" name="travel_date" value="<?php echo $tomorrow; ?>" />
                                         </div>
-                                        <div class="col-xl-2 col-md-4 col-12">
+                                        <div class="col-xl-3 col-md-4 col-12">
                                             <div class="form-group" id="frm-agent">
                                                 <label for="agent">Agent</label>
                                                 <select class="form-control select2" id="agent" name="agent" onchange="search_program();">
@@ -526,7 +426,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group col-xl-4 col-md-4 col-12">
+                                        <div class="form-group col-xl-3 col-md-4 col-12">
                                             <label for="product_id">Programe (สินค้าหลัก)</label>
                                             <select class="form-control select2" id="product_id" name="product_id" onchange="search_program();">
                                                 <?php
@@ -537,11 +437,18 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                        <div class="form-group col-xl-3 col-md-4 col-12">
                                             <label for="category_id">Categorys (สินค้ารอง)</label>
-                                            <select class="form-control select2" id="category_id" name="category_id" onchange="check_category();">
+                                            <select class="form-control select2" id="category_id" name="category_id[]" onchange="check_category();" multiple>
                                             </select>
                                         </div>
+                                    </div>
+                                    <!------ start div rates ---->
+                                    <div class="row" id="div-rates">
+                                    </div>
+                                    <input type="hidden" id="rate_total" name="rate_total" value="0">
+                                    <!------ end div rates ------>
+                                    <div class="row">
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label class="form-label" for="voucher_no">Voucher</label>
                                             <input type="text" id="voucher_no" name="voucher_no" class="form-control" onchange="check_no_agent(this);" />
@@ -550,83 +457,6 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label class="form-label" for="sender">Sender</label>
                                             <input type="text" id="sender" name="sender" class="form-control" />
-                                        </div>
-                                        <div class="form-group col-md-2 col-12">
-                                            <div class="form-group" id="div-adult">
-                                                <label class="form-label" for="adult">Adult</label>
-                                                <input type="text" class="form-control numeral-mask" id="adult" name="adult" value="0" oninput="rows_customer();" />
-                                            </div>
-                                            <table width="100%" id="table-adult">
-                                                <tr>
-                                                    <td width="30%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="cover-adult">Adult</label>
-                                                            <input type="text" class="form-control numeral-mask" id="cover-adult" name="adult" value="0" oninput="rows_customer();" />
-                                                        </div>
-                                                    </td>
-                                                    <td width="1%"><i data-feather='x' class="m-1 font-medium-4"></i></td>
-                                                    <td width="69%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="rate_adult">Rate Adult</label>
-                                                            <input type="text" id="rate_adult" name="rate_adult" class="form-control numeral-mask" value="0" oninput="check_rate();">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="form-group col-md-2 col-12">
-                                            <div class="form-group" id="div-child">
-                                                <label class="form-label" for="child">Children</label>
-                                                <input type="text" class="form-control numeral-mask" id="child" name="child" value="0" oninput="rows_customer();" />
-                                            </div>
-                                            <table width="100%" id="table-child">
-                                                <tr>
-                                                    <td width="30%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="cover-child">Children</label>
-                                                            <input type="text" class="form-control numeral-mask" id="cover-child" name="child" value="0" oninput="rows_customer();" />
-                                                        </div>
-                                                    </td>
-                                                    <td width="1%"><i data-feather='x' class="m-1 font-medium-4"></i></td>
-                                                    <td width="69%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="rate_child">Rate Children</label>
-                                                            <input type="text" id="rate_child" name="rate_child" class="form-control numeral-mask" value="0" oninput="check_rate();">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="form-group col-md-2 col-12">
-                                            <div class="form-group" id="div-infant">
-                                                <label class="form-label" for="infant">Infant</label>
-                                                <input type="text" class="form-control numeral-mask" id="infant" name="infant" value="0" oninput="rows_customer();" />
-                                            </div>
-                                            <table width="100%" id="table-infant">
-                                                <tr>
-                                                    <td width="30%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="cover-infant">Infant</label>
-                                                            <input type="text" class="form-control numeral-mask" id="cover-infant" name="infant" value="0" oninput="rows_customer();" />
-                                                        </div>
-                                                    </td>
-                                                    <td width="1%"><i data-feather='x' class="m-1 font-medium-4"></i></td>
-                                                    <td width="69%">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="rate_infant">Rate Infant</label>
-                                                            <input type="text" id="rate_infant" name="rate_infant" class="form-control numeral-mask" value="0" oninput="check_rate();">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="form-group col-xl-2 col-md-4 col-12" id="div-total">
-                                            <label for="rate_total">Total Price</label>
-                                            <input type="text numeral-mask" class="form-control" id="rate_total" name="rate_total" value="0" />
-                                        </div>
-                                        <div class="form-group col-md-2 col-12">
-                                            <label class="form-label" for="foc">FOC</label>
-                                            <input type="text" class="form-control numeral-mask" id="foc" name="foc" value="0" oninput="rows_customer();" />
                                         </div>
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label for="cus_name">Customer Name</label>
@@ -637,28 +467,20 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                             <input type="text" class="form-control" id="telephone" name="telephone" value="" />
                                         </div>
                                         <div class="form-group col-xl-2 col-md-4 col-12">
-                                            <label for="cot">Cash on tour</label>
-                                            <input type="text numeral-mask" class="form-control" id="cot" name="cot" value="" />
+                                            <label for="discount">Discount</label>
+                                            <input type="text" class="form-control numeral-mask" id="discount" name="discount" value="" />
                                         </div>
-                                        <div class="form-group col-xl-4 col-md-4 col-12">
+                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                            <label for="cot">Cash on tour</label>
+                                            <input type="text" class="form-control numeral-mask" id="cot" name="cot" value="" />
+                                        </div>
+                                        <div class="form-group col-xl-6 col-md-4 col-12">
                                             <label class="form-label" for="bp_note">Remark</label>
                                             <textarea class="form-control" name="bp_note" id="bp_note" rows="1"></textarea>
                                         </div>
                                     </div>
                                     <div class="row" id="div-transfer">
-                                        <div class="form-group col-md-3 col-12" hidden>
-                                            <label class="form-label">Include</label>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="include_true" name="include" class="custom-control-input" value="1" checked />
-                                                <label class="custom-control-label" for="include_true">เอารถรับส่ง</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="include_false" name="include" class="custom-control-input" value="2" />
-                                                <label class="custom-control-label" for="include_false">เดินทางมาเอง</label>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" id="include" name="include" value="0" />
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 div-transfer-pickup">
                                             <input type="hidden" id="bt_id" name="bt_id" value="" />
                                             <div class="form-group">
                                                 <label for="zone_pickup">Pickup Zone</label>
@@ -675,7 +497,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 div-transfer-pickup">
                                             <div class="form-group" id="frm-hotel-pickup" hidden>
                                                 <label for="hotel_pickup">Pickup Hotel</label>
                                                 <select class="form-control select2" id="hotel_pickup" name="hotel_pickup" onchange="check_outside('hotel_pickup');">
@@ -976,10 +798,26 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 <label class="custom-control-label" for="transfer_private">Private</label>
                                             </div>
                                         </div>
+                                        <div class="form-group col-md-3 col-12">
+                                            <label class="form-label">Transfer</label>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="pickup_type_1" name="pickup_type" class="custom-control-input" value="1" <?php echo $pickup_type == 1 || $pickup_type == 0 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <label class="custom-control-label" for="pickup_type_1">เอารถรับส่ง</label>
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="pickup_type_2" name="pickup_type" class="custom-control-input" value="2" <?php echo $pickup_type == 2 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <label class="custom-control-label" for="pickup_type_2">เดินทางมาเอง</label>
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="pickup_type_3" name="pickup_type" class="custom-control-input" value="3" <?php echo $pickup_type == 3 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <label class="custom-control-label" for="pickup_type_3">เอารถขากลับ</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer d-flex justify-content-between">
-                                    <a href="./?pages=booking/create" type="button" id="btn-more" class="btn btn-flat-secondary waves-effect btn-page-block-spinner">เพิ่มเติม</a>
+                                    <span></span>
+                                    <!-- <a href="./?pages=booking/create" type="button" id="btn-more" class="btn btn-flat-secondary waves-effect btn-page-block-spinner">เพิ่มเติม</a> -->
                                     <button type="submit" class="btn btn-primary waves-effect waves-float waves-light btn-page-block-spinner">Submit</button>
                                 </div>
                             </form>

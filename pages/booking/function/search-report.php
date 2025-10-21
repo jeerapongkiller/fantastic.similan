@@ -25,54 +25,67 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
     $first_boat = array();
     $first_driver = array();
     $first_book = array();
+    $first_bpr = array();
     $bookings = $bookObj->showlist($_SESSION["supplier"]["id"], 'all', 'all', 'all', 'all', $travel_date, '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
             if ($booking['booksta_id'] != 3) {
                 # --- get value booking --- #
-                if (in_array($booking['mange_id'], $first_boat) == false && !empty($booking['boat_id'])) {
-                    $first_boat[] = $booking['mange_id'];
-                    $mange_boat['id'][] = !empty($booking['mange_id']) ? $booking['mange_id'] : 0;
-                    $mange_boat['boat'][] = !empty($booking['boat_id']) ? $booking['boat_id'] : 0;
-                    $mange_boat['name'][] = !empty($booking['boat_name']) ? $booking['boat_name'] : '';
-                    $mange_boat['guide'][] = !empty($booking['guide_name']) ? $booking['guide_name'] : '';
-                    $mange_boat['color_hex'][] = !empty($booking['color_hex']) ? $booking['color_hex'] : '';
-                }
+                // if (in_array($booking['mange_id'], $first_boat) == false && !empty($booking['boat_id'])) {
+                //     $first_boat[] = $booking['mange_id'];
+                //     $mange_boat['id'][] = !empty($booking['mange_id']) ? $booking['mange_id'] : 0;
+                //     $mange_boat['boat'][] = !empty($booking['boat_id']) ? $booking['boat_id'] : 0;
+                //     $mange_boat['name'][] = !empty($booking['boat_name']) ? $booking['boat_name'] : '';
+                //     $mange_boat['guide'][] = !empty($booking['guide_name']) ? $booking['guide_name'] : '';
+                //     $mange_boat['color_hex'][] = !empty($booking['color_hex']) ? $booking['color_hex'] : '';
+                // }
                 # --- get value booking --- #
-                if (in_array($booking['manget_id'], $first_driver) == false && !empty($booking['car_id'])) {
-                    $first_driver[] = $booking['manget_id'];
-                    $mange_trans['id'][] = !empty($booking['manget_id']) ? $booking['manget_id'] : 0;
-                    $mange_trans['name'][] = !empty($booking['car_name']) ? $booking['car_name'] : '';
-                    $mange_trans['license'][] = !empty($booking['license']) ? $booking['license'] : '';
-                    $mange_trans['seat'][] = !empty($booking['seat']) ? $booking['seat'] : '-';
-                }
+                // if (in_array($booking['manget_id'], $first_driver) == false && !empty($booking['car_id'])) {
+                //     $first_driver[] = $booking['manget_id'];
+                //     $mange_trans['id'][] = !empty($booking['manget_id']) ? $booking['manget_id'] : 0;
+                //     $mange_trans['name'][] = !empty($booking['car_name']) ? $booking['car_name'] : '';
+                //     $mange_trans['license'][] = !empty($booking['license']) ? $booking['license'] : '';
+                //     $mange_trans['seat'][] = !empty($booking['seat']) ? $booking['seat'] : '-';
+                // }
                 # --- get value booking --- #
                 if (in_array($booking['id'], $first_book) == false) {
                     $first_book[] = $booking['id'];
                     $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
-                    $adult[] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                    $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                    $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                    $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                    $total[] = $booking['booking_type_id'] == 1 ? $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
-                    $private[] = $booking['booking_type_id'] == 2 ?  $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
+                    // $adult[] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
+                    // $child[] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
+                    // $infant[] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
+                    // $foc[] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+                    // $total[] = $booking['booking_type_id'] == 1 ? $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
+                    // $private[] = $booking['booking_type_id'] == 2 ?  $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'] : 0;
 
-                    $mange_boat[$booking['mange_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
-                    $mange_boat[$booking['mange_id']]['adult'][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                    $mange_boat[$booking['mange_id']]['child'][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                    $mange_boat[$booking['mange_id']]['infant'][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                    $mange_boat[$booking['mange_id']]['foc'][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                    $mange_boat[$booking['mange_id']]['total'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                    // $mange_boat[$booking['mange_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
+                    // $mange_boat[$booking['mange_id']]['adult'][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
+                    // $mange_boat[$booking['mange_id']]['child'][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
+                    // $mange_boat[$booking['mange_id']]['infant'][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
+                    // $mange_boat[$booking['mange_id']]['foc'][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+                    // $mange_boat[$booking['mange_id']]['total'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
 
-                    $mange_trans[$booking['manget_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
-                    $mange_trans[$booking['manget_id']]['adult'][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
-                    $mange_trans[$booking['manget_id']]['child'][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
-                    $mange_trans[$booking['manget_id']]['infant'][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
-                    $mange_trans[$booking['manget_id']]['foc'][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
-                    $mange_trans[$booking['manget_id']]['total'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                    // $mange_trans[$booking['manget_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
+                    // $mange_trans[$booking['manget_id']]['adult'][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
+                    // $mange_trans[$booking['manget_id']]['child'][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
+                    // $mange_trans[$booking['manget_id']]['infant'][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
+                    // $mange_trans[$booking['manget_id']]['foc'][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+                    // $mange_trans[$booking['manget_id']]['total'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
 
                     $mange_product[$booking['product_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
-                    $mange_product[$booking['product_id']]['totalrist'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                    // $mange_product[$booking['product_id']]['totalrist'][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                }
+                # --- get value booking --- #
+                if (in_array($booking['bpr_id'], $first_bpr) == false) {
+                    $first_bpr[] = $booking['bpr_id'];
+                    $adult[] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                    $child[] = !empty($booking['child']) ? $booking['child'] : 0;
+                    $infant[] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                    $foc[] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                    $total[] = $booking['booking_type_id'] == 1 ? $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'] : 0;
+                    $private[] = $booking['booking_type_id'] == 2 ?  $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'] : 0;
+
+                    $mange_product[$booking['product_id']]['totalrist'][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
                 }
             }
         }

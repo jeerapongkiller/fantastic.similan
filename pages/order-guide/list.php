@@ -226,6 +226,7 @@ function check_in($var)
                                     $start_pickup[$order['mange_id']][] = !empty($order['start_pickup']) ? date('H:i', strtotime($order['start_pickup'])) : '00:00:00';
                                     $pickup_type[$order['mange_id']][] = !empty($order['pickup_type']) ? $order['pickup_type'] : 0;
                                     $total[$order['mange_id']][] = $order['booktye_id'] == 1 ? ($order['bp_adult'] * $order['rate_adult']) + ($order['bp_child'] * $order['rate_child']) + ($order['rate_infant'] * $order['rate_infant']) : $order['rate_private'];
+                                    $cot[$order['id']][] = !empty($order['total_paid']) ? $order['total_paid'] : 0;
                                 }
 
                                 $bopay_name[$order['id']] = !empty($order['bopay_name']) ? $order['bopay_name'] : '';
@@ -265,7 +266,7 @@ function check_in($var)
                                         $cot_id[$order['id']][] = !empty($order['bopa_id']) ? $order['bopa_id'] : 0;
                                         $cot_name[$order['id']] = !empty($order['bopay_name']) ? $order['bopay_name'] . ' (' . number_format($order['total_paid']) . ')' : '';
                                         $cot_class[$order['id']] = !empty($order['bopay_name_class']) ? $order['bopay_name_class'] : '';
-                                        $cot[$order['id']][] = !empty($order['total_paid']) ? $order['total_paid'] : 0;
+                                        // $cot[$order['id']][] = !empty($order['total_paid']) ? $order['total_paid'] : 0;
                                     }
                                 }
 

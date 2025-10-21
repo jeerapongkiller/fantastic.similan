@@ -408,7 +408,7 @@
                         'product_id': {
                             required: true
                         },
-                        'category_id': {
+                        'category_id[]': {
                             required: true
                         }
                     },
@@ -427,22 +427,22 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                // $('#div-show').html(response);
-                                if (response != false && response > 0) {
-                                    Swal.fire({
-                                        title: "The information has been updated.",
-                                        icon: "success",
-                                    }).then(function(isConfirm) {
-                                        if (isConfirm) {
-                                            window.location.href = './?pages=booking/list';
-                                        }
-                                    })
-                                } else {
-                                    Swal.fire({
-                                        title: "Please try again.",
-                                        icon: "error",
-                                    });
-                                }
+                                console.log(response);
+                                // if (response != false && response > 0) {
+                                //     Swal.fire({
+                                //         title: "The information has been updated.",
+                                //         icon: "success",
+                                //     }).then(function(isConfirm) {
+                                //         if (isConfirm) {
+                                //             window.location.href = './?pages=booking/list';
+                                //         }
+                                //     })
+                                // } else {
+                                //     Swal.fire({
+                                //         title: "Please try again.",
+                                //         icon: "error",
+                                //     });
+                                // }
                             }
                         });
                     }
@@ -487,21 +487,6 @@
         }
 
         function search_program() {
-            var open_rates = document.getElementById('open-rates').value;
-            var book_type = document.getElementById('book_type1').checked == true ? 1 : 2;
-            document.getElementById('div-adult').hidden = (book_type == 1 && open_rates == 1) ? true : false;
-            document.getElementById('table-adult').hidden = (book_type == 1 && open_rates == 1) ? false : true;
-            document.getElementById('div-child').hidden = (book_type == 1 && open_rates == 1) ? true : false;
-            document.getElementById('table-child').hidden = (book_type == 1 && open_rates == 1) ? false : true;
-            document.getElementById('div-infant').hidden = (book_type == 1 && open_rates == 1) ? true : false;
-            document.getElementById('table-infant').hidden = (book_type == 1 && open_rates == 1) ? false : true;
-            if (open_rates == 1) {
-                document.getElementById('rate_total').readOnly = (book_type == 1) ? true : false;
-            } else {
-                document.getElementById('div-total').hidden = true;
-            }
-
-
             var agent = document.getElementById('agent').value;
             var product_id = document.getElementById('product_id').value;
 
@@ -524,10 +509,10 @@
                         var countcate = Object.keys(res.id).length;
                         if (countcate) {
                             for (let index = 0; index < countcate; index++) {
-                                $('#category_id').append("<option value=\"" + res.id[index] + "\">" + res.name[index] + "</option>");
+                                $('#category_id').append("<option value=\"" + res.id[index] + "\" data-name=\"" + res.name[index] + "\" data-transfer=\"" + res.transfer[index] + "\">" + res.name[index] + "</option>");
                             }
                         } else {
-                            $('#category_id').append("<option value=\"0\"></option>");
+                            $('#category_id').append("<option value=\"0\" data-name=\"\"></option>");
                         }
 
                         check_category();
@@ -537,18 +522,28 @@
         }
 
         function check_category() {
-            var open_rates = document.getElementById('open-rates').value;
             var book_type = document.getElementsByName('booking_type')[0].checked == true ? 1 : 2;
             var agent = document.getElementById('agent').value;
             var product_id = document.getElementById('product_id').value;
-            var category_id = document.getElementById('category_id').value;
             var travel_date = document.getElementById('travel_date').value;
+            const selectCategory = document.getElementById('category_id');
+            const selectedValues = [];
+            for (const option of selectCategory.options) {
+                if (option.selected) {
+                    selectedValues.push({
+                        id: option.value,
+                        name: option.dataset.name,
+                        transfer: option.dataset.transfer
+                    });
+                }
+            }
             var formData = new FormData();
             formData.append('action', 'search');
             formData.append('agent_id', agent);
             formData.append('product_id', product_id);
-            formData.append('category_id', category_id);
+            formData.append('categorys', JSON.stringify(selectedValues));
             formData.append('travel_date', travel_date);
+            formData.append('book_type', book_type);
             $.ajax({
                 url: "pages/booking/function/search-rate.php",
                 type: "POST",
@@ -556,45 +551,67 @@
                 contentType: false,
                 data: formData,
                 success: function(response) {
-                    if (response != '' && response != false && open_rates == 1) {
-                        var res = $.parseJSON(response);
-                        if (book_type == 1) {
-                            document.getElementById('pror_id').value = res.prodrid;
-                            document.getElementById('rate_adult').value = res.rate_adult;
-                            document.getElementById('rate_child').value = res.rate_child;
-                            document.getElementById('rate_infant').value = res.rate_infant;
-                        } else if (book_type == 2) {
-                            document.getElementById('rate_total').value = res.rate_private;
-                        }
-                        document.getElementById('div-transfer').hidden = (res.transfer == 0) ? true : false;
-                        document.getElementById('start_pickup').value = (res.transfer == 0) ? '08:15' : '';
-                        document.getElementById('end_pickup').value = (res.transfer == 0) ? '08:15' : '';
-                        document.getElementById('include').value = (res.transfer === 1) ? '1' : '2';
+                    $('#div-rates').html(response);
 
-                        check_rate();
-                    }
+                    var include = document.getElementById('include').value
+                    document.getElementById('pickup_type_2').checked = (include == 2) ? true : false;
+                    document.getElementById('pickup_type_1').checked = (include == 1) ? true : false;
+                    document.getElementById('start_pickup').value = (include == 1) ? '08:15' : '';
+                    document.getElementById('end_pickup').value = (include == 1) ? '08:15' : '';
+
+                    $('.numeral-mask').toArray().forEach(function(field) {
+                        new Cleave(field, {
+                            numeral: true,
+                            numeralThousandsGroupStyle: 'thousand'
+                        });
+                    });
+
+                    check_transfer();
+                    check_rate();
                 }
             });
+        }
+
+        function check_transfer() {
+            var pickup_type = document.getElementsByName('pickup_type');
+            if (pickup_type[0].checked == true) {
+                document.getElementById('div-transfer').hidden = false;
+                var pickup = document.getElementsByClassName('div-transfer-pickup');
+                for (let index = 0; index < pickup.length; index++) {
+                    pickup[index].hidden = false;
+                }
+            } else if (pickup_type[1].checked == true) {
+                document.getElementById('div-transfer').hidden = true;
+            } else if (pickup_type[2].checked == true) {
+                document.getElementById('div-transfer').hidden = false;
+                var pickup = document.getElementsByClassName('div-transfer-pickup');
+                for (let index = 0; index < pickup.length; index++) {
+                    pickup[index].hidden = true;
+                }
+            }
         }
 
         function check_rate() {
             var total_product = 0;
             var book_type = document.getElementById('book_type1').checked == true ? 1 : 2;
             var rate_total = document.getElementById('rate_total');
-            var adult = book_type == 2 ? document.getElementById('adult') : document.getElementById('cover-adult');
-            var child = book_type == 2 ? document.getElementById('child') : document.getElementById('cover-child');
-            var infant = book_type == 2 ? document.getElementById('infant') : document.getElementById('cover-infant');
+            var adult = document.getElementsByName('adult[]');
+            var child = document.getElementsByName('child[]');
+            var infant = document.getElementsByName('infant[]');
             if (book_type == 1) {
-                var rate_adult = document.getElementById('rate_adult').value.replace(/,/g, '');
-                var rate_child = document.getElementById('rate_child').value.replace(/,/g, '');
-                var rate_infant = document.getElementById('rate_infant').value.replace(/,/g, '');
-            }
-            if (book_type == 1) {
-                total_product = Number(total_product) + Number(rate_adult) * Number(adult.value);
-                total_product = Number(total_product) + Number(rate_child) * Number(child.value);
-                total_product = Number(total_product) + Number(rate_infant) * Number(infant.value);
+                var rates_adult = document.getElementsByName('rates_adult[]');
+                var rates_child = document.getElementsByName('rates_child[]');
+                var rates_infant = document.getElementsByName('rates_infant[]');
+                for (let index = 0; index < adult.length; index++) {
+                    total_product += Number(rates_adult[index].value.replace(/,/g, '')) * Number(adult[index].value);
+                    total_product += Number(rates_child[index].value.replace(/,/g, '')) * Number(child[index].value);
+                    total_product += Number(rates_infant[index].value.replace(/,/g, '')) * Number(infant[index].value);
+                }
             } else {
-                total_product = Number(rate_total.value.replace(/,/g, ''));
+                var rates_private = document.getElementsByName('rates_private[]');
+                for (let index = 0; index < rates_private.length; index++) {
+                    total_product += Number(rates_private[index].value.replace(/,/g, ''));
+                }
             }
             rate_total.value = numberWithCommas(total_product);
         }
@@ -689,109 +706,6 @@
             }
         }
 
-        function rows_customer() {
-            check_rate();
-            // if (open_rates == 1) {
-            //     check_rate();
-            // }
-            return false; // ปิดการมใช้งาน
-            var open_rates = document.getElementById('open-rates').value;
-            var book_type = document.getElementById('book_type1').checked == true ? 1 : 2;
-            var before_arr = document.getElementById('before_arr_cus').value;
-            array = (before_arr !== undefined && before_arr != '' && before_arr != 'undefined') ? $.parseJSON(before_arr) : '';
-            var frm = document.getElementById('frm-customer');
-            var adult = (book_type == 1 && open_rates == 1) ? document.getElementById('cover-adult') : document.getElementById('adult');
-            var child = (book_type == 1 && open_rates == 1) ? document.getElementById('cover-child') : document.getElementById('child');
-            var infant = (book_type == 1 && open_rates == 1) ? document.getElementById('cover-infant') : document.getElementById('infant');
-            var foc = document.getElementById('foc');
-            var sum = Number(adult.value) + Number(child.value) + Number(infant.value) + Number(foc.value);
-
-            var text = '';
-            var text_age = '';
-            var cus_age = 0;
-
-            for (let index = 0; index < sum; index++) {
-                // console.log(adult.value + ' | ' + child.value + ' | ' + infant.value + ' | ' + foc.value + ' | ' + Number(index + 1));
-                if ((Number(adult.value) - Number(index + 1)) >= 0) {
-                    text_age = 'Adult';
-                    cus_age = 1;
-                } else if (((Number(adult.value) + Number(child.value)) - Number(index + 1)) >= 0) {
-                    text_age = 'Children';
-                    cus_age = 2;
-                } else if (((Number(adult.value) + Number(child.value) + Number(infant.value)) - Number(index + 1)) >= 0) {
-                    text_age = 'Infant';
-                    cus_age = 3;
-                } else {
-                    text_age = 'FOC';
-                    cus_age = 4;
-                }
-
-                var cus_id = (array != '' && array['cus_id'][index]) ? array['cus_id'][index] : 0;
-                var id_card = (array != '' && array['id_card'][index]) ? array['id_card'][index] : '';
-                var cus_name = (array != '' && array['cus_name'][index]) ? array['cus_name'][index] : '';
-                var birth_date = (array != '' && array['birth_date'][index]) ? array['birth_date'][index] : '';
-                var nation_id = (array != '' && array['nation_id'][index]) ? array['nation_id'][index] : 0;
-
-                text += '<div class="col-md-1 col-12">' +
-                    '<div class="form-group pt-2">' +
-                    '<strong>' + text_age + '</strong>' +
-                    '<input type="hidden" name="customers[cus_id][]" value="' + cus_id + '" />' +
-                    '<input type="hidden" name="customers[cus_age][]" value="' + cus_age + '" />' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="col-md-2 col-12">' +
-                    '<div class="form-group">' +
-                    '<label for="id_card">ID Passport/ ID Card</label>' +
-                    '<input type="text" class="form-control" name="customers[id_card][]" value="' + id_card + '" />' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="col-md-4 col-12">' +
-                    '<div class="form-group">' +
-                    '<label for="name">Name</label>' +
-                    '<input type="text" class="form-control" name="customers[cus_name][]" value="' + cus_name + '" />' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="col-md-2 col-12">' +
-                    '<div class="form-group">' +
-                    '<label for="birth_date">Birth Date</label>' +
-                    '<input type="date" class="form-control birth-date" name="customers[cus_birth_date][]" value="' + birth_date + '" />' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="col-md-3 col-12">' +
-                    '<div class="form-group">' +
-                    '<label for="nationality_id">Nationality</label>' +
-                    '<select class="form-control select2" id="customers' + index + '" name="customers[cus_nationality_id][]">' +
-                    '<option value="0">Please Select Nationality...</option>' +
-                    <?php
-                    $nations = $bookObj->shownation();
-                    foreach ($nations as $nation) {
-                    ?> '<option value="<?php echo $nation['id']; ?>" ';
-                text += (nation_id == <?php echo $nation['id']; ?>) ? 'selected' : '';
-                text += "><?php echo $nation['name']; ?></option>" +
-                <?php
-                    }
-                ?> '</select>' +
-                '</div>' +
-                '</div>';
-            }
-
-            frm.innerHTML = text;
-
-            // select2
-            $('.select2').each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent()
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    });
-            });
-        }
-
         // Script Function Extra Charge
         // ------------------------------------------------------------------------------------
         function chang_extra_charge(select) {
@@ -818,9 +732,17 @@
         }
 
         function check_extar_type(select) {
-            var adult = document.getElementById('cover-adult').value;
-            var child = document.getElementById('cover-child').value;
-            var infant = document.getElementById('cover-infant').value;
+            var adult = 0;
+            var child = 0;
+            var infant = 0;
+            var adultEle = document.getElementsByName('adult[]');
+            var childEle = document.getElementsByName('child[]');
+            var infantEle = document.getElementsByName('infant[]');
+            for (let index = 0; index < adultEle.length; index++) {
+                adult += Number(adultEle[index].value);
+                child += Number(childEle[index].value);
+                infant += Number(infantEle[index].value);
+            }
 
             var div_name_perpax = select.name.replace('[extra_type]', '[div_extar_perpax]');
             document.getElementsByName(div_name_perpax)[0].hidden = select.value == 1 ? false : true;

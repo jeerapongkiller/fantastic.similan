@@ -45,6 +45,14 @@
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- END: Custom CSS-->
 
+    <!-- <style>
+        .table-bordered th,
+        .table-bordered td {
+            color: #5E5873;
+            background-color: #F3F2F7;
+            border-color: #000000 !important;
+        }
+    </style> -->
 </head>
 <!-- END: Head-->
 

@@ -9,12 +9,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
     // get value from ajax
     $agent_id = $_POST['agent_id'] != "" ? $_POST['agent_id'] : 0;
     $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
-    // $search_status = $_POST['search_status'] != "" ? $_POST['search_status'] : 'all';
-    // $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
-    // $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
-    // $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
-    // $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
-    // $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
     $first_booking = array();
     $first_ext = array();
@@ -94,7 +88,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             </h4>
         </div>
 
-        <table class="table table-striped text-uppercase table-vouchure-t2">
+        <table class="table table-bordered table-striped text-uppercase table-vouchure-t2">
             <thead class="bg-light">
                 <tr>
                     <th width="7%">Time</th>
@@ -167,7 +161,28 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             </tbody>
         </table>
 
-        <div class="text-center mt-1 pb-2">
+        <table class="table table-bordered table-striped text-uppercase table-vouchure-t2">
+            <thead class="bg-light">
+                <tr>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Adult</th>
+                    <th class="text-center">Child</th>
+                    <th class="text-center">Infant</th>
+                    <th class="text-center">Foc</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center"><b><?php echo $total_tourist; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_adult; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_child; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_infant; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_foc; ?></b></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- <div class="text-center mt-1 pb-2">
             <h4>
                 <div class="badge badge-pill badge-light-warning">
                     <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
@@ -177,7 +192,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                     FOC : <?php echo $total_foc; ?>
                 </div>
             </h4>
-        </div>
+        </div> -->
     </div>
     <input type="hidden" id="name_img" value="<?php echo 'Re Confirm Agent - ' . $agent_name[0] . ' (' . date('j F Y', strtotime($travel_date)) . ')'; ?>">
     <div class="modal-footer">

@@ -9,3 +9,119 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+:root {
+    --primary: #662e93;
+    --light-purple: #d7c4e0;
+	--black: #000;
+	--white: #fff;
+	--gray: #B8C2CC;
+	--light: #e6e6e6;
+	--light-green: #c4df9a;
+	--sky: #006cb4 ;
+	--light-sky: #aed6f1;
+	--green-2: #239b56;
+	--light-green-2: #abebc6;
+	--orange: #d35400;
+	--light-orange: #f5cba7;
+}
+
+.badge-light {
+	background: var(--light);
+	color: var(--black);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.badge-purple {
+	background: var(--primary);
+	color: var(--white);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.badge-purple-big {
+	background: var(--primary);
+	color: var(--white);
+	padding: 15px 30px;
+	border-radius: 100px;
+	display:block;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.badge-light-purple {
+	background: var(--light-purple);
+	color: var(--primary);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.badge-light-sky {
+	background: var(--light-sky);
+	color: var(--sky);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.badge-light-orange {
+	background: var(--light-orange);
+	color: var(--orange);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.badge-light-green-2 {
+	background: var(--light-green-2);
+	color: var(--green-2);
+	padding: 5px 20px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.badge-white {
+	background: var(--white);
+	color: var(--black);
+	padding: 5px 15px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.badge-light-green {
+	background: var(--light-green);
+	color: var(--black);
+	padding: 5px 15px;
+	border-radius: 30px;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-align: center;
+	white-space: nowrap;
+}

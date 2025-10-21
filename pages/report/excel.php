@@ -13,7 +13,8 @@ $objPHPExcel->setActiveSheetIndex(0);
 if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])) {
     # --- get value --- #
     $search_status = !empty($_GET["search_status"]) ? $_GET["search_status"] : 'all';
-    $search_travel = !empty($_GET["search_travel"]) ? $_GET["search_travel"] : '0000-00-00';
+    $search_payment = !empty($_GET["search_payment"]) ? $_GET["search_payment"] : 'all';
+    $search_travel = !empty($_GET["search_travel"]) ? $_GET["search_travel"] : $today;
     $date_form = substr($search_travel, 0, 10) != '' ? substr($search_travel, 0, 10) : '0000-00-00';
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
     $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
@@ -40,7 +41,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $first_boboat = array();
     $first_extar = array();
     $first_pay = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product);
+    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
         if (in_array($booking['id'], $first_book) == false) {
@@ -247,6 +248,31 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
                 $columnName[] = [$agent_name[$i], array_count_values($comp_id)[$agent_id[$i]], !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0, !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0, !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0, !empty($comp_foc[$agent_id[$i]]) ? array_sum($comp_foc[$agent_id[$i]]) : 0, !empty($comp_sum[$agent_id[$i]]) ? array_sum($comp_sum[$agent_id[$i]]) : 0, !empty($amount_comp) ? number_format($amount_comp) : 0, !empty($revenue_comp) ? number_format($revenue_comp) : 0, number_format($amount_comp - $revenue_comp),];
             }
         }
+        $columnName[] = ['', '', '', '', '', '', '', '', '', '',];
+        $columnName[] = [
+            'ยอดขายทั้งหมด',
+            !empty($array_total) ? !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total)) : number_format(array_sum($array_total)) : 0,
+            'รับเงินทั้งหมด',
+            !empty($paid) ? number_format($paid) : 0,
+            'แบ่งเป็น Cash On Tour',
+            !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0,
+            '',
+            '',
+            '',
+            '',
+        ];
+        $columnName[] = [
+            'ค้างจ่ายที่ยังไม่ได้ออก Invoice',
+            !empty($not_issued) ? number_format($not_issued) : 0,
+            'ค้างจ่าย',
+            !empty($issued_inv) ? number_format($issued_inv) : 0,
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ];
     } elseif ($_GET['type'] == 'programe') {
         $columnName[] = ['Programe Name', 'AD', 'CHD', 'INF', 'FOC', 'TOTAL',];
         if (!empty($prod_id)) {

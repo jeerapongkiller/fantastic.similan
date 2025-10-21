@@ -5,7 +5,7 @@
     <meta name="description" content="<?php echo $main_description; ?>">
     <meta name="keywords" content="<?php echo $main_keywords; ?>">
     <meta name="author" content="<?php echo $main_author; ?>">
-    <title>Print Report Transfer - <?php echo $main_title; ?></title>
+    <title>Print Report Transfer</title>
     <link rel="apple-touch-icon" href="app-assets/images/ico/favicon.png">
     <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/ico/favicon.png">
 

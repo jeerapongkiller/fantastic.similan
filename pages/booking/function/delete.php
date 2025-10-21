@@ -1,16 +1,16 @@
 <?php
-require_once '../../../config/env.php';
-require_once '../../../controllers/Product.php';
+include_once('../../../config/env.php');
+include_once('../../../controllers/Booking.php');
 
-$prodObj = new Product();
+$bookObj = new Booking();
 
-if (isset($_POST['action']) && $_POST['action'] == "delete" && isset($_POST['product_id']) && $_POST['product_id'] > 0) {
+if (isset($_POST['action']) && $_POST['action'] == "delete" && isset($_POST['bo_id']) && $_POST['bo_id'] > 0) {
     // get value from ajax
-    $product_id = $_POST['product_id'] > 0 ? $_POST['product_id'] : 0;
+    $bo_id = $_POST['bo_id'] > 0 ? $_POST['bo_id'] : 0;
 
-    if ($product_id > 0) {
-        $response = $prodObj->delete_data($product_id);
-    }
+    $response = $bookObj->delete_data($bo_id);
+
+    $response = ($bo_id != FALSE && $bo_id > 0) ? $bookObj->insert_log('Delete Booking', '', $bo_id, 3, date("Y-m-d H:i:s")) : FALSE; // insert log booking
 
     echo $response;
 } else {

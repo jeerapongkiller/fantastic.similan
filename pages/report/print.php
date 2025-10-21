@@ -7,7 +7,8 @@ $times = date("H:i:s");
 
 if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])) {
     $search_status = !empty($_GET["search_status"]) ? $_GET["search_status"] : 'all';
-    $search_travel = !empty($_GET["search_travel"]) ? $_GET["search_travel"] : '0000-00-00';
+    $search_payment = !empty($_GET["search_payment"]) ? $_GET["search_payment"] : 'all';
+    $search_travel = !empty($_GET["search_travel"]) ? $_GET["search_travel"] : $today;
     $date_form = substr($search_travel, 0, 10) != '' ? substr($search_travel, 0, 10) : '0000-00-00';
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
     $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
@@ -34,7 +35,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $first_boboat = array();
     $first_extar = array();
     $first_pay = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product);
+    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
         if (in_array($booking['id'], $first_book) == false) {
@@ -258,6 +259,23 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     <?php } elseif ($_GET['type'] == 'agent') { ?>
         <h3 class="text-center pt-1">รายงาน <span class="text-warning font-weight-bolder">Agent</span></h3>
         <h5 class="text-center"><?php echo $text_detail; ?></h5>
+        <div class="table-responsive table-striped table-vouchure-t2 mt-2">
+            <table>
+                <thead>
+                    <tr>
+                        <th><span class="font-weight-bolder text-primary">ยอดขายทั้งหมด : <?php echo !empty($array_total) ? !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total)) : number_format(array_sum($array_total)) : 0; ?> THB</span></th>
+                        <th><span class="font-weight-bolder text-success">รับเงินทั้งหมด : <?php echo !empty($paid) ? number_format($paid) . ' THB' : '0 THB'; ?></span></th>
+                        <th><span class="font-weight-bolder text-warning">แบ่งเป็น Cash On Tour : <?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0; ?> THB</span></th>
+                    </tr>
+                    <tr>
+
+                        <th><span class="font-weight-bolder text-info">ค้างจ่ายที่ยังไม่ได้ออก Invoice : <?php echo !empty($not_issued) ? number_format($not_issued) . ' THB' : '0 THB'; ?></span></th>
+                        <th><span class="font-weight-bolder text-danger">ค้างจ่าย : <?php echo !empty($issued_inv) ? number_format($issued_inv) . ' THB' : '0 THB'; ?></span></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
         <div class="table-responsive table-striped table-vouchure-t2">
             <table>
                 <thead>
@@ -278,37 +296,39 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
                     <?php
                     $amount_comp = 0;
                     $revenue_comp = 0;
-                    for ($i = 0; $i < count($agent_id); $i++) {
-                        $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_amount[$agent_id[$i]]) : 0;
-                        $revenue_comp = !empty($comp_revenue[$agent_id[$i]]) ? (!empty($extar_total_agent[$agent_id[$i]]) && array_sum($comp_revenue[$agent_id[$i]]) > 0) ? array_sum($comp_revenue[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_revenue[$agent_id[$i]]) : 0
+                    if (!empty($agent_id)) {
+                        for ($i = 0; $i < count($agent_id); $i++) {
+                            $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_amount[$agent_id[$i]]) : 0;
+                            $revenue_comp = !empty($comp_revenue[$agent_id[$i]]) ? (!empty($extar_total_agent[$agent_id[$i]]) && array_sum($comp_revenue[$agent_id[$i]]) > 0) ? array_sum($comp_revenue[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_revenue[$agent_id[$i]]) : 0
                     ?>
-                        <tr>
-                            <td>
-                                <span class="font-weight-bolder text-primary"><?php echo $agent_name[$i]; ?></span>
-                            </td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo array_count_values($comp_id)[$agent_id[$i]] ?></td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0; ?></td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0; ?></td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0; ?></td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_foc[$agent_id[$i]]) ? array_sum($comp_foc[$agent_id[$i]]) : 0; ?></td>
-                            <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_sum[$agent_id[$i]]) ? array_sum($comp_sum[$agent_id[$i]]) : 0; ?></td>
-                            <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
-                                <div class="d-flex flex-column">
-                                    <span class="font-weight-bolder mb-25 text-warning"><?php echo number_format($amount_comp); ?></span>
-                                </div>
-                            </td>
-                            <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
-                                <div class="d-flex flex-column">
-                                    <span class="font-weight-bolder mb-25 text-success"><?php echo number_format($revenue_comp); ?></span>
-                                </div>
-                            </td>
-                            <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
-                                <div class="d-flex flex-column">
-                                    <span class="font-weight-bolder mb-25 text-danger"><?php echo number_format($amount_comp - $revenue_comp); ?></span>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php } ?>
+                            <tr>
+                                <td>
+                                    <span class="font-weight-bolder text-primary"><?php echo $agent_name[$i]; ?></span>
+                                </td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo array_count_values($comp_id)[$agent_id[$i]] ?></td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0; ?></td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0; ?></td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0; ?></td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_foc[$agent_id[$i]]) ? array_sum($comp_foc[$agent_id[$i]]) : 0; ?></td>
+                                <td class="text-center font-weight-bolder p-25 m-25"><?php echo !empty($comp_sum[$agent_id[$i]]) ? array_sum($comp_sum[$agent_id[$i]]) : 0; ?></td>
+                                <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
+                                    <div class="d-flex flex-column">
+                                        <span class="font-weight-bolder mb-25 text-warning"><?php echo number_format($amount_comp); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
+                                    <div class="d-flex flex-column">
+                                        <span class="font-weight-bolder mb-25 text-success"><?php echo number_format($revenue_comp); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-nowrap text-center font-weight-bolder p-25 m-25">
+                                    <div class="d-flex flex-column">
+                                        <span class="font-weight-bolder mb-25 text-danger"><?php echo number_format($amount_comp - $revenue_comp); ?></span>
+                                    </div>
+                                </td>
+                            </tr>
+                    <?php }
+                    } ?>
                 </tbody>
             </table>
         </div>

@@ -1,11 +1,10 @@
 <?php
 class DB
 {
-    // private $host = 'ftp.shambhala.work';
-    // // private $host = 'localhost';
-    // private $username = 'uodaxwdlggpfl';
-    // private $password = 'ytb8[1{|533A';
-    // private $database = 'dbwgqp6ncpmie3';
+    // private $host = 'ftp.fantastic-tourmate.work';
+    // private $username = 'uh30461kvktxj';
+    // private $password = '@h5?1c2jf^ki';
+    // private $database = 'dbxwoccqevnkts';
     private $host = 'localhost';
     private $username = 'root';
     private $password = '';
@@ -22,7 +21,7 @@ class DB
                 exit;
             }
 
-            $this->connection->set_charset("utf8");
+            $this->connection->set_charset("utf8mb4");
         }
 
         return $this->connection;

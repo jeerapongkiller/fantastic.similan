@@ -64,41 +64,25 @@ class Booking extends DB
         $query = "SELECT BO.*,
                         BONO.bo_full as book_full,
                         BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
-                        BTYE.id as booktye_id, BTYE.name as booktye_name,
-                        BOPA.id as bopa_id, BOPA.date_paid as date_paid, BOPA.total_paid as total_paid, BOPA.card_no as card_no, 
-                        BOPA.photo as bopa_photo, BOPA.note as bopa_note, BOPA.payment_type_id as payment_type_id, BOPA.bank_account_id as bank_account_id, BOPA.updated_at as bopa_updated,
+                        BTYE.name as booktye_name,
+                        BOPA.id as bopa_id, BOPA.total_paid as total_paid, BOPA.updated_at as bopa_updated,
                         BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class, BOPAY.created_at as bopay_created,
-                        COMP.id as comp_id, COMP.name as comp_name,
-                        CUS.id as cus_id, CUS.name as cus_name, CUS.birth_date as birth_date, CUS.id_card as id_card, CUS.telephone as telephone, CUS.address as cus_address, CUS.head as cus_head, CUS.nationality_id as nationality_id,
-                        NATION.id as nation_id, NATION.name as nation_name,
-                        BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bp_adult, BP.child as bp_child, BP.infant as bp_infant, BP.foc as bp_foc, BP.note as bp_note,
-                        BP.private_type as bp_private_type,
+                        COMP.name as comp_name,
+                        CUS.name as cus_name, CUS.head as cus_head,
+                        BP.id as bp_id, BP.travel_date as travel_date, BP.note as note,
                         PROD.id as product_id, PROD.name as product_name,
-                        CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
-                        BPR.id as bpr_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total,   
-                        BT.id as bt_id, BT.adult as bt_adult, BT.child as bt_child, BT.infant as bt_infant, BT.foc as bt_foc, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-                        BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no, BT.note as bt_note, BT.transfer_type as transfer_type,
-                        BT.pickup_type as pickup_type,
-                        BTR.id as btr_id, BTR.rate_adult as btr_rate_adult, BTR.rate_child as btr_rate_child, BTR.rate_infant as btr_rate_infant, BTR.cars_category_id as cars_category,
-                        BTR.rate_private as rate_private,
+                        CATE.name as category_name,
+                        BPR.id as bpr_id, BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
+                        BPR.rates_adult as rates_adult, BPR.rates_child as rates_child, BPR.rates_infant as rates_infant, BPR.rates_private as rates_private,   
+                        BT.start_pickup as start_pickup, BT.end_pickup as end_pickup, BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no, BT.pickup_type as pickup_type,
                         PICKUP.id as pickup_id, PICKUP.name_th as hotel_pickup_name,
                         DROPOFF.id as dropoff_id, DROPOFF.name_th as hotel_dropoff_name,
-                        CARC.id as carc_id, CARC.name as carc_name,
                         BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
                         BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-                        EXTRA.id as extra_id, EXTRA.name as extra_name,
-                        BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
-                        PICK.id as pickup_id, PICK.name as pickup_name, 
-                        DROF.id as dropoff_id, DROF.name as dropoff_name,
-                        BOMANGE.id as bomange_id,
-                        MANGET.id as manget_id, MANGET.license as license, MANGET.seat as seat,
-                        CAR.id as car_id, CAR.name as car_name, CAR.name as car_name,
-                        BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
-                        MANGE.id as mange_id, MANGE.time as manage_time,
-                        COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex,
-                        GUIDE.id as guide_id, GUIDE.name as guide_name,
-                        BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
-                        CONFIRM.id as confirm_id
+                        EXTRA.name as extra_name,
+                        BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
+                        PICK.name as pickup_name, 
+                        DROF.name as dropoff_name
                     FROM bookings BO
                     LEFT JOIN bookings_no BONO
                         ON BO.id = BONO.booking_id
@@ -120,10 +104,10 @@ class Booking extends DB
                         ON BO.id = BP.booking_id
                     LEFT JOIN products PROD
                         ON BP.product_id = PROD.id
-                    LEFT JOIN product_category CATE
-                        ON BP.category_id = CATE.id
                     LEFT JOIN booking_product_rates BPR
                         ON BP.id = BPR.booking_products_id
+                    LEFT JOIN product_category CATE
+                        ON BPR.category_id = CATE.id
                     LEFT JOIN booking_transfer BT
                         ON BP.id = BT.booking_products_id
                     LEFT JOIN booking_transfer_rates BTR
@@ -132,8 +116,6 @@ class Booking extends DB
                         ON BT.hotel_pickup_id = PICKUP.id
                     LEFT JOIN hotel DROPOFF
                         ON BT.hotel_dropoff_id = DROPOFF.id
-                    LEFT JOIN cars_category CARC
-                        ON BTR.cars_category_id = CARC.id    
                     LEFT JOIN booking_extra_charge BEC
                         ON BO.id = BEC.booking_id
                     LEFT JOIN extra_charges EXTRA
@@ -142,30 +124,14 @@ class Booking extends DB
                         ON BT.pickup_id = PICK.id
                     LEFT JOIN zones DROF
                         ON BT.dropoff_id = DROF.id
-                    LEFT JOIN booking_order_transfer BOMANGE
-                        ON BT.id = BOMANGE.booking_transfer_id
-                    LEFT JOIN order_transfer MANGET 
-                        ON BOMANGE.order_id = MANGET.id
-                        AND MANGET.pickup = 1
-                    LEFT JOIN cars CAR 
-                        ON MANGET.car_id = CAR.id
-                    LEFT JOIN booking_order_boat BORDB
-                        ON BO.id = BORDB.booking_id
-                    LEFT JOIN order_boat MANGE 
-                        ON BORDB.manage_id = MANGE.id
-                    LEFT JOIN colors COLOR 
-                        ON MANGE.color_id = COLOR.id
-                    LEFT JOIN guides GUIDE
-                        ON MANGE.guide_id = GUIDE.id
-                    LEFT JOIN boats BOAT
-                        ON MANGE.boat_id = BOAT.id
-                    LEFT JOIN confirm_agent CONFIRM
-                        ON COMP.id = CONFIRM.agent_id
                     LEFT JOIN users BOOKER 
                         ON BO.booker_id = BOOKER.id
                     WHERE BO.id > 0
-                    AND BP.is_deleted = 0
         ";
+
+        if ($_SESSION["supplier"]["id"] != 1) {
+            $query .= " AND BO.is_deleted = 0 ";
+        }
 
         if (!empty($search_status) && $search_status != 'all') {
             $query .= " AND BSTA.id = " . $search_status;
@@ -573,107 +539,87 @@ class Booking extends DB
     public function get_data(int $id)
     {
         $query = "SELECT BO.*,
-                BONO.bo_full as book_full,
-                BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
-                BTYE.id as booktye_id, BTYE.name as booktye_name,
-                BOPA.id as bopa_id, BOPA.date_paid as date_paid, BOPA.total_paid as total_paid, BOPA.card_no as card_no, 
-                BOPA.photo as bopa_photo, BOPA.note as bopa_note, BOPA.payment_type_id as payment_type_id, BOPA.bank_account_id as bank_account_id, BOPA.updated_at as bopa_updated,
-                BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.created_at as bopay_created,
-                USPAD.id as uspad_id, USPAD.firstname as uspad_firstname, USPAD.lastname as uspad_lastname,
-                COMP.id as comp_id, COMP.name as comp_name, COMP.tat_license as tat_license, COMP.telephone as comp_telephone, COMP.address as comp_address,
-                CUS.id as cus_id, CUS.name as cus_name, CUS.birth_date as birth_date, CUS.id_card as id_card, CUS.telephone as telephone, CUS.address as cus_address, CUS.age as cus_age, CUS.type as cus_type, CUS.head as cus_head, CUS.nationality_id as nationality_id,
-                NATION.id as nation_id, NATION.name as nation_name,
-                BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bp_adult, BP.child as bp_child, BP.infant as bp_infant, BP.foc as bp_foc, BP.note as bp_note,
-                BP.private_type as bp_private_type,
-                PROD.id as product_id, PROD.name as product_name,
-                CATE.id as category_id, CATE.name as category_name,
-                BPR.id as bpr_id, BPR.product_rates_id as product_rates_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total,   
-                BT.id as bt_id, BT.adult as bt_adult, BT.child as bt_child, BT.infant as bt_infant, BT.foc as bt_foc, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-                BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no, BT.note as bt_note, BT.transfer_type as transfer_type,
-                BT.pickup_type as pickup_type,
-                HOTPIK.id as hotel_pickup_id, HOTPIK.name as hotel_pickup_name,
-                HOTDRO.id as hotel_dropoff_id, HOTDRO.name as hotel_dropoff_name,
-                BTR.id as btr_id, BTR.rate_adult as btr_rate_adult, BTR.rate_child as btr_rate_child, BTR.rate_infant as btr_rate_infant, BTR.cars_category_id as cars_category,
-                BTR.rate_private as btr_rate_private,
-                CARC.id as carc_id, CARC.name as carc_name,
-                BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
-                BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-                EXTRA.id as extra_id, EXTRA.name as extra_name,
-                BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
-                PICK.id as pickup_id, PICK.name as pickup_name, 
-                DROF.id as dropoff_id, DROF.name as dropoff_name,
-                INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding, INV.branche_id as branche_id, INV.vat_id as vat_id, 
-                INV.currency_id as currency_id, INV.bank_account_id as inv_bank_account, INV.note as inv_note, 
-                COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
-                BOMANGE.id as bomange_id,
-                MANGET.id as manget_id,
-                BORDB.id as boman_id, 
-                MANGE.id as mange_id,
-                CONFIRM.id as confirm_id
-            FROM bookings BO
-            LEFT JOIN bookings_no BONO
-                ON BO.id = BONO.booking_id
-            LEFT JOIN booking_status BSTA
-                ON BO.booking_status_id = BSTA.id
-            LEFT JOIN booking_type BTYE
-                ON BO.booking_type_id = BTYE.id
-            LEFT JOIN booking_paid BOPA
-                ON BO.id = BOPA.booking_id
-            LEFT JOIN booking_payment BOPAY
-                ON BOPA.booking_payment_id = BOPAY.id
-            LEFT JOIN users USPAD 
-                ON BOPA.user_id = USPAD.id
-            LEFT JOIN companies COMP
-                ON BO.company_id = COMP.id
-            LEFT JOIN customers CUS
-                ON BO.id = CUS.booking_id
-            LEFT JOIN nationalitys NATION
-                ON CUS.nationality_id = NATION.id
-            LEFT JOIN booking_products BP
-                ON BO.id = BP.booking_id
-            LEFT JOIN products PROD
-                ON BP.product_id = PROD.id
-            LEFT JOIN product_category CATE
-                ON BP.category_id = CATE.id
-            LEFT JOIN booking_product_rates BPR
-                ON BP.id = BPR.booking_products_id
-            LEFT JOIN booking_transfer BT
-                ON BP.id = BT.booking_products_id
-            LEFT JOIN booking_transfer_rates BTR
-                ON BT.id = BTR.booking_transfer_id
-            LEFT JOIN hotel HOTPIK
-                ON BT.hotel_pickup_id = HOTPIK.id
-            LEFT JOIN hotel HOTDRO
-                ON BT.hotel_dropoff_id = HOTDRO.id
-            LEFT JOIN cars_category CARC
-                ON BTR.cars_category_id = CARC.id    
-            LEFT JOIN booking_extra_charge BEC
-                ON BO.id = BEC.booking_id
-            LEFT JOIN extra_charges EXTRA
-                ON BEC.extra_charge_id = EXTRA.id
-            LEFT JOIN zones PICK
-                ON BT.pickup_id = PICK.id
-            LEFT JOIN zones DROF
-                ON BT.dropoff_id = DROF.id
-            LEFT JOIN users BOOKER 
-                ON BO.booker_id = BOOKER.id
-            LEFT JOIN invoices INV
-                ON INV.booking_id = BO.id
-            LEFT JOIN invoice_cover COVER
-                ON INV.cover_id = COVER.id
-            LEFT JOIN booking_order_transfer BOMANGE
-                ON BT.id = BOMANGE.booking_transfer_id
-            LEFT JOIN order_transfer MANGET 
-                ON BOMANGE.order_id = MANGET.id
-                AND MANGET.pickup = 1
-            LEFT JOIN booking_order_boat BORDB
-                ON BO.id = BORDB.booking_id
-            LEFT JOIN order_boat MANGE 
-                ON BORDB.manage_id = MANGE.id
-            LEFT JOIN confirm_agent CONFIRM
-                ON COMP.id = CONFIRM.agent_id
-                AND CONFIRM.travel_date = BP.travel_date
-            WHERE BO.id = ? AND BO.is_deleted = 0
+                        BONO.bo_full as book_full,
+                        BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
+                        BTYE.name as booktye_name,
+                        BOPA.id as bopa_id, BOPA.total_paid as total_paid, BOPA.updated_at as bopa_updated,
+                        COMP.name as comp_name,
+                        CUS.id as cus_id, CUS.name as cus_name, CUS.head as cus_head, CUS.telephone as telephone,
+                        BP.id as bp_id, BP.travel_date as travel_date, BP.note as note,
+                        PROD.id as product_id, PROD.name as product_name,
+                        CATE.id as category_id, CATE.name as category_name,
+                        BPR.id as bpr_id, BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
+                        BPR.rates_adult as rates_adult, BPR.rates_child as rates_child, BPR.rates_infant as rates_infant, BPR.rates_private as rates_private,   
+                        BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup, BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no,
+                        BT.pickup_type as pickup_type, BT.transfer_type as transfer_type,
+                        -- BT.adult as bt_adult, BT.child as bt_child, BT.infant as bt_infant, BT.foc as bt_foc,
+                        -- PICKUP.id as pickup_id, PICKUP.name_th as hotel_pickup_name,
+                        -- DROPOFF.id as dropoff_id, DROPOFF.name_th as hotel_dropoff_name,
+                        BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
+                        BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
+                        EXTRA.id as extra_id, EXTRA.name as extra_name,
+                        BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
+                        PICKUP.id as pickup_id, PICKUP.name as pickup_name, 
+                        DROPOFF.id as dropoff_id, DROPOFF.name as dropoff_name,
+                        BOMANGE.id as bomange_id,
+                        MANGET.id as manget_id,
+                        BORDB.id as boman_id, 
+                        MANGE.id as mange_id,
+                        CONFIRM.id as confirm_id
+                    FROM bookings BO
+                    LEFT JOIN bookings_no BONO
+                        ON BO.id = BONO.booking_id
+                    LEFT JOIN booking_status BSTA
+                        ON BO.booking_status_id = BSTA.id
+                    LEFT JOIN booking_type BTYE
+                        ON BO.booking_type_id = BTYE.id
+                    LEFT JOIN booking_paid BOPA
+                        ON BO.id = BOPA.booking_id
+                    LEFT JOIN companies COMP
+                        ON BO.company_id = COMP.id
+                    LEFT JOIN customers CUS
+                        ON BO.id = CUS.booking_id
+                    LEFT JOIN nationalitys NATION
+                        ON CUS.nationality_id = NATION.id
+                    LEFT JOIN booking_products BP
+                        ON BO.id = BP.booking_id
+                    LEFT JOIN products PROD
+                        ON BP.product_id = PROD.id
+                    LEFT JOIN booking_product_rates BPR
+                        ON BP.id = BPR.booking_products_id
+                    LEFT JOIN product_category CATE
+                        ON BPR.category_id = CATE.id
+                    LEFT JOIN booking_transfer BT
+                        ON BP.id = BT.booking_products_id
+                    LEFT JOIN booking_transfer_rates BTR
+                        ON BT.id = BTR.booking_transfer_id
+                    -- LEFT JOIN hotel PICKUP
+                    --     ON BT.hotel_pickup_id = PICKUP.id
+                    -- LEFT JOIN hotel DROPOFF
+                    --     ON BT.hotel_dropoff_id = DROPOFF.id
+                    LEFT JOIN booking_extra_charge BEC
+                        ON BO.id = BEC.booking_id
+                    LEFT JOIN extra_charges EXTRA
+                        ON BEC.extra_charge_id = EXTRA.id
+                    LEFT JOIN zones PICKUP
+                        ON BT.pickup_id = PICKUP.id
+                    LEFT JOIN zones DROPOFF
+                        ON BT.dropoff_id = DROPOFF.id
+                    LEFT JOIN users BOOKER 
+                        ON BO.booker_id = BOOKER.id
+                    LEFT JOIN booking_order_transfer BOMANGE
+                        ON BT.id = BOMANGE.booking_transfer_id
+                    LEFT JOIN order_transfer MANGET 
+                        ON BOMANGE.order_id = MANGET.id
+                        AND MANGET.pickup = 1
+                    LEFT JOIN booking_order_boat BORDB
+                        ON BO.id = BORDB.booking_id
+                    LEFT JOIN order_boat MANGE 
+                        ON BORDB.manage_id = MANGE.id
+                    LEFT JOIN confirm_agent CONFIRM
+                        ON COMP.id = CONFIRM.agent_id
+                        AND CONFIRM.travel_date = BP.travel_date
+                    WHERE BO.id = ?
         ";
 
         $query .= " ORDER BY CUS.id ASC, BOPA.id ASC";
@@ -687,6 +633,21 @@ class Booking extends DB
         } else {
             $data = false;
         }
+
+        return $data;
+    }
+
+    public function get_values(string $select, string $from, string $where, int $type)
+    {
+        $query = "SELECT $select
+                FROM $from
+                WHERE $where
+        ";
+
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $type == 0 ? $result->fetch_assoc() : $result->fetch_all(MYSQLI_ASSOC);
 
         return $data;
     }
@@ -706,93 +667,6 @@ class Booking extends DB
         } else {
             $data = false;
         }
-
-        return $data;
-    }
-
-    public function get_values(string $select, string $from, string $where)
-    {
-        $query = "SELECT $select
-            FROM $from 
-            WHERE $where
-        ";
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_assoc();
-
-        return $data;
-    }
-
-    public function search(string $refcode, string $name)
-    {
-        $bind_types = "";
-        $params = array();
-
-        $query = "SELECT BO.*,
-                    BP.id as bpID, BP.travel_date as bpTravelDate, BP.adult as bpAdult, BP.child as bpChild, BP.infant as bpInfant, 
-                    BONO.id as bonoID, BONO.bo_full as bonoFull,
-                    BTY.id as btyID, BTY.name as btyName, 
-                    COMP.id as compID, COMP.name as compName, 
-                    BOSTA.id as bostaID, BOSTA.name as bostaName, BOSTA.name_class as bostaNameClass, 
-                    PRO.id as proID, PRO.name as proName,
-                    CATE.id as cateID, CATE.name as cateName,
-                    BPR.id as bprID, BPR.rate_adult as bprRateAdult, BPR.rate_child as bprRateChild, BPR.rate_infant as bprRateInfant, 
-                    BPR.rate_group as bprRateGroup, BPR.pax_group as bprPaxGroup, BPR.rate_total as bprRateTotal,
-                    BT.id as btID, BT.adult as btAdult, BT.child as btChild, BT.infant as btInfant, BT.hotel_name as btHotelName,
-                    BT.room_no as btRoomNo, BT.note as btNote, BT.private_type as btPrivateType,
-                    BTR.id as btrID, BTR.rate_adult as btrRateAdult, BTR.rate_child as btrRateChild, BTR.rate_infant as btrRateInfant, 
-                    BTR.rate_private as btrRatePrivate,
-                    PLA.id as plaID, PLA.name as plaName,
-                    CAR.id as carID, CAR.name as carName,
-                    CUS.id as cusID
-                FROM bookings BO  
-                LEFT JOIN booking_products BP
-                    ON BO.id = BP.booking_id
-                LEFT JOIN bookings_no BONO
-                    ON BO.id = BONO.booking_id
-                LEFT JOIN booking_type BTY
-                    ON BO.booking_type_id = BTY.id
-                LEFT JOIN companies COMP
-                    ON BO.company_id = COMP.id
-                LEFT JOIN booking_status BOSTA
-                    ON BO.booking_status_id = BOSTA.id
-                LEFT JOIN products PRO
-                    ON BP.product_id = PRO.id
-                LEFT JOIN product_category CATE
-                    ON BP.category_id = CATE.id
-                LEFT JOIN booking_product_rates BPR
-                    ON BP.id = BPR.booking_products_id
-                LEFT JOIN booking_transfer BT
-                    ON BP.id = BT.booking_products_id
-                LEFT JOIN booking_transfer_rates BTR
-                    ON BT.id = BTR.booking_transfer_id
-                LEFT JOIN place PLA
-                    ON BT.pickup_id = PLA.id
-                LEFT JOIN cars_category CAR
-                    ON BTR.cars_category_id = CAR.id
-                LEFT JOIN customers CUS
-                    ON BO.id = CUS.booking_id
-                WHERE BO.id > 0
-                    ";
-
-        if (!empty($refcode)) {
-            $query .= " AND BONO.bo_full LIKE ?";
-            $bind_types .= "s";
-            array_push($params, '%' . $refcode . '%');
-        }
-        if (!empty($name)) {
-            $query .= " AND CUS.firstname LIKE ?";
-            $bind_types .= "s";
-            array_push($params, '%' . $name . '%');
-        }
-        $query .= " ORDER BY BO.id DESC";
-
-        $statement = $this->connection->prepare($query);
-        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
 
         return $data;
     }
@@ -1092,9 +966,12 @@ class Booking extends DB
         return $data;
     }
 
-    public function show_category_rate($agent_id, int $category_id, string $travel_date)
+    public function show_category_rate($agent_id, string $travel_date, array $category_id)
     {
-        $query = "SELECT PRODC.*,
+        $sanitized_ids = array_map('intval', $category_id);
+        $in_clause_values = implode(',', $sanitized_ids);
+
+        $query = "SELECT PRODC.id as id, PRODC.name as name, PRODC.transfer as transfer,
                 PRODP.id as periodid,
                 PRODR.id as prodrid, PRODR.rate_adult as rate_adult, PRODR.rate_child as rate_child, PRODR.rate_infant as rate_infant, PRODR.rate_private as rate_private
                 FROM product_category PRODC
@@ -1104,17 +981,16 @@ class Booking extends DB
                     ON PRODP.id = COMR.product_period_id
                 LEFT JOIN product_rates PRODR
                     ON COMR.product_rate_id = PRODR.id
-                WHERE PRODC.id = ? 
-                AND PRODP.is_approved = 1
+                WHERE PRODP.is_approved = 1
                 AND PRODP.is_deleted = 0
                 ";
 
         $query .= " AND PRODP.period_from <= '" . $travel_date . "'";
         $query .= " AND PRODP.period_to >= '" . $travel_date . "'";
-        $query .= (isset($agent_id) && $agent_id > 0) ? " AND COMR.company_id = " . $agent_id : "";
+        $query .= " AND COMR.company_id = " . $agent_id;
+        $query .= " AND PRODC.id IN (" . $in_clause_values . ") ";
 
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("i", $category_id);
         $statement->execute();
         $result = $statement->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -1283,41 +1159,19 @@ class Booking extends DB
         return $data;
     }
 
-    public function insert_booking_paid(int $bo_id, string $date_paid, string $total_paid, string $card_no, string $note, int $payment_type_id, int $bank_account_id, int $book_payment, array $fileArray)
+    public function insert_booking_paid(string $total_paid, int $booking_payment_id, int $bo_id)
     {
-        // upload photo file
-        $photoResponse = $this->uploadFile($fileArray);
-        $photo = !empty($photoResponse['filename'][0]) ? $photoResponse['filename'][0] : '';
-
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO booking_paid (date_paid, total_paid, card_no, photo, note, payment_type_id, bank_account_id, booking_payment_id, booking_id, user_id, updated_at, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now())";
-
-        $bind_types .= "s";
-        array_push($params, $date_paid);
+        $query = "INSERT INTO `booking_paid`(`total_paid`, `booking_payment_id`, `booking_id`, `user_id`, `updated_at`, `created_at`)
+        VALUES (?, ?, ?, ?, now(), now())";
 
         $bind_types .= "d";
         array_push($params, $total_paid);
 
-        $bind_types .= "s";
-        array_push($params, $card_no);
-
-        $bind_types .= "s";
-        array_push($params, $photo);
-
-        $bind_types .= "s";
-        array_push($params, $note);
-
         $bind_types .= "i";
-        array_push($params, $payment_type_id);
-
-        $bind_types .= "i";
-        array_push($params, $bank_account_id);
-
-        $bind_types .= "i";
-        array_push($params, $book_payment);
+        array_push($params, $booking_payment_id);
 
         $bind_types .= "i";
         array_push($params, $bo_id);
@@ -1335,54 +1189,26 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_booking_paid(int $id, string $date_paid, string $total_paid, string $card_no, string $note, int $payment_type_id, int $bank_account_id, int $book_payment, array $fileArray)
+    public function update_booking_paid(int $id, string $total_paid, int $booking_payment_id)
     {
-        // upload photo file
-        $photoResponse = $this->uploadFile($fileArray);
-        $photo = !empty($photoResponse['filename'][0]) ? $photoResponse['filename'][0] : '';
-
         $bind_types = "";
         $params = array();
 
         $query = "UPDATE booking_paid SET";
 
-        $query .= " date_paid = ?,";
-        $bind_types .= "s";
-        array_push($params, $date_paid);
-
         $query .= " total_paid = ?,";
         $bind_types .= "d";
         array_push($params, $total_paid);
 
-        $query .= " card_no = ?,";
-        $bind_types .= "s";
-        array_push($params, $card_no);
-
-        $query .= " photo = ?,";
-        $bind_types .= "s";
-        array_push($params, $photo);
-
-        $query .= " note = ?,";
-        $bind_types .= "s";
-        array_push($params, $note);
-
-        $query .= " payment_type_id = ?,";
-        $bind_types .= "i";
-        array_push($params, $payment_type_id);
-
-        $query .= " bank_account_id = ?,";
-        $bind_types .= "i";
-        array_push($params, $bank_account_id);
-
         $query .= " booking_payment_id = ?,";
         $bind_types .= "i";
-        array_push($params, $book_payment);
+        array_push($params, $booking_payment_id);
 
         $query .= " user_id = ?,";
         $bind_types .= "i";
         array_push($params, $_SESSION["supplier"]["id"]);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1398,13 +1224,13 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function insert_data(int $booking_status_id, int $booking_type_id, string $booking_date, string $booking_time, int $company_id, string $voucher_no_agent, string $sender)
+    public function insert_data(int $booking_status_id, int $booking_type_id, string $booking_date, string $booking_time, int $company_id, string $voucher_no_agent, string $sender, string $discount)
     {
         $bind_types = "";
         $params = array();
 
         $query = "INSERT INTO bookings (booking_date, booking_time, voucher_no_agent, discount_type, discount, sender, booker_id, company_id, booking_status_id, booking_type_id, is_deleted, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)";
 
         $bind_types .= "s";
         array_push($params, $booking_date);
@@ -1419,9 +1245,8 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, 1);
 
-        // discount
-        $bind_types .= "i";
-        array_push($params, 0);
+        $bind_types .= "d";
+        array_push($params, $discount);
 
         $bind_types .= "s";
         array_push($params, $sender);
@@ -1437,6 +1262,13 @@ class Booking extends DB
 
         $bind_types .= "i";
         array_push($params, $booking_type_id);
+
+        $bind_types .= "s";
+        array_push($params, date("Y-m-d H:i:s"));
+
+        $bind_types .= "s";
+        array_push($params, date("Y-m-d H:i:s"));
+   
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -1479,7 +1311,7 @@ class Booking extends DB
         $bind_types .= "d";
         array_push($params, $discount);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1495,18 +1327,18 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_booking_discount(int $id, string $discount)
+    public function delete_data(int $id)
     {
         $bind_types = "";
         $params = array();
 
         $query = "UPDATE bookings SET";
 
-        $query .= " discount = ?,";
-        $bind_types .= "d";
-        array_push($params, $discount);
+        $query .= " is_deleted = ?,";
+        $bind_types .= "i";
+        array_push($params, 1);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1517,6 +1349,61 @@ class Booking extends DB
 
         if ($statement->execute()) {
             $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function showlog(int $booking_id)
+    {
+        $query = "SELECT log_booking.*,
+            users.firstname as firstname, users.lastname as lastname
+            FROM log_booking 
+            LEFT JOIN users
+                ON log_booking.user_id = users.id
+            WHERE log_booking.id > 0
+            AND log_booking.booking_id = $booking_id
+        ";
+        $query .= " ORDER BY log_booking.id ASC";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
+    public function insert_log(string $name, string $detail, int $booking_id, int $type_id, string $created_at)
+    {
+        $bind_types = "";
+        $params = array();
+
+        $query = "INSERT INTO `log_booking`(`name`, `detail`, `booking_id`, `user_id`, `type_id`, `created_at`)
+        VALUES (?, ?, ?, ?, ?, ?)";
+
+        $bind_types .= "s";
+        array_push($params, $name);
+
+        $bind_types .= "s";
+        array_push($params, $detail);
+
+        $bind_types .= "i";
+        array_push($params, $booking_id);
+
+        $bind_types .= "i";
+        array_push($params, $_SESSION["supplier"]["id"]);
+
+        $bind_types .= "i";
+        array_push($params, $type_id);
+
+        $bind_types .= "s";
+        array_push($params, $created_at);
+
+        $statement = $this->connection->prepare($query);
+        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
+
+        if ($statement->execute()) {
+            $this->response = $this->connection->insert_id;
         }
 
         return $this->response;
@@ -1537,7 +1424,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $book_payment);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1639,7 +1526,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $nationality_id);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1670,46 +1557,25 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function insert_booking_product(string $travel_date, int $adult, int $child, int $infant, int $foc, string $note, int $private_type, int $booking_type_id, int $booking_id, int $product_id, int $category_id)
+    public function insert_booking_product(string $travel_date, string $note, int $booking_id, int $product_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO  booking_products (travel_date, adult, child, infant, foc, note, private_type, booking_type_id, booking_id, product_id, category_id, is_approved, is_deleted, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, NOW(), NOW())";
+        $query = "INSERT INTO `booking_products`(`travel_date`, `note`, `booking_id`, `product_id`, `is_approved`, `is_deleted`, `created_at`, `updated_at`)
+        VALUES (?, ?, ?, ?, 1, 0, NOW(), NOW())";
 
         $bind_types .= "s";
         array_push($params, $travel_date);
 
-        $bind_types .= "i";
-        array_push($params, $adult);
-
-        $bind_types .= "i";
-        array_push($params, $child);
-
-        $bind_types .= "i";
-        array_push($params, $infant);
-
-        $bind_types .= "i";
-        array_push($params, $foc);
-
         $bind_types .= "s";
         array_push($params, $note);
-
-        $bind_types .= "i";
-        array_push($params, $private_type);
-
-        $bind_types .= "i";
-        array_push($params, $booking_type_id);
 
         $bind_types .= "i";
         array_push($params, $booking_id);
 
         $bind_types .= "i";
         array_push($params, $product_id);
-
-        $bind_types .= "i";
-        array_push($params, $category_id);
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -1721,32 +1587,16 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_booking_product(int $id, string $travel_date, int $adult, int $child, int $infant, int $foc, string $note, int $product_id, int $category_id)
+    public function update_booking_product(int $id, string $travel_date, string $note, int $product_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "UPDATE booking_products SET";
+        $query = "UPDATE `booking_products` SET";
 
         $query .= " travel_date = ?,";
         $bind_types .= "s";
         array_push($params, $travel_date);
-
-        $query .= " adult = ?,";
-        $bind_types .= "i";
-        array_push($params, $adult);
-
-        $query .= " child = ?,";
-        $bind_types .= "i";
-        array_push($params, $child);
-
-        $query .= " infant = ?,";
-        $bind_types .= "i";
-        array_push($params, $infant);
-
-        $query .= " foc = ?,";
-        $bind_types .= "i";
-        array_push($params, $foc);
 
         $query .= " note = ?,";
         $bind_types .= "s";
@@ -1756,11 +1606,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $product_id);
 
-        $query .= " category_id = ?,";
-        $bind_types .= "i";
-        array_push($params, $category_id);
-
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1776,25 +1622,40 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function insert_booking_rate(string $rate_adult, string $rate_child, string $rate_infant, string $rate_total, int $booking_products_id, int $product_rates_id)
+    public function insert_booking_rate(int $adult, int $child, int $infant, int $foc, string $rates_adult, string $rates_child, string $rates_infant, string $rates_private, int $category_id, int $booking_products_id, int $product_rates_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO booking_product_rates (rate_adult, rate_child, rate_infant, rate_group, pax_group, rate_total, booking_products_id, product_rates_id, created_at, updated_at)
-        VALUES (?, ?, ?, 0, 0, ?, ?, ?, NOW(), NOW())";
+        $query = "INSERT INTO `booking_product_rates`(`adult`, `child`, `infant`, `foc`, `rates_adult`, `rates_child`, `rates_infant`, `rates_private`, `category_id`, `booking_products_id`, `product_rates_id`, `created_at`, `updated_at`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+
+        $bind_types .= "i";
+        array_push($params, $adult);
+
+        $bind_types .= "i";
+        array_push($params, $child);
+
+        $bind_types .= "i";
+        array_push($params, $infant);
+
+        $bind_types .= "i";
+        array_push($params, $foc);
 
         $bind_types .= "d";
-        array_push($params, $rate_adult);
+        array_push($params, $rates_adult);
 
         $bind_types .= "d";
-        array_push($params, $rate_child);
+        array_push($params, $rates_child);
 
         $bind_types .= "d";
-        array_push($params, $rate_infant);
+        array_push($params, $rates_infant);
 
         $bind_types .= "d";
-        array_push($params, $rate_total);
+        array_push($params, $rates_private);
+
+        $bind_types .= "i";
+        array_push($params, $category_id);
 
         $bind_types .= "i";
         array_push($params, $booking_products_id);
@@ -1812,34 +1673,54 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_booking_rate(int $id, string $rate_adult, string $rate_child, string $rate_infant, string $rate_total, int $pror_id)
+    public function update_booking_rate(int $id, int $adult, int $child, int $infant, int $foc, string $rates_adult, string $rates_child, string $rates_infant, string $rates_private, int $category_id, int $product_rates_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "UPDATE booking_product_rates SET";
+        $query = "UPDATE `booking_product_rates` SET";
 
-        $query .= " rate_adult = ?,";
-        $bind_types .= "d";
-        array_push($params, $rate_adult);
+        $query .= " adult = ?,";
+        $bind_types .= "i";
+        array_push($params, $adult);
 
-        $query .= " rate_child = ?,";
-        $bind_types .= "d";
-        array_push($params, $rate_child);
+        $query .= " child = ?,";
+        $bind_types .= "i";
+        array_push($params, $child);
 
-        $query .= " rate_infant = ?,";
-        $bind_types .= "d";
-        array_push($params, $rate_infant);
+        $query .= " infant = ?,";
+        $bind_types .= "i";
+        array_push($params, $infant);
 
-        $query .= " rate_total = ?,";
+        $query .= " foc = ?,";
+        $bind_types .= "i";
+        array_push($params, $foc);
+
+        $query .= " rates_adult = ?,";
         $bind_types .= "d";
-        array_push($params, $rate_total);
+        array_push($params, $rates_adult);
+
+        $query .= " rates_child = ?,";
+        $bind_types .= "d";
+        array_push($params, $rates_child);
+
+        $query .= " rates_infant = ?,";
+        $bind_types .= "d";
+        array_push($params, $rates_infant);
+
+        $query .= " rates_private = ?,";
+        $bind_types .= "d";
+        array_push($params, $rates_private);
+
+        $query .= " category_id = ?,";
+        $bind_types .= "i";
+        array_push($params, $category_id);
 
         $query .= " product_rates_id = ?,";
         $bind_types .= "i";
-        array_push($params, $pror_id);
+        array_push($params, $product_rates_id);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -1855,25 +1736,26 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function insert_booking_transfer(int $adult, int $child, int $infant, int $foc, string $start_pickup, string $end_pickup, string $hotel_pickup, string $hotel_dropoff, string $room_no, string $note, int $pickup_id, int $dropoff_id, int $hotel_pickup_id, int $hotel_dropoff_id, int $transfer_type, int $pickup_type, int $booking_products_id, int $category_id)
+    public function delete_booking_rate(int $id)
+    {
+        $query = "DELETE FROM `booking_product_rates` WHERE `id` = ? ";
+        $statement = $this->connection->prepare($query);
+        $statement->bind_param("i", $id);
+        $statement->execute();
+        if ($statement->execute()) {
+            $this->response = true;
+        }
+
+        return $this->response;
+    }
+
+    public function insert_booking_transfer(string $start_pickup, string $end_pickup, string $hotel_pickup, string $hotel_dropoff, string $room_no, string $note, int $pickup_id, int $dropoff_id, int $hotel_pickup_id, int $hotel_dropoff_id, int $transfer_type, int $pickup_type, int $booking_products_id)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO booking_transfer (adult, child, infant, foc, start_pickup, end_pickup, hotel_pickup, hotel_dropoff, room_no, note, pickup_id, dropoff_id, hotel_pickup_id, hotel_dropoff_id, transfer_type, pickup_type, booking_products_id, category_id, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-        $bind_types .= "i";
-        array_push($params, $adult);
-
-        $bind_types .= "i";
-        array_push($params, $child);
-
-        $bind_types .= "i";
-        array_push($params, $infant);
-
-        $bind_types .= "i";
-        array_push($params, $foc);
+        $query = "INSERT INTO `booking_transfer`(`start_pickup`, `end_pickup`, `hotel_pickup`, `hotel_dropoff`, `room_no`, `note`, `pickup_id`, `dropoff_id`, `hotel_pickup_id`, `hotel_dropoff_id`, `transfer_type`, `pickup_type`, `booking_products_id`, `created_at`, `updated_at`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
         $bind_types .= "s";
         array_push($params, $start_pickup);
@@ -1914,9 +1796,6 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $booking_products_id);
 
-        $bind_types .= "i";
-        array_push($params, $category_id);
-
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
 
@@ -1927,28 +1806,12 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function update_booking_transfer(int $id, int $adult, int $child, int $infant, int $foc, string $start_pickup, string $end_pickup, string $hotel_pickup_outside, string $hotel_dropoff_outside, string $room_no, string $note, int $pickup, int $dropoff, int $hotel_pickup, int $hotel_dropoff, int $transfer_type, int $pickup_type, int $category_id)
+    public function update_booking_transfer(int $id, string $start_pickup, string $end_pickup, string $hotel_pickup_outside, string $hotel_dropoff_outside, string $room_no, string $note, int $pickup, int $dropoff, int $hotel_pickup, int $hotel_dropoff, int $transfer_type, int $pickup_type)
     {
         $bind_types = "";
         $params = array();
 
         $query = "UPDATE booking_transfer SET";
-
-        $query .= " adult = ?,";
-        $bind_types .= "i";
-        array_push($params, $adult);
-
-        $query .= " child = ?,";
-        $bind_types .= "i";
-        array_push($params, $child);
-
-        $query .= " infant = ?,";
-        $bind_types .= "i";
-        array_push($params, $infant);
-
-        $query .= " foc = ?,";
-        $bind_types .= "i";
-        array_push($params, $foc);
 
         $query .= " start_pickup = ?,";
         $bind_types .= "s";
@@ -1998,11 +1861,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $pickup_type);
 
-        $query .= " category_id = ?,";
-        $bind_types .= "i";
-        array_push($params, $category_id);
-
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -2081,7 +1940,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $cars_category);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -2118,7 +1977,7 @@ class Booking extends DB
         $params = array();
 
         $query = "INSERT INTO bookings_no (bo_date, bo_year, bo_year_th, bo_month, bo_no, bo_full, booking_id, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $bind_types .= "s";
         array_push($params, $bo_date);
@@ -2140,6 +1999,9 @@ class Booking extends DB
 
         $bind_types .= "i";
         array_push($params, $booking_id);
+
+        $bind_types .= "s";
+        array_push($params, date("Y-m-d H:i:s"));
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -2256,7 +2118,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, $extra_type);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";
@@ -2423,37 +2285,6 @@ class Booking extends DB
         return $ipaddress;
     }
 
-    public function delete_data_prod(int $id)
-    {
-        $bind_types = "";
-        $params = array();
-
-        $query = "UPDATE booking_products SET";
-
-        $query .= " is_approved = ?,";
-        $bind_types .= "i";
-        array_push($params, 0);
-
-        $query .= " is_deleted = ?,";
-        $bind_types .= "i";
-        array_push($params, 1);
-
-        $query .= " updated_at = now()";
-
-        $query .= " WHERE id = ?";
-        $bind_types .= "i";
-        array_push($params, $id);
-
-        $statement = $this->connection->prepare($query);
-        !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
-
-        if ($statement->execute()) {
-            $this->response = true;
-        }
-
-        return $this->response;
-    }
-
     public function delete_data_cus(int $id)
     {
         $query = "DELETE FROM customers WHERE id = ?";
@@ -2505,7 +2336,7 @@ class Booking extends DB
         $bind_types .= "i";
         array_push($params, 1);
 
-        $query .= " updated_at = now()";
+        $query .= " updated_at = '" . date("Y-m-d H:i:s") . "'";
 
         $query .= " WHERE id = ?";
         $bind_types .= "i";

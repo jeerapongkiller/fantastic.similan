@@ -68,6 +68,12 @@
         .table thead th {
             border-bottom: 1px solid #6E6B7B;
         }
+
+        .table .thead-light th {
+            color: #5E5873;
+            background-color: #F3F2F7;
+            border-color: #6E6B7B;
+        }
     </style>
 </head>
 <!-- END: Head-->
@@ -127,6 +133,7 @@
             var jqFormTransfer = $('#transfer-form'),
                 jqFormDriver = $('#driver-car-search-form'),
                 FormEdTransfer = $('#edit-manage-form'),
+                jqSearch = $('#manages-search-form'),
                 picker = $('#dob'),
                 DatePicker = $('.date-picker'),
                 dtPicker = $('#dob-bootstrap-val'),
@@ -250,6 +257,26 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
+            // jqSearch.on("submit", function(e) {
+            //     var serializedData = $(this).serialize();
+            //     $.ajax({
+            //         url: "pages/order-driver/function/search.php",
+            //         type: "POST",
+            //         data: serializedData + "&action=search",
+            //         success: function(response) {
+            //             if (response != false) {
+            //                 $('#div-manage-list').html(response);
+            //             } else {
+            //                 Swal.fire({
+            //                     title: "Please try again.",
+            //                     icon: "error",
+            //                 });
+            //             }
+            //         }
+            //     });
+            //     e.preventDefault();
+            // });
+
             FormEdTransfer.on("submit", function(e) {
                 var serializedData = $(this).serialize();
                 $.ajax({
@@ -277,15 +304,11 @@
                 $.ajax({
                     url: "pages/order-driver/function/" + action + "-transfer.php",
                     type: "POST",
-                    data: serializedData + "&action=" + action + "&travel_date=" + $('#date_travel_booking').val() + "&return=" + $('#return').val(),
+                    data: serializedData + "&action=" + action + "&travel_date=" + $('#search_travel_date').val() + "&return=" + $('#return').val(),
                     success: function(response) {
                         // console.log(response);
                         if (action === 'create' && response != false) {
                             location.reload(); // refresh page
-                            // $('#modal-transfers').modal('hide');
-                            // $('#modal-booking').modal('show');
-                            // var res = $.parseJSON(response);
-                            // search_booking('next', res.travel_date, res.retrun, res.id);
                         } else if (action === 'edit' && response != false) {
                             location.reload(); // refresh page
                         } else {
@@ -340,6 +363,12 @@
             sum_checkbox();
         }
 
+        function check_max_tourist(bt_id, other, max) {
+            var manage = document.getElementById('toc-manage' + bt_id).value;
+            document.getElementById('span' + bt_id).innerHTML = Number(max) - (Number(manage) + Number(other));
+            document.getElementById('span' + bt_id).classList = ((Number(manage) + Number(other)) - Number(max) > 0) ? 'text-danger' : 'text-success';
+        }
+
         function sum_checkbox() {
             var bookings = document.getElementsByClassName('checkbox-book');
             var manage = document.getElementsByClassName('checkbox-manage');
@@ -350,53 +379,54 @@
             var toc = 0;
             if (bookings.length > 0) {
                 for (let index = 0; index < bookings.length; index++) {
-                    toc = document.getElementById('toc-bookings' + bookings[index].value).innerHTML;
+                    toc = document.getElementById('tourist' + bookings[index].value).value;
                     if (bookings[index].checked == true) {
                         sum_true = Number(sum_true + 1);
                         sum_toc_true = Number(sum_toc_true) + Number(toc);
                     } else {
-                        sum_false = Number(sum_false + 1);
+                        sum_false++;
                         sum_toc_false = Number(sum_toc_false) + Number(toc);
                     }
                 }
             }
             if (manage.length > 0) {
                 for (let index = 0; index < manage.length; index++) {
-                    toc = document.getElementById('toc-manage' + manage[index].value).innerHTML;
+                    toc = document.getElementById('toc-manage' + manage[index].value).value;
                     if (manage[index].checked == true) {
                         sum_true = Number(sum_true + 1);
                         sum_toc_true = Number(sum_toc_true) + Number(toc);
                     } else {
-                        sum_false = Number(sum_false + 1);
+                        sum_false++;
                         sum_toc_false = Number(sum_toc_false) + Number(toc);
                     }
                 }
             }
+
             document.getElementById('booking-true').innerHTML = sum_true;
             document.getElementById('booking-false').innerHTML = sum_false;
             document.getElementById('toc-true').innerHTML = sum_toc_true;
             document.getElementById('toc-false').innerHTML = sum_toc_false;
         }
 
-        function modal_transfer(travel_date, manage_id, i, type) {
+        function modal_transfer(travel_date, manage_id) {
             document.getElementById('text-travel-date').innerHTML = '<b>' + travel_date + '</b>';
             if (manage_id > 0) {
                 var arr_mange = document.getElementById('arr_mange' + manage_id).value;
                 var res = $.parseJSON(arr_mange);
 
-                $("#driver").val(res.driver_id[i]).trigger("change");
+                $("#driver").val(res.driver_id).trigger("change");
 
-                document.getElementById('manage_id').value = res.id[i];
-                document.getElementById('car').value = res.car_id[i];
-                document.getElementById('driver').value = res.driver_id[i];
-                document.getElementById('seat').value = res.seat[i];
-                document.getElementById('license').value = res.license[i];
-                document.getElementById('telephone').value = res.telephone[i];
-                document.getElementById('note').value = res.note[i];
-                document.getElementById('outside_driver').value = res.driver_id[i] == 0 ? res.driver_name[i] : '';
+                document.getElementById('manage_id').value = res.id;
+                document.getElementById('car').value = res.car_id;
+                document.getElementById('driver').value = res.driver_id;
+                document.getElementById('seat').value = res.seat;
+                document.getElementById('license').value = res.license;
+                document.getElementById('telephone').value = res.telephone;
+                document.getElementById('note').value = res.note;
+                document.getElementById('outside_driver').value = res.driver_id == 0 ? res.driver_name : '';
 
-                $("#car").val(res.car_id[i]).trigger("change");
-                $("#seat").val(res.seat[i]).trigger("change");
+                $("#car").val(res.car_id).trigger("change");
+                $("#seat").val(res.seat).trigger("change");
                 document.getElementById('delete_manage').disabled = false;
             } else {
                 $("#driver").val(0).trigger("change");
@@ -405,7 +435,6 @@
                 document.getElementById('delete_manage').disabled = true;
                 document.getElementById('transfer-form').reset();
             }
-            document.getElementById('retrun').value = type;
         }
 
         function check_outside(type) {
@@ -448,16 +477,23 @@
             }
         }
 
-        function search_booking(type, travel_date, retrun, manage_id, car, seat) {
+        function search_booking(manage_id, driver, car, seat) {
             // get data
             var formData = new FormData();
             formData.append('action', 'search');
-            formData.append('travel_date', String(travel_date));
-            formData.append('return', retrun);
             formData.append('manage_id', manage_id);
+            formData.append('search_status', $('#search_status').val());
+            formData.append('search_agent', $('#search_agent').val());
+            formData.append('search_product', $('#search_product').val());
+            formData.append('search_car', $('#search_car').val());
+            formData.append('search_travel_date', $('#search_travel_date').val());
+            formData.append('refcode', $('#refcode').val());
+            formData.append('voucher_no', $('#voucher_no').val());
+            formData.append('name', $('#name').val());
+            formData.append('hotel', $('#hotel').val());
+            formData.append('driver', driver);
             formData.append('car', car);
             formData.append('seat', seat);
-            formData.append('type', type);
             $.ajax({
                 url: "pages/order-driver/function/search-manage-booking.php",
                 type: "POST",
@@ -466,57 +502,64 @@
                 data: formData,
                 success: function(response) {
                     $('#div-manage-boooking').html(response);
+
                     sum_checkbox();
 
-                    if (type !== 'next') {
-                        var tbody = document.querySelector('#list-group tbody');
-                        // สร้าง Dragula instance
-                        if (tbody) {
-                            dragula([tbody], {
-                                moves: function(el, container, handle) {
-                                    return handle.tagName.toLowerCase() === 'td'; // กำหนดให้ลากได้เฉพาะที่ td
-                                }
-                            }).on('drop', function(el, target, source, sibling) {
-                                // console.log('Dropped element:', el);
-                            });
-                        }
-                    }
+                    $('.numeral-mask').toArray().forEach(function(field) {
+                        new Cleave(field, {
+                            numeral: true,
+                            numeralThousandsGroupStyle: 'thousand'
+                        });
+                    });
+
+                    // if (type !== 'next') {
+                    //     var tbody = document.querySelector('#list-group tbody');
+                    //     // สร้าง Dragula instance
+                    //     if (tbody) {
+                    //         dragula([tbody], {
+                    //             moves: function(el, container, handle) {
+                    //                 return handle.tagName.toLowerCase() === 'td'; // กำหนดให้ลากได้เฉพาะที่ td
+                    //             }
+                    //         }).on('drop', function(el, target, source, sibling) {
+                    //             // console.log('Dropped element:', el);
+                    //         });
+                    //     }
+                    // }
                 }
             });
-
-            if (type == 'next') {
-                $('#modal-booking').on('hidden.bs.modal', function() {
-                    location.reload(); // refresh page
-                });
-            }
         }
 
-        function submit_booking_manage(type, t_return, manage_id) {
+        function submit_booking_manage(manage_id) {
             var bt_id = document.getElementsByName('bt_id[]');
-            var manage_bt = (document.getElementsByName('manage_bt[]')) ? document.getElementsByName('manage_bt[]') : '';
-            var before = (document.getElementById('before_managebt')) ? document.getElementById('before_managebt') : '';
-            var before2 = (document.getElementById('before_managebt2')) ? document.getElementById('before_managebt2') : '';
-            var transfer = [];
-            var dropoff = [];
-            var dropoff_2 = [];
-            var bt_manage = [];
+            var tourist = document.getElementsByName('tourist[]');
+            var manage_bt = (document.getElementsByName('manage_bt[]')) ? document.getElementsByName('manage_bt[]') : [];
+            var manage_tourist = (document.getElementsByName('manage_tourist[]')) ? document.getElementsByName('manage_tourist[]') : [];
+            var before_manage = (document.getElementsByName('before_manage[]')) ? document.getElementsByName('before_manage[]') : [];
+            var bt_array = [];
+            var tourist_array = [];
+            var manage_array = [];
+            var manage_tourist_array = [];
+            var before_array = [];
+            var after_array = [];
             if (bt_id) {
                 for (let index = 0; index < bt_id.length; index++) {
                     if (bt_id[index].checked == true) {
-                        transfer.push(bt_id[index].value);
-                        if ($('#return').val() == 1) {
-                            dropoff.push($('#bt2_' + bt_id[index].value).val());
-                        }
+                        bt_array.push(bt_id[index].value);
+                        tourist_array.push(tourist[index].value);
                     }
+                }
+            }
+            if (before_manage) {
+                for (let index = 0; index < before_manage.length; index++) {
+                    before_array.push(before_manage[index].value);
                 }
             }
             if (manage_bt) {
                 for (let index = 0; index < manage_bt.length; index++) {
                     if (manage_bt[index].checked == true) {
-                        bt_manage.push(manage_bt[index].value);
-                        if ($('#return').val() == 1) {
-                            dropoff_2.push($('#manage_bt2_' + manage_bt[index].value).val());
-                        }
+                        manage_array.push(manage_bt[index].value);
+                        manage_tourist_array.push(manage_tourist[index].value);
+                        after_array.push(before_manage[index].value);
                     }
                 }
             }
@@ -525,13 +568,12 @@
                 var formData = new FormData();
                 formData.append('action', 'create');
                 formData.append('manage_id', manage_id);
-                formData.append('return', t_return);
-                formData.append('transfer', JSON.stringify(transfer));
-                formData.append('dropoff', JSON.stringify(dropoff));
-                formData.append('dropoff_2', JSON.stringify(dropoff_2));
-                formData.append('manage_bt', JSON.stringify(bt_manage));
-                formData.append('before', before.value);
-                formData.append('before2', before2.value);
+                formData.append('bt_array', JSON.stringify(bt_array));
+                formData.append('tourist_array', JSON.stringify(tourist_array));
+                formData.append('manage_array', JSON.stringify(manage_array));
+                formData.append('manage_tourist_array', JSON.stringify(manage_tourist_array));
+                formData.append('before_array', JSON.stringify(before_array));
+                formData.append('after_array', JSON.stringify(after_array));
                 $.ajax({
                     url: "pages/order-driver/function/create_booking_manage.php",
                     type: "POST",
@@ -539,7 +581,6 @@
                     contentType: false,
                     data: formData,
                     success: function(response) {
-                        // console.log(response);
                         if (response != false && response > 0) {
                             location.reload(); // refresh page
                         } else {
@@ -550,48 +591,6 @@
                         }
                     }
                 });
-            } else if (type == 'next' && bt_manage == '') {
-                location.reload(); // refresh page
-            } else {
-                Swal.fire({
-                    title: "Please try again.",
-                    icon: "error",
-                });
-            }
-        }
-
-        function modal_manage_transfer(bt_id, reteun, mange_id) {
-            var array_trans = document.getElementById('array_trans').value;
-            document.getElementById('edit_bt_id').value = typeof bt_id !== undefined ? bt_id : 0;
-            document.getElementById('brfore_manage_id').value = typeof mange_id !== undefined ? mange_id : 0;
-
-            if (array_trans !== '') {
-                $('#edit_manage').find('option').remove();
-                $('#edit_manage').append("<option value=\"\">กรุญาเลือกรถ...</option>");
-                var res = $.parseJSON(array_trans);
-                var count = Object.keys(res.mange_id).length;
-                if (count) {
-                    for (let index = 0; index < count; index++) {
-                        if ((reteun == 1 && res.pickup[index] == 1) || (reteun == 2 && res.dropoff[index] == 1)) {
-                            selected = (mange_id !== undefined && res.mange_id[index] == mange_id) ? 'selected' : '';
-                            $('#edit_manage').append("<option value=\"" + res.mange_id[index] + "\" " + selected + ">" + res.car[index] + "</option>");
-                        }
-                    }
-                }
-                $('#edit_manage').append("<option value=\"0\" >ไม่มีการจัดรถ</option>");
-            } else {
-                $('#edit_manage').find('option').remove();
-                $('#edit_manage').append("<option value=\"\">กรุญาเลือกรถ...</option>");
-            }
-        }
-
-        function check_cover(type) {
-            var mange_id = document.getElementsByName('mange_id[]');
-            if (mange_id) {
-                for (let index = 0; index < mange_id.length; index++) {
-                    document.getElementById('text-head-h4-' + mange_id[index].value).innerHTML = type == 1 ? 'ใบงานจัดรถ Pick Up' : 'ใบงานจัดรถ Drop off';
-                    document.getElementById('text-pier' + mange_id[index].value).innerHTML = type == 1 ? 'รับลูกค้าส่ง' + mange_id[index].dataset.pier : 'รับ' + mange_id[index].dataset.pier + 'ส่งลูกค้าที่โรงแรม';
-                }
             }
         }
 

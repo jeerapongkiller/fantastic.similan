@@ -69,23 +69,11 @@
             border-bottom: 1px solid #6E6B7B;
         }
 
-        .vc-column {
-            word-wrap: break-word;
-            /* white-space: normal; */
+        .table .thead-light th {
+            color: #5E5873;
+            background-color: #F3F2F7;
+            border-color: #6E6B7B;
         }
-
-        /* @media print {
-            body {
-                visibility: hidden;
-            }
-
-            #div-boat-job-image {
-                visibility: visible;
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-        } */
     </style>
 </head>
 <!-- END: Head-->
@@ -258,6 +246,31 @@
                 });
             }
 
+            // ตรวจสอบ checkbox "ALL"
+            $('input[type="checkbox"][value="all"]').on('change', function() {
+                let groupName = $(this).attr('name');
+                let isChecked = $(this).is(':checked');
+
+                $('input[name="' + groupName + '"]').not(this).prop('checked', isChecked).each(function() {
+                    // updateCustomOptionClass(this);
+                });
+
+                // updateCustomOptionClass(this);
+            });
+
+            // ตรวจสอบ checkbox อื่นในแต่ละกลุ่ม
+            $('input[type="checkbox"]').not('[value="all"]').on('change', function() {
+                let groupName = $(this).attr('name');
+                let total = $('input[name="' + groupName + '"]').not('[value="all"]').length;
+                let checked = $('input[name="' + groupName + '"]').not('[value="all"]').filter(':checked').length;
+
+                let allCheckbox = $('input[name="' + groupName + '"][value="all"]');
+                allCheckbox.prop('checked', total === checked);
+                // updateCustomOptionClass(allCheckbox);
+
+                // updateCustomOptionClass(this);
+            });
+
             // Ajax Search
             // --------------------------------------------------------------------
             FormEdBoat.on("submit", function(e) {
@@ -296,14 +309,8 @@
                     type: "POST",
                     data: serializedData + "&action=" + action + "&travel_date=" + $('#date_travel_booking').val(),
                     success: function(response) {
-                        // console.log(response);
-                        if (action === 'create' && response != false) {
-                            // $('#modal-boat').modal('hide');
-                            // $('#modal-booking').modal('show');
-                            // var res = $.parseJSON(response);
-                            // search_booking('next', res.travel_date, res.id);
-                            location.reload(); // refresh page
-                        } else if (action === 'edit' && response != false) {
+                        console.log(response);
+                        if (response != false && response > 0) {
                             Swal.fire({
                                 title: "The information has been added successfully.",
                                 icon: "success",
@@ -347,52 +354,42 @@
             });
         }
 
-        function checkbox(type) {
-            var checkbox_all = type == 'booking' ? document.getElementById('checkbo_all').checked : document.getElementById('checkmanage_all').checked;
-            var checkbox = type == 'booking' ? document.getElementsByClassName('checkbox-bookings') : document.getElementsByClassName('checkbox-manage');
-
-            if (checkbox_all == true && checkbox.length > 0) {
-                for (let index = 0; index < checkbox.length; index++) {
-                    checkbox[index].checked = true;
-                }
-            } else if (checkbox_all == false && checkbox.length > 0) {
-                for (let index = 0; index < checkbox.length; index++) {
-                    checkbox[index].checked = false;
-                }
-            }
-
-            sum_checkbox();
-        }
-
         function sum_checkbox() {
-            var bookings = document.getElementsByClassName('checkbox-bookings');
-            var manage = document.getElementsByClassName('checkbox-manage');
+            // var bookings = document.getElementsByClassName('checkbox-bookings');
+            // var manage = document.getElementsByClassName('checkbox-manage');
+            var bookings = document.getElementsByName('bookings[]');
+            var manages = document.getElementsByName('manages[]');
             var sum_true = 0;
             var sum_false = 0;
             var sum_toc_true = 0;
             var sum_toc_false = 0;
             var toc = 0;
+
             if (bookings.length > 0) {
                 for (let index = 0; index < bookings.length; index++) {
-                    toc = document.getElementById('toc-bookings' + bookings[index].value).innerHTML;
-                    if (bookings[index].checked == true) {
-                        sum_true = Number(sum_true + 1);
-                        sum_toc_true = Number(sum_toc_true) + Number(toc);
-                    } else {
-                        sum_false = Number(sum_false + 1);
-                        sum_toc_false = Number(sum_toc_false) + Number(toc);
+                    if (bookings[index].value !== 'all') {
+                        toc = bookings[index].dataset['tourist'];
+                        if (bookings[index].checked == true) {
+                            sum_true = Number(sum_true + 1);
+                            sum_toc_true = Number(sum_toc_true) + Number(toc);
+                        } else {
+                            sum_false = Number(sum_false + 1);
+                            sum_toc_false = Number(sum_toc_false) + Number(toc);
+                        }
                     }
                 }
             }
-            if (manage.length > 0) {
-                for (let index = 0; index < manage.length; index++) {
-                    toc = document.getElementById('toc-manage' + manage[index].value).innerHTML;
-                    if (manage[index].checked == true) {
-                        sum_true = Number(sum_true + 1);
-                        sum_toc_true = Number(sum_toc_true) + Number(toc);
-                    } else {
-                        sum_false = Number(sum_false + 1);
-                        sum_toc_false = Number(sum_toc_false) + Number(toc);
+            if (manages.length > 0) {
+                for (let index = 0; index < manages.length; index++) {
+                    if (manages[index].value !== 'all') {
+                        toc = manages[index].dataset['tourist'];
+                        if (manages[index].checked == true) {
+                            sum_true = Number(sum_true + 1);
+                            sum_toc_true = Number(sum_toc_true) + Number(toc);
+                        } else {
+                            sum_false = Number(sum_false + 1);
+                            sum_toc_false = Number(sum_toc_false) + Number(toc);
+                        }
                     }
                 }
             }
@@ -402,13 +399,16 @@
             document.getElementById('toc-false').innerHTML = sum_toc_false;
         }
 
-        function search_booking(type, travel_date, manage_id) {
+        function search_booking(travel_date, manage_id) {
             // get data
+            var serializedArr = $('#booking-search-form').serializeArray();
             var formData = new FormData();
             formData.append('action', 'search');
             formData.append('travel_date', String(travel_date));
             formData.append('manage_id', manage_id);
-            formData.append('type', type);
+            $.each(serializedArr, function(i, field) {
+                formData.append(field.name, field.value);
+            });
             $.ajax({
                 url: "pages/order-boat/function/search-manage-booking.php",
                 type: "POST",
@@ -417,96 +417,83 @@
                 data: formData,
                 success: function(response) {
                     $('#div-manage-boooking').html(response);
-                    sum_checkbox();
 
-                    if (type !== 'next') {
-                        var tbody = document.querySelector('#list-group tbody');
-                        // สร้าง Dragula instance
-                        if (tbody) {
-                            dragula([tbody], {
-                                moves: function(el, container, handle) {
-                                    return handle.tagName.toLowerCase() === 'td'; // กำหนดให้ลากได้เฉพาะที่ td
-                                }
-                            }).on('drop', function(el, target, source, sibling) {
-                                // console.log('Dropped element:', el);
-                            });
-                        }
-                    }
+                    // ตรวจสอบ checkbox "ALL"
+                    $('input[type="checkbox"][value="all"]').on('change', function() {
+                        let groupName = $(this).attr('name');
+                        let isChecked = $(this).is(':checked');
+
+                        $('input[name="' + groupName + '"]').not(this).prop('checked', isChecked).each(function() {
+
+                        });
+
+                        sum_checkbox();
+                    });
+
+                    // ตรวจสอบ checkbox อื่นในแต่ละกลุ่ม
+                    $('input[type="checkbox"]').not('[value="all"]').on('change', function() {
+                        let groupName = $(this).attr('name');
+                        let total = $('input[name="' + groupName + '"]').not('[value="all"]').length;
+                        let checked = $('input[name="' + groupName + '"]').not('[value="all"]').filter(':checked').length;
+
+                        let allCheckbox = $('input[name="' + groupName + '"][value="all"]');
+                        allCheckbox.prop('checked', total === checked);
+
+                        sum_checkbox();
+                    });
+
+                    sum_checkbox();
                 }
             });
 
-            if (type == 'next') {
-                $('#modal-booking').on('hidden.bs.modal', function() {
-                    location.reload(); // refresh page
-                });
-            }
         }
 
-        function modal_boat(travel_date, manage_id, i) {
-            document.getElementById('text-travel-date').innerHTML = '<b>' + travel_date + '</b>';
+        function modal_boat(manages) {
+            document.getElementById('text-travel-date').innerHTML = '<b>' + manages.dataset['travel_date'] + '</b>';
 
-            if (manage_id > 0) {
-                var arr_mange = document.getElementById('arr_mange' + manage_id).value;
-                var res = $.parseJSON(arr_mange);
+            if (manages.dataset['id'] > 0) {
+                document.getElementById('manage_id').value = manages.dataset['id'];
+                document.getElementById('time').value = manages.dataset['time'];
+                document.getElementById('color').value = manages.dataset['color'];
+                document.getElementById('guides').value = manages.dataset['guide'];
+                document.getElementById('note').value = manages.dataset['note'];
+                document.getElementById('counter').value = manages.dataset['counter'];
+                document.getElementById('outside_boat').value = manages.dataset['outside'];
 
-                document.getElementById('manage_id').value = res.id[i];
-                // document.getElementById('programe').value = res.product_id[i];
-                // document.getElementById('guide').value = res.guide[i];
-                document.getElementById('time').value = res.time[i];
-                document.getElementById('color').value = res.color_id[i];
-                // document.getElementById('captains').value = res.captain_id[i];
-                document.getElementById('guides').value = res.guide_id[i];
-                // document.getElementById('crew_first').value = res.crewf_id[i];
-                // document.getElementById('crew_second').value = res.crews_id[i];
-                document.getElementById('note').value = res.note[i];
-                document.getElementById('counter').value = res.counter[i];
-                document.getElementById('outside_boat').value = res.outside_boat[i];
+                $("#color").val(manages.dataset['color']).trigger("change");
+                $("#guides").val(manages.dataset['guide']).trigger("change");
 
-                // $("#programe").val(res.product_id[i]).trigger("change");
-                $("#color").val(res.color_id[i]).trigger("change");
-                // $("#captains").val(res.captain_id[i]).trigger("change");
-                $("#guides").val(res.guide_id[i]).trigger("change");
-                // $("#crew_first").val(res.crewf_id[i]).trigger("change");
-                // $("#crew_second").val(res.crews_id[i]).trigger("change");
-
-                // document.getElementById('programe').disabled = true;
                 document.getElementById('delete_manage').disabled = false;
-                check_boat(res.boat_id[i] != 0 ? res.boat_id[i] : "outside");
+                check_boat(manages);
             } else {
-                // document.getElementById('programe').disabled = false;
                 document.getElementById('delete_manage').disabled = true;
-                // document.getElementById('frm-boats').hidden = false;
-                // document.getElementById('frm-boats-outside').hidden = true;
-                // document.getElementById('frm-captain').hidden = false;
-                // document.getElementById('frm-captain-outside').hidden = true;
                 document.getElementById('frm-guide').hidden = false;
                 document.getElementById('frm-guide-outside').hidden = true;
-                // document.getElementById('frm-crew-first').hidden = false;
-                // document.getElementById('frm-crew-first-outside').hidden = true;
-                // document.getElementById('frm-crew-second').hidden = false;
-                // document.getElementById('frm-crew-second-outside').hidden = true;
                 document.getElementById('boat-form').reset();
-                check_boat(0);
+                check_boat(manages);
             }
         }
 
-        function submit_booking_manage(type, manage_id) {
-            var bo_id = document.getElementsByName('bo_id[]');
-            var manage_bo = document.getElementsByName('manage_bo[]');
-            var before = (document.getElementById('before_managebo')) ? document.getElementById('before_managebo') : '';
-            var booking = [];
-            var bo_manage = [];
-            if (bo_id) {
-                for (let index = 0; index < bo_id.length; index++) {
-                    if (bo_id[index].checked == true) {
-                        booking.push(bo_id[index].value);
+        function submit_booking_manage(manage_id) {
+            var bookings = document.getElementsByName('bookings[]');
+            var manages = document.getElementsByName('manages[]');
+            var booking_arr = [];
+            var manage_arr = [];
+            var before_arr = [];
+            if (bookings) {
+                for (let index = 0; index < bookings.length; index++) {
+                    if (bookings[index].checked == true && bookings[index].value !== 'all') {
+                        booking_arr.push(bookings[index].value);
                     }
                 }
             }
-            if (manage_bo) {
-                for (let index = 0; index < manage_bo.length; index++) {
-                    if (manage_bo[index].checked == true) {
-                        bo_manage.push(manage_bo[index].value);
+            if (manages) {
+                for (let index = 0; index < manages.length; index++) {
+                    if (manages[index].value !== 'all') {
+                        before_arr.push(manages[index].value);
+                        if (manages[index].checked == true) {
+                            manage_arr.push(manages[index].value);
+                        }
                     }
                 }
             }
@@ -515,9 +502,9 @@
                 var formData = new FormData();
                 formData.append('action', 'create');
                 formData.append('manage_id', manage_id);
-                formData.append('booking', JSON.stringify(booking));
-                formData.append('manage_bo', JSON.stringify(bo_manage));
-                formData.append('before', before.value);
+                formData.append('booking_arr', JSON.stringify(booking_arr));
+                formData.append('manage_arr', JSON.stringify(manage_arr));
+                formData.append('before_arr', JSON.stringify(before_arr));
                 $.ajax({
                     url: "pages/order-boat/function/create_booking_manage.php",
                     type: "POST",
@@ -543,15 +530,6 @@
                         }
                     }
                 });
-            } else if (type == 'next' && booking == '') {
-                Swal.fire({
-                    title: "The information has been updated.",
-                    icon: "success",
-                }).then(function(isConfirm) {
-                    if (isConfirm) {
-                        location.reload(); // refresh page
-                    }
-                });
             } else {
                 Swal.fire({
                     title: "Please try again.",
@@ -560,14 +538,12 @@
             }
         }
 
-        function check_boat(boat_id) {
-            var array_boat = document.getElementById('array_boat').value;
-
+        function check_boat(manages) {
+            var boat_id = manages.dataset['boat'];
             var formData = new FormData();
             formData.append('action', 'search');
-            formData.append('arr_boats', array_boat);
             formData.append('boat_id', boat_id);
-            formData.append('travel_date', $('#date_travel_booking').val());
+            formData.append('travel_date', manages.dataset['travel']);
             $.ajax({
                 url: "pages/order-boat/function/search-boat.php",
                 type: "POST",
@@ -586,7 +562,7 @@
                         if (countprod) {
                             for (let index = 0; index < countprod; index++) {
                                 selected = (boat_id !== undefined && res.id[index] == boat_id) ? 'selected' : '';
-                                $('#boats').append("<option value=\"" + res.id[index] + "\" data-name=\"" + res.name[index] + " (" + res.refcode[index] + ")\" " + selected + ">" + res.name[index] + " (" + res.refcode[index] + ")</option>");
+                                $('#boats').append("<option value=\"" + res.id[index] + "\" data-name=\"" + res.name[index] + "\" " + selected + ">" + res.name[index] + "</option>");
                             }
                         }
                         if (boat_id !== undefined && boat_id == 'outside') {

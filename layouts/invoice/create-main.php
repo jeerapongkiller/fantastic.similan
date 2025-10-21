@@ -400,7 +400,7 @@
                 }
 
                 if (cot > 0) {
-                    amount = amount - cot;
+                    // amount = amount - cot;
                     text_html += '<tr>' +
                         '<td colspan="10"></td>' +
                         '<td class="text-center"><b>Cash on tour</b></td>' +
@@ -474,22 +474,22 @@
         }
 
         function calculator_price() {
-            var type = 'multi';
+            // var type = 'multi';
             var vat_total = 0;
             var vat_cut = 0;
             var withholding_total = 0;
             var total = 0;
-            var price_amount = document.getElementById('price-' + type + '-amount');
+            var price_amount = document.getElementById('price-multi-amount');
             var vat = document.getElementById('vat');
             var withholding = document.getElementById('withholding');
-            var price_withholding = document.getElementById('price-' + type + '-withholding');
+            var price_withholding = document.getElementById('price-multi-withholding');
             var price_total = document.getElementById('price_total');
-            var tr_vat = document.getElementById('tr-' + type + '-vat');
-            var vat_text = document.getElementById('vat-' + type + '-text');
-            var price_vat = document.getElementById('price-' + type + '-vat');
-            var price_total_1 = document.getElementById('price-' + type + '-total');
-            var tr_withholding = document.getElementById('tr-' + type + '-withholding');
-            var withholding_text = document.getElementById('withholding-' + type + '-text');
+            var tr_vat = document.getElementById('tr-multi-vat');
+            var vat_text = document.getElementById('vat-multi-text');
+            var price_vat = document.getElementById('price-multi-vat');
+            var price_total_1 = document.getElementById('price-multi-total');
+            var tr_withholding = document.getElementById('tr-multi-withholding');
+            var withholding_text = document.getElementById('withholding-multi-text');
             var discount = document.getElementById('discount');
             var cot = document.getElementById('cot');
             var amount = document.getElementById('amount');
@@ -521,7 +521,7 @@
                 maximumFractionDigits: 2
             });
 
-            price_total_1.innerHTML = Number(total).toLocaleString("en-US", {
+            price_total_1.innerHTML = Number(price_total.value).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
 

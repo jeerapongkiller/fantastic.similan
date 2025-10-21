@@ -10,7 +10,7 @@ class Report extends DB
         parent::__construct();
     }
 
-    public function showlist($status, $date_form, $date_to, $agent, $product)
+    public function showlist($status, $date_form, $date_to, $agent, $product, $payment)
     {
         $bind_types = "";
         $params = array();
@@ -132,6 +132,18 @@ class Report extends DB
             }
         }
 
+        if (!empty($payment)) {
+            if ($payment != 'all') {
+                $query .= " AND (";
+                for ($i = 0; $i < count($payment); $i++) {
+                    $query .= $i == 0 ? " BOPAY.id = " . $payment[$i] : " OR BOPAY.id = " . $payment[$i];
+                }
+                $query .= " )";
+            } else {
+                $query .= " AND BOPAY.id = 1";
+            }
+        }
+
         if (isset($agent) && $agent != "all") {
             $query .= " AND COMP.id = ?";
             $bind_types .= "i";
@@ -161,6 +173,22 @@ class Report extends DB
             WHERE id > 0
         ";
         $query .= " ORDER BY id ASC";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
+    public function showbookingpayment()
+    {
+        $query = "SELECT *
+            FROM booking_payment 
+            WHERE id > 0
+            AND type != 2
+        ";
+        $query .= " ORDER BY name ASC";
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();

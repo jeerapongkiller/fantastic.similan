@@ -8,7 +8,8 @@ $times = date("H:i:s");
 
 if (isset($_POST['action']) && $_POST['action'] == "search") {
     $search_status = !empty($_POST["search_status"]) ? $_POST["search_status"] : 'all';
-    $search_travel = !empty($_POST["search_travel"]) ? $_POST["search_travel"] : '0000-00-00';
+    $search_payment = !empty($_POST["search_payment"]) ? $_POST["search_payment"] : 'all';
+    $search_travel = !empty($_POST["search_travel"]) ? $_POST["search_travel"] : $today;
     $date_form = substr($search_travel, 0, 10) != '' ? substr($search_travel, 0, 10) : '0000-00-00';
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
     $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
@@ -36,7 +37,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $first_boboat = array();
     $first_extar = array();
     $first_pay = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product);
+    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
         if (in_array($booking['id'], $first_book) == false) {
@@ -229,6 +230,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $href .= '&search_status[]=' . $search_status[$i];
         }
     }
+    if (!empty($search_payment) && $search_payment != 'all') {
+        for ($i = 0; $i < count($search_payment); $i++) {
+            $href .= '&search_payment[]=' . $search_payment[$i];
+        }
+    }
 ?>
     <div class="bs-stepper-header p-1">
         <div class="step" data-target="#report-booking">
@@ -330,7 +336,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-primary"><?php echo !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total)) : number_format(array_sum($array_total)); ?> THB</h4>
+                                        <h4 class="font-weight-bolder mb-0 text-primary"><?php echo !empty($array_total) ? !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total)) : number_format(array_sum($array_total)) : 0; ?> THB</h4>
                                         <p class="card-text font-small-3 mb-0">ยอดขายทั้งหมด</p>
                                     </div>
                                 </div>
@@ -360,7 +366,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) . ' THB' : ''; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0; ?> THB</h4>
                                         <p class="card-text font-small-3 mb-0">แบ่งเป็น Cash On Tour</p>
                                     </div>
                                 </div>
@@ -405,7 +411,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0"><?php echo (!empty($bo_status) && !empty(array_count_values($bo_status)[1])) ? array_count_values($bo_status)[1] : 0; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($bo_status) ? array_count_values($bo_status)[1] : 0; ?></h4>
                                         <p class="card-text font-small-3 mb-0">Confirm</p>
                                     </div>
                                 </div>
@@ -420,7 +426,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0"><?php echo (!empty($bo_status) && !empty(array_count_values($bo_status)[3])) ? array_count_values($bo_status)[3] : 0; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0"><?php echo (!empty($bo_status)) ? !empty(array_count_values($bo_status)[3]) ? array_count_values($bo_status)[3] : 0 : 0; ?></h4>
                                         <p class="card-text font-small-3 mb-0">Cancel</p>
                                     </div>
                                 </div>
@@ -436,7 +442,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0"><?php echo (!empty($bo_status) && !empty(array_count_values($bo_status)[4])) ? array_count_values($bo_status)[4] : 0; ?></h4>
+                                        <h4 class="font-weight-bolder mb-0"><?php echo (!empty($bo_status)) ? !empty(array_count_values($bo_status)[4]) ? array_count_values($bo_status)[4] : 0 : 0; ?></h4>
                                         <p class="card-text font-small-3 mb-0">No Show</p>
                                     </div>
                                 </div>
@@ -458,9 +464,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                 <th>Booker</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php if (!empty($bo_id)) {
-                                for ($i = 0; $i < count($bo_id); $i++) { ?>
+                        <?php if (!empty($bo_id)) { ?>
+                            <tbody>
+                                <?php for ($i = 0; $i < count($bo_id); $i++) { ?>
                                     <tr>
                                         <td><?php echo $status[$i]; ?></td>
                                         <td><?php echo !empty($bopay_id[$bo_id[$i]]) ? '<span class="badge badge-pill ' . $bopay_name_class[$bo_id[$i]] . ' text-capitalized"> ' . $bopay_paid_name[$bo_id[$i]] . ' </span>' : '<span class="badge badge-pill badge-light-primary text-capitalized"> ไม่ได้ระบุ </span>'; ?></td>
@@ -478,9 +484,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         <td><?php echo $cus_name[$i]; ?></td>
                                         <td><?php echo $sender[$i]; ?></td>
                                     </tr>
-                            <?php }
-                            } ?>
-                        </tbody>
+                                <?php } ?>
+                            </tbody>
+                        <?php } ?>
                     </table>
                 </div>
             </div>
@@ -510,7 +516,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                     <h5 class="text-center">เอเยนต์ทั้งหมด โปรแกรมทั้งหมด <span><?php echo $text_travel; ?></span></h5>
                     <input type="hidden" id="name-img-agent" value="<?php echo "รายงานเอเยนต์-" . date("dmY-Hs"); ?>">
                     <!-- <h4 class="card-title p-1 m-0">Booking</h4> -->
-                    <div class="card-body statistics-body pb-0">
+                    <div class="card-body statistics-body">
                         <div class="row">
                             <div class="col-4 mb-2">
                                 <div class="media">
@@ -543,6 +549,81 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-4 mb-2">
+                                <div class="media">
+                                    <div class="avatar bg-light-primary mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0 text-primary"><?php echo !empty($array_total) ? !empty($extar_arr_total) ? number_format(array_sum($array_total) + array_sum($extar_arr_total)) : number_format(array_sum($array_total)) : 0; ?> THB</h4>
+                                        <p class="card-text font-small-3 mb-0">ยอดขายทั้งหมด</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="media">
+                                    <div class="avatar bg-light-success mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0 text-success"><?php echo !empty($paid) ? number_format($paid) . ' THB' : '0 THB'; ?></h4>
+                                        <p class="card-text font-small-3 mb-0">รับเงินทั้งหมด</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="media">
+                                    <div class="avatar bg-light-warning mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0; ?> THB</h4>
+                                        <p class="card-text font-small-3 mb-0">แบ่งเป็น Cash On Tour</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <div class="media">
+                                    <div class="avatar bg-light-info mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0 text-info"><?php echo !empty($not_issued) ? number_format($not_issued) . ' THB' : '0 THB'; ?></h4>
+                                        <p class="card-text font-small-3 mb-0">ค้างจ่ายที่ยังไม่ได้ออก Invoice</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="media">
+                                    <div class="avatar bg-light-danger mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0 text-danger"><?php echo !empty($issued_inv) ? number_format($issued_inv) . ' THB' : '0 THB'; ?></h4>
+                                        <p class="card-text font-small-3 mb-0">ค้างจ่าย</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <table class="table table-striped text-uppercase table-vouchure-t2">
@@ -560,21 +641,21 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                 <th class="text-center">Overdue</br><small>(THB)</small></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php
-                            if (!empty($agent_id)) {
+                        <?php if (!empty($agent_id)) { ?>
+                            <tbody>
+                                <?php
                                 $amount_comp = 0;
                                 $revenue_comp = 0;
                                 for ($i = 0; $i < count($agent_id); $i++) {
                                     $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_amount[$agent_id[$i]]) : 0;
                                     $revenue_comp = !empty($comp_revenue[$agent_id[$i]]) ? (!empty($extar_total_agent[$agent_id[$i]]) && array_sum($comp_revenue[$agent_id[$i]]) > 0) ? array_sum($comp_revenue[$agent_id[$i]]) + array_sum($extar_total_agent[$agent_id[$i]]) : array_sum($comp_revenue[$agent_id[$i]]) : 0
-                            ?>
+                                ?>
                                     <tr>
                                         <td>
                                             <img src="storage/uploads/no-image.jpg" class="mr-75" height="40" width="40" alt="Angular">
                                             <span class="font-weight-bolder text-primary"><?php echo $agent_name[$i]; ?></span>
                                         </td>
-                                        <td class="text-center font-weight-bolder"><?php echo array_count_values($comp_id)[$agent_id[$i]] ?></td>
+                                        <td class="text-center font-weight-bolder"><?php echo !empty($comp_id) ? array_count_values($comp_id)[$agent_id[$i]] : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0; ?></td>
@@ -596,9 +677,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                             </div>
                                         </td>
                                     </tr>
-                            <?php }
-                            } ?>
-                        </tbody>
+                                <?php } ?>
+                            </tbody>
+                        <?php } ?>
                     </table>
                 </div>
             </div>
@@ -676,13 +757,13 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                 <th class="text-center">Total</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php
-                            if (!empty($prod_id)) {
+                        <?php if (!empty($prod_id)) { ?>
+                            <tbody>
+                                <?php
                                 $age = array_count_values($prod_id);
                                 arsort($age);
                                 foreach ($age as $x => $x_value) {
-                            ?>
+                                ?>
                                     <tr>
                                         <td>
                                             <div class="font-weight-bolder text-primary"><?php echo $product_name[$x] ?></div>
@@ -693,10 +774,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         <td class="text-center font-weight-bolder"><?php echo !empty($product_foc[$x]) ? array_sum($product_foc[$x]) : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($product_adult[$x]) && !empty($product_child[$x]) && !empty($product_infant[$x]) && !empty($product_foc[$x]) ? array_sum($product_adult[$x]) + array_sum($product_child[$x]) + array_sum($product_infant[$x]) + array_sum($product_foc[$x]) : 0; ?></td>
                                     </tr>
-                            <?php
-                                }
-                            } ?>
-                        </tbody>
+                                <?php } ?>
+                            </tbody>
+                        <?php } ?>
                     </table>
                 </div>
             </div>

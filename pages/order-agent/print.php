@@ -160,9 +160,40 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                 <?php }
                 } ?>
             </tbody>
+            <!-- <tfoot>
+                <tr>
+                    <td colspan="6" class="text-right"><b class="text-danger">TOTAL : <?php echo $total_tourist; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_adult; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_child; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_infant; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_foc; ?></b></td>
+                    <td colspan="2"></td>
+                </tr>
+            </tfoot> -->
         </table>
 
-        <div class="text-center mt-1 pb-2">
+        <table>
+            <thead class="bg-light">
+                <tr>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Adult</th>
+                    <th class="text-center">Child</th>
+                    <th class="text-center">Infant</th>
+                    <th class="text-center">Foc</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center"><b><?php echo $total_tourist; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_adult; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_child; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_infant; ?></b></td>
+                    <td class="text-center"><b><?php echo $total_foc; ?></b></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- <div class="text-center mt-1 pb-2">
             <h4>
                 <div class="badge badge-pill badge-light-warning">
                     <b class="text-danger">TOTAL <?php echo $total_tourist; ?></b> |
@@ -172,7 +203,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                     FOC : <?php echo $total_foc; ?>
                 </div>
             </h4>
-        </div>
+        </div> -->
     </div>
     <input type="hidden" id="name_img" name="name_img" value="<?php echo $name_img; ?>">
 <?php
