@@ -303,12 +303,10 @@
                     contentType: false,
                     data: formData,
                     success: function(response) {
+                        // console.log(response + ' | ' + input.value + ' | ' + input.dataset.travel);
                         search_start_date('today', '<?php echo $today; ?>');
                         search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
                         search_start_date('custom', $('#travel_date').val());
-                        // console.log(response);
-                        // input.dataset.check = response;
-                        // location.reload();
                     }
                 });
             }

@@ -19,7 +19,7 @@ $name = $_GET['name'] != "" ? $_GET['name'] : '';
 $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, 0);
 
 $categorys_array = array();
-$all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, 0);
+$all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', 0);
 
 foreach ($all_bookings as $categorys) {
     $categorys_array[] = $categorys['id'];
@@ -245,7 +245,7 @@ foreach ($all_bookings as $categorys) {
                                             $total_infant = 0;
                                             $total_foc = 0;
                                             $bomange_arr = array();
-                                            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $manages['id']);
+                                            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manages['id']);
                                             foreach ($all_bookings as $bookings) {
                                                 if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                                                     $bomange_arr[] = $bookings['bomange_id'];
@@ -330,7 +330,7 @@ foreach ($all_bookings as $categorys) {
                         <!-- Start Table Booking -->
                         <!------------------------------------------------------------------>
                         <?php
-                        $all_bookings = $manageObj->fetch_all_bookingboat('booking', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, 0);
+                        $all_bookings = $manageObj->fetch_all_bookingboat('booking', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', 0);
                         if (!empty($all_bookings)) {
                         ?>
                             <div class="card-body pt-0 p-50">
@@ -411,6 +411,7 @@ foreach ($all_bookings as $categorys) {
                                                             }
                                                             echo $bookings['bp_note']; ?>
                                                         </b>
+                                                    </td>
                                                 </tr>
                                         <?php }
                                         } ?>

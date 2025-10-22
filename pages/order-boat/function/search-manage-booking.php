@@ -18,7 +18,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
 
     $manage = $manageObj->fetch_all_manageboat($search_travel_date, $search_boat, $manage_id);
     $categorys_array = array();
-    $all_bookings = $manageObj->fetch_all_bookingboat('all', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $manage_id);
+    $all_bookings = $manageObj->fetch_all_bookingboat('all', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manage_id);
     foreach ($all_bookings as $key => $categorys) {
         $categorys_array[] = $categorys['id'];
         $category_name[$categorys['id']][] = $categorys['category_name'];
@@ -79,7 +79,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
             $total_infant = 0;
             $total_foc = 0;
             $booking_array = array();
-            $all_bookings = $manageObj->fetch_all_bookingboat('booking', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $manage_id);
+            $all_bookings = $manageObj->fetch_all_bookingboat('booking', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manage_id);
             foreach ($all_bookings as $key => $bookings) {
                 if (in_array($bookings['id'], $booking_array) == false) {
                     $booking_array[] = $bookings['id'];
@@ -173,7 +173,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
             $total_infant = 0;
             $total_foc = 0;
             $bomange_arr = array();
-            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $manage_id);
+            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $search_travel_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manage_id);
             foreach ($all_bookings as $bookings) {
                 if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                     $bomange_arr[] = $bookings['bomange_id'];

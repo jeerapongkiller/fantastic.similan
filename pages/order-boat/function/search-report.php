@@ -15,7 +15,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
     <div class="card-body p-0">
         <?php if (!empty($all_manages)) {
             foreach ($all_manages as $key => $manages) {
-                $all_bookings = $manageObj->fetch_all_bookingboat('manage', $_POST['date'], 'all', 'all', 'all', '', '', '', $manages['id']);
+                $all_bookings = $manageObj->fetch_all_bookingboat('manage', $_POST['date'], 'all', 'all', 'all', '', '', '', '', $manages['id']);
                 if (!empty($all_bookings)) {
                     $tourist = 0;
                     $adult = 0;

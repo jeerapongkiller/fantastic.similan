@@ -272,29 +272,6 @@
             });
         }
 
-        function modal_customer(orboat_id) {
-            if (typeof orboat_id !== 'undefined') {
-                var customers = $('.customers' + orboat_id);
-                $('#tbody-customer').find('tr').remove();
-                var text_html = '';
-                for (let index = 0; index < customers.length; index++) {
-                    var customer = JSON.parse(customers[index].value);
-                    if (customer['cus_name'].length > 0) {
-                        for (let a = 0; a < customer['cus_name'].length; a++) {
-                            text_html += '<tr>' +
-                                '<td class="text-center text-nowrap">' + customer['cus_age'][a] + '</td>' +
-                                '<td class="text-center">' + customer['id_card'][a] + '</td>' +
-                                '<td class="text-center">' + customer['cus_name'][a] + '</td>' +
-                                '<td class="text-center">' + customer['birth_date'][a] + '</td>' +
-                                '<td class="text-center">' + customer['nation_name'][a] + '</td>' +
-                                '</tr>';
-                        }
-                    }
-                }
-                $('#tbody-customer').append(text_html);
-            }
-        }
-
         function modal_park(park_id, orboat_id, orboat_park_id, array_orpark) {
             document.getElementById('orboat_id').value = typeof orboat_id !== 'undefined' ? orboat_id : 0;
             document.getElementById('orboat_park_id').value = orboat_park_id > 0 ? orboat_park_id : 0;
@@ -432,7 +409,8 @@
                     contentType: false,
                     data: formData,
                     success: function(response) {
-                        search_start_date('custom', $('#date_travel_form').val());
+                        console.log(response);
+                        // search_start_date('custom', $('#date_travel_form').val());
                         // console.log(response);
                         // input.dataset.check = response;
                         // location.reload();
