@@ -15,9 +15,6 @@
 
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/vendors.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/forms/select/select2.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
     <!-- END: Vendor CSS-->
@@ -86,12 +83,6 @@
     <!-- BEGIN Vendor JS-->
 
     <!-- BEGIN: Page Vendor JS-->
-    <script src="app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js"></script>
     <script src="app-assets/vendors/js/forms/select/select2.full.min.js"></script>
     <script src="app-assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
     <script src="app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
@@ -110,15 +101,10 @@
     <script src="app-assets/js/core/app.js"></script>
     <!-- END: Theme JS-->
 
-    <?php
-    // $columntarget = $_SESSION["supplier"]["role_id"] == 1 || $_SESSION["supplier"]["role_id"] == 2 ? '0' : '0';
-    ?>
-
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         $(document).ready(function() {
             var jqForm = $('#order-job-search-form'),
-                jqFormPark = $('#order-park-form'),
                 picker = $('#dob'),
                 DatePicker = $('.date-picker'),
                 dtPicker = $('#dob-bootstrap-val'),
@@ -184,69 +170,42 @@
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
+                e.preventDefault(); // ป้องกัน reload หน้า
+
                 var serializedData = $(this).serialize();
+
+                // 🔹 เริ่ม Block ตอน submit
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8
+                    }
+                });
+
                 $.ajax({
                     url: "pages/order-job/function/search.php",
                     type: "POST",
                     data: serializedData + "&action=search",
                     success: function(response) {
-                        if (response != 'false') {
+                        if (response !== 'false') {
                             search_start_date('custom', $('#date_travel_form').val());
                             $("#order-jobs-search-table").html(response);
                         }
+                    },
+                    error: function() {
+                        alert("เกิดข้อผิดพลาดในการค้นหา");
+                    },
+                    complete: function() {
+                        // 🔹 ปลด Block ตอน Ajax เสร็จ (ไม่ว่าจะ success หรือ error)
+                        $.unblockUI();
                     }
                 });
-                e.preventDefault();
             });
-
-            // jQuery Validation
-            // --------------------------------------------------------------------
-            if (jqFormPark.length) {
-                $.validator.addMethod("regex", function(value, element, regexp) {
-                    return this.optional(element) || regexp.test(value);
-                }, "Please check your input.");
-
-                jqFormPark.validate({
-                    rules: {
-                        // 'payments_type': {
-                        //     required: true
-                        // }
-                    },
-                    messages: {
-
-                    },
-                    submitHandler: function(form) {
-                        // update ajax request data
-                        var position = $('#orboat_park_id').val() > 0 ? 'park-edit.php' : 'park-create.php';
-                        var formData = new FormData(form);
-                        $.ajax({
-                            url: "pages/order-job/function/" + position,
-                            type: "POST",
-                            processData: false,
-                            contentType: false,
-                            data: formData,
-                            success: function(response) {
-                                // $('#show-div-park').html(response);
-                                if (response != false && response > 0) {
-                                    Swal.fire({
-                                        title: "The information has been added successfully.",
-                                        icon: "success",
-                                    }).then(function(isConfirm) {
-                                        if (isConfirm) {
-                                            location.reload(); // refresh page
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: "Please try again.",
-                                        icon: "error",
-                                    });
-                                }
-                            }
-                        });
-                    }
-                });
-            }
 
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
@@ -270,6 +229,50 @@
                     }
                 }
             });
+        }
+
+        function trigger_search(search) {
+            if (search.dataset['day'] !== undefined) {
+                $('input[name="date_travel_form"]').val(search.dataset['day']);
+            }
+
+            if (search.dataset['manage'] !== undefined) {
+                $('input[name="manage_id"]').val(search.dataset['manage']);
+            }
+
+            var manage_id = (search.dataset['manage'] !== undefined) ? search.dataset['manage'] : 0;
+            var serializedData = $('#order-job-search-form').serialize();
+
+            $.blockUI({
+                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                css: {
+                    backgroundColor: 'transparent',
+                    border: '0'
+                },
+                overlayCSS: {
+                    backgroundColor: '#fff',
+                    opacity: 0.8
+                }
+            });
+
+            $.ajax({
+                url: "pages/order-job/function/search.php",
+                type: "POST",
+                data: serializedData + "&action=search&manage_id=" + manage_id,
+                success: function(response) {
+                    if (response !== 'false') {
+                        search_start_date('custom', $('#date_travel_form').val());
+                        $("#order-jobs-search-table").html(response);
+                    }
+                },
+                error: function() {
+                    alert("เกิดข้อผิดพลาดในการค้นหา");
+                },
+                complete: function() {
+                    $.unblockUI();
+                }
+            });
+
         }
 
         function modal_park(park_id, orboat_id, orboat_park_id, array_orpark) {

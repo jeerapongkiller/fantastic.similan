@@ -53,6 +53,10 @@
         }
 
         @media print {
+            .pagebreak {
+                page-break-after: always;
+            }
+
             table {
                 page-break-after: auto
             }

@@ -3,9 +3,21 @@ require_once 'controllers/Order.php';
 
 $manageObj = new Order();
 
-$today = date("Y-m-d");
+// $today = date("Y-m-d");
+$today = '2025-09-25';
 $tomorrow = date("Y-m-d", strtotime(" +1 day"));
-$get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
+
+# --- get data --- #
+$all_manages = $manageObj->fetch_all_manageboat($today, $search_boat = 'all', 0);
+
+$categorys_array = array();
+$all_bookings = $manageObj->fetch_all_bookingboat('all', $today, $search_status = 'all', $search_agent = 'all', $search_product = 'all', $search_voucher_no = '', $refcode = '', $name = '', $hotel = '', 0);
+foreach ($all_bookings as $categorys) {
+    $categorys_array[] = $categorys['id'];
+    $category_name[$categorys['id']][] = $categorys['category_name'];
+}
+
+$name_img = 'ใบงาน [' . date('j F Y', strtotime($today)) . ']';
 ?>
 <div class="app-content content">
     <div class="content-overlay"></div>
@@ -20,10 +32,10 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                     <div class="card-body">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                                <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true" data-day="<?php echo $today; ?>" onclick="trigger_search(this);">Today</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false" data-day="<?php echo $tomorrow; ?>" onclick="trigger_search(this);">Tomorrow</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="customh-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="true">Custom</a>
@@ -85,7 +97,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-12">
+                                <div class="col-md-4 col-12">
                                     <div class="form-group">
                                         <label for="search_product">Programe</label>
                                         <select class="form-control select2" id="search_product" name="search_product">
@@ -155,7 +167,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                     <div id="order-jobs-search-table">
                         <div class="content-header">
                             <div class="pl-1 pt-0 pb-0">
-                                <a href="./?pages=order-guide/print&action=print" target="_blank" class="btn btn-info">Print</a>
+                                <a href="./?pages=order-job/print&action=print" target="_blank" class="btn btn-info">Print</a>
                                 <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
                             </div>
                         </div>
@@ -173,7 +185,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                 <div class="text-center card-text">
                                     <h4 class="font-weight-bolder">ใบงาน</h4>
                                     <div class="badge badge-pill badge-light-danger">
-                                        <h5 class="m-0 pl-1 pr-1 text-danger"><?php echo date('j F Y', strtotime($get_date)); ?></h5>
+                                        <h5 class="m-0 pl-1 pr-1 text-danger"><?php echo date('j F Y', strtotime($today)); ?></h5>
                                     </div>
                                 </div>
                             </div>
@@ -182,15 +194,6 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                             <!-- Body starts -->
                             <div id="div-guide-list">
                                 <?php
-                                $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat = 'all', 0);
-
-                                $categorys_array = array();
-                                $all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status = 'all', $search_agent = 'all', $search_product = 'all', $search_voucher_no = '', $refcode = '', $name = '', $hotel = '', 0);
-                                foreach ($all_bookings as $categorys) {
-                                    $categorys_array[] = $categorys['id'];
-                                    $category_name[$categorys['id']][] = $categorys['category_name'];
-                                }
-
                                 if ($all_manages) {
                                     foreach ($all_manages as $key => $manages) {
                                 ?>
@@ -203,8 +206,8 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                         <table class="table table-striped text-uppercase table-vouchure-t2">
                                             <thead class="bg-light">
                                                 <tr>
-                                                    <th colspan="6">ไกด์ : <?php echo $manages['guide_name']; ?></th>
-                                                    <th colspan="5">เคาน์เตอร์ : <?php echo $manages['counter']; ?></th>
+                                                    <th colspan="5">ไกด์ : <?php echo $manages['guide_name']; ?></th>
+                                                    <th colspan="6">เคาน์เตอร์ : <?php echo $manages['counter']; ?></th>
                                                     <th colspan="4" style="background-color: <?php echo $manages['color_hex']; ?>; <?php echo $manages['text_color'] != '' ? 'color: ' . $manages['text_color'] . ';' : ''; ?>">
                                                         สี : <?php echo $manages['color_name_th']; ?>
                                                     </th>
@@ -240,7 +243,7 @@ $get_date = !empty($_GET['date']) ? $_GET['date'] : $today;
                                                 $total_infant = 0;
                                                 $total_foc = 0;
                                                 $bomange_arr = array();
-                                                $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status = 'all', $search_agent = 'all', $search_product = 'all', $search_voucher_no = '', $refcode = '', $name = '', '', $manages['id']);
+                                                $all_bookings = $manageObj->fetch_all_bookingboat('manage', $today, $search_status = 'all', $search_agent = 'all', $search_product = 'all', $search_voucher_no = '', $refcode = '', $name = '', $hotel = '', $manages['id']);
                                                 foreach ($all_bookings as $bookings) {
                                                     if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                                                         $bomange_arr[] = $bookings['bomange_id'];

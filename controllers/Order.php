@@ -1476,6 +1476,7 @@ class Order extends DB
         // $query .= (!empty($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
         // $query .= (!empty($hotel)) ? " AND BT.hotel_pickup_id LIKE '%" . $hotel . "%' " : "";
 
+        // echo $query;
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();

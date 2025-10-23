@@ -22,6 +22,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
     $name = $_POST['name'] != "" ? $_POST['name'] : '';
     $hotel = $_POST['hotel'] != "" ? $_POST['hotel'] : '';
+    $manage_id = !empty($_POST['manage_id']) ? $_POST['manage_id'] : 0;
 
     $href = "./?pages=order-job/print";
     $href .= "&date_travel_form=" . $get_date;
@@ -34,9 +35,9 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $href .= "&name=" . $name;
     $href .= "&hotel=" . $hotel;
     $href .= "&action=print";
-    # --- get data --- #
 
-    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, 0);
+    # --- get data --- #
+    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, $manage_id);
 
     $categorys_array = array();
     $all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, 0);
@@ -88,8 +89,8 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                     <table class="table table-striped text-uppercase table-vouchure-t2">
                         <thead class="bg-light">
                             <tr>
-                                <th colspan="6">ไกด์ : <?php echo $manages['guide_name']; ?></th>
-                                <th colspan="5">เคาน์เตอร์ : <?php echo $manages['counter']; ?></th>
+                                <th colspan="5">ไกด์ : <?php echo $manages['guide_name']; ?></th>
+                                <th colspan="6">เคาน์เตอร์ : <?php echo $manages['counter']; ?></th>
                                 <th colspan="4" style="background-color: <?php echo $manages['color_hex']; ?>; <?php echo $manages['text_color'] != '' ? 'color: ' . $manages['text_color'] . ';' : ''; ?>">
                                     สี : <?php echo $manages['color_name_th']; ?>
                                 </th>
@@ -125,7 +126,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                             $total_infant = 0;
                             $total_foc = 0;
                             $bomange_arr = array();
-                            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manages['id']);
+                            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, $manages['id']);
                             foreach ($all_bookings as $bookings) {
                                 if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                                     $bomange_arr[] = $bookings['bomange_id'];

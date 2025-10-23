@@ -57,9 +57,9 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                 <table>
                     <thead>
                         <tr>
-                            <td colspan="6">ไกด์ : <?php echo $manages['guide_name']; ?></td>
+                            <td colspan="5">ไกด์ : <?php echo $manages['guide_name']; ?></td>
                             <td colspan="6">เคาน์เตอร์ : <?php echo $manages['counter']; ?></td>
-                            <td colspan="3" style="background-color: <?php echo $manages['color_hex']; ?>; <?php echo $manages['text_color'] != '' ? 'color: ' . $manages['text_color'] . ';' : ''; ?>">
+                            <td colspan="4" style="background-color: <?php echo $manages['color_hex']; ?>; <?php echo $manages['text_color'] != '' ? 'color: ' . $manages['text_color'] . ';' : ''; ?>">
                                 สี : <?php echo $manages['color_name_th']; ?>
                             </td>
                         </tr>
@@ -157,8 +157,11 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                 </table>
                 </br>
             </div>
-            <input type="hidden" id="name_img" name="name_img" value="<?php echo $name_img; ?>">
-<?php }
+
+            <div class="pagebreak"></div>
+        <?php } ?>
+        <input type="hidden" id="name_img" name="name_img" value="<?php echo $name_img; ?>">
+<?php
     }
 } else {
     echo FALSE;
