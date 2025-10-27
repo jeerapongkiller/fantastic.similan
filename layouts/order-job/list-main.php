@@ -275,111 +275,6 @@
 
         }
 
-        function modal_park(park_id, orboat_id, orboat_park_id, array_orpark) {
-            document.getElementById('orboat_id').value = typeof orboat_id !== 'undefined' ? orboat_id : 0;
-            document.getElementById('orboat_park_id').value = orboat_park_id > 0 ? orboat_park_id : 0;
-            document.getElementById('parks').value = typeof park_id !== 'undefined' ? park_id : 0;
-            document.getElementById('action_park').value = orboat_park_id > 0 ? 'edit' : 'create';
-
-            park_id = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['orpark_park'][0] : park_id;
-            document.getElementById('parks').value = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['orpark_park'][0] : park_id;
-            document.getElementById('rate_adult_eng').value = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['adult_eng'][0] : 0;
-            document.getElementById('rate_child_eng').value = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['child_eng'][0] : 0;
-            document.getElementById('rate_adult_th').value = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['adult_th'][0] : 0;
-            document.getElementById('rate_child_th').value = (orboat_park_id > 0 && array_orpark != '') ? array_orpark['child_th'][0] : 0;
-
-            $('#parks').each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent(),
-                        'val': typeof park_id !== 'undefined' ? park_id : 0
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    })
-            });
-
-
-            document.getElementById('parks_text').innerHTML = $('#parks').find(':selected').attr('data-name');
-
-            var ad_eng = 0;
-            var chd_eng = 0;
-            var ad_th = 0;
-            var chd_th = 0;
-            if (typeof orboat_id !== 'undefined') {
-                var nationality = $('.nationality' + orboat_id);
-                for (let index = 0; index < nationality.length; index++) {
-                    ad_eng = Number(ad_eng) + Number(nationality[index].dataset.ad_eng);
-                    chd_eng = Number(chd_eng) + Number(nationality[index].dataset.chd_eng);
-                    ad_th = Number(ad_th) + Number(nationality[index].dataset.ad_th);
-                    chd_th = Number(chd_th) + Number(nationality[index].dataset.chd_th);
-                }
-            }
-            document.getElementById('adult_eng').innerHTML = ad_eng;
-            document.getElementById('child_eng').innerHTML = chd_eng;
-            document.getElementById('adult_th').innerHTML = ad_th;
-            document.getElementById('child_th').innerHTML = chd_th;
-
-            if (orboat_park_id > 0 && array_orpark != '') {
-                calculator_parks();
-            } else {
-                check_parks();
-            }
-        }
-
-        function check_parks() {
-            var parks = document.getElementById('parks').value;
-            if (parks != 0) {
-                var ad_eng = $('#parks').find(':selected').attr('data-adult-eng');
-                var chd_eng = $('#parks').find(':selected').attr('data-child-eng');
-                var ad_th = $('#parks').find(':selected').attr('data-adult-th');
-                var chd_th = $('#parks').find(':selected').attr('data-child-th');
-
-                document.getElementById('rate_adult_eng').value = ad_eng;
-                document.getElementById('rate_child_eng').value = chd_eng;
-                document.getElementById('rate_adult_th').value = ad_th;
-                document.getElementById('rate_child_th').value = chd_th;
-            }
-
-            calculator_parks();
-        }
-
-        function calculator_parks() {
-            var orboat_id = document.getElementById('orboat_id').value;
-            var rate_adult_eng = document.getElementById('rate_adult_eng').value.replace(/,/g, '');
-            var rate_child_eng = document.getElementById('rate_child_eng').value.replace(/,/g, '');
-            var rate_adult_th = document.getElementById('rate_adult_th').value.replace(/,/g, '');
-            var rate_child_th = document.getElementById('rate_child_th').value.replace(/,/g, '');
-            var total = 0;
-            var ad_eng = 0;
-            var chd_eng = 0;
-            var ad_th = 0;
-            var chd_th = 0;
-            if (orboat_id > 0) {
-                var nationality = $('.nationality' + orboat_id);
-                for (let index = 0; index < nationality.length; index++) {
-                    ad_eng = Number(ad_eng) + Number(nationality[index].dataset.ad_eng);
-                    chd_eng = Number(chd_eng) + Number(nationality[index].dataset.chd_eng);
-                    ad_th = Number(ad_th) + Number(nationality[index].dataset.ad_th);
-                    chd_th = Number(chd_th) + Number(nationality[index].dataset.chd_th);
-                }
-            }
-            total = Number(total) + (Number(rate_adult_eng) * Number(ad_eng));
-            total = Number(total) + (Number(rate_child_eng) * Number(chd_eng));
-            total = Number(total) + (Number(rate_adult_th) * Number(ad_th));
-            total = Number(total) + (Number(rate_child_th) * Number(chd_th));
-            document.getElementById('total_park').value = numberWithCommas(total);
-
-            document.getElementById('adult_eng').innerHTML = ad_eng + ' X ' + rate_adult_eng + ' = ' + numberWithCommas(Number(rate_adult_eng * ad_eng));
-            document.getElementById('child_eng').innerHTML = chd_eng + ' X ' + rate_child_eng + ' = ' + numberWithCommas(Number(rate_child_eng * chd_eng));
-            document.getElementById('adult_th').innerHTML = ad_th + ' X ' + rate_adult_th + ' = ' + numberWithCommas(Number(rate_adult_th * ad_th));
-            document.getElementById('child_th').innerHTML = chd_th + ' X ' + rate_child_th + ' = ' + numberWithCommas(Number(rate_child_th * chd_th));
-            document.getElementById('park_total').innerHTML = numberWithCommas(total)
-        }
-
         function checkbox(mange_id) {
             var checkbox_all = document.getElementById('checkall' + mange_id).checked;
             var checkbox = document.getElementsByClassName('checkbox-' + mange_id);
@@ -412,7 +307,7 @@
                     contentType: false,
                     data: formData,
                     success: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         // search_start_date('custom', $('#date_travel_form').val());
                         // console.log(response);
                         // input.dataset.check = response;

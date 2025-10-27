@@ -19,7 +19,7 @@ function setNumberLength($num, $length)
 if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['bo_id'])) {
     // get value from ajax
     # --- booking create form --- #
-    $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : 0;
+    $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id']) : 0;
     $is_approved = !empty($_POST['is_approved']) ? $_POST['is_approved'] : 0;
     $inv_date = $_POST['inv_date'] != "" ? $_POST['inv_date'] : '';
     $rec_date = $_POST['rec_date'] != "" ? $_POST['rec_date'] : '';
@@ -36,14 +36,14 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['bo_
     $inv['full'] = '';
     $inv_no = $invObj->checkinvno();
     $no = !empty($inv_no['max_inv_no']) ? $inv_no['max_inv_no'] + 1 : 1;
-    $inv['full'] = 'IN' . date("Ymd") . '-' . setNumberLength($no, 3);
+    $inv['full'] = 'IN-' . setNumberLength($no, 7);
     $inv['no'] = $no;
     $cover_id = (!empty($inv['no']) && !empty($inv['full'])) ? $invObj->insert_cover_inv($today, $inv['no'], $inv['full']) : 0;
     # --- create invoice --- #
     if (!empty($bo_id)) {
         $no = 1;
         for ($i = 0; $i < count($bo_id); $i++) {
-            $response = $response != false && $response > 0 ? $invObj->insert_data($no, $inv_date, $rec_date, $withholding, $note, $branch, $bo_id[$i], $payment_id, $vat_id, $currency_id, $cover_id, $bank_account_id, $is_approved) : false;
+            $response = $response != false && $response > 0 ? $invObj->insert_data($no, $rec_date, $withholding, $note, $branch, $bo_id[$i], $payment_id, $vat_id, $currency_id, $cover_id, $bank_account_id, $is_approved) : false;
             # --- insert booking paid --- #
             $response = $response != false && $response > 0 ? $invObj->insert_booking_paid($bo_id[$i], 6) : false;
             $no++;

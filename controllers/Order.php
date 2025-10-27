@@ -1348,7 +1348,7 @@ class Order extends DB
         return $data;
     }
 
-    public function fetch_all_manageboat(string $travel_date, $boat, int $mange_id)
+    public function fetch_all_manageboat(string $travel_date, $boat, $guide, int $mange_id)
     {
         $query = "SELECT order_boat.*,
                 boats.id as boat_id, boats.name as boat_name,
@@ -1367,6 +1367,7 @@ class Order extends DB
         $query .= (!empty($mange_id) && $mange_id > 0) ? " AND order_boat.id = " . $mange_id : "";
         $query .= (isset($travel_date) && $travel_date != '0000-00-00') ? " AND order_boat.travel_date = '" . $travel_date . "'" : "";
         $query .= (!empty($boat) && $boat != 'all') ? " AND boats.id = " . $boat : "";
+        $query .= (!empty($guide) && $guide != 'all') ? " AND guides.id = " . $guide : "";
 
         $statement = $this->connection->prepare($query);
         $statement->execute();

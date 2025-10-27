@@ -15,9 +15,6 @@
 
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/vendors.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/forms/select/select2.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
     <!-- END: Vendor CSS-->
@@ -86,12 +83,6 @@
     <!-- BEGIN Vendor JS-->
 
     <!-- BEGIN: Page Vendor JS-->
-    <script src="app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
-    <script src="app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js"></script>
     <script src="app-assets/vendors/js/forms/select/select2.full.min.js"></script>
     <script src="app-assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
     <script src="app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
@@ -175,19 +166,41 @@
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
+                e.preventDefault(); // ป้องกัน reload หน้า
+
                 var serializedData = $(this).serialize();
+
+                // 🔹 เริ่ม Block ตอน submit
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8
+                    }
+                });
+
                 $.ajax({
                     url: "pages/order-guide/function/search.php",
                     type: "POST",
                     data: serializedData + "&action=search",
                     success: function(response) {
-                        if (response != 'false') {
+                        if (response !== 'false') {
                             search_start_date('custom', $('#date_travel_form').val());
                             $("#order-guide-search-table").html(response);
                         }
+                    },
+                    error: function() {
+                        alert("เกิดข้อผิดพลาดในการค้นหา");
+                    },
+                    complete: function() {
+                        // 🔹 ปลด Block ตอน Ajax เสร็จ (ไม่ว่าจะ success หรือ error)
+                        $.unblockUI();
                     }
                 });
-                e.preventDefault();
             });
 
             search_start_date('today', '<?php echo $today; ?>');
@@ -212,6 +225,51 @@
                     }
                 }
             });
+        }
+
+        function trigger_search(search) {
+            if (search.dataset['day'] !== undefined) {
+                $('input[name="date_travel_form"]').val(search.dataset['day']);
+            }
+
+            if (search.dataset['guide'] !== undefined) {
+                $('#search_guide').val(search.dataset['guide']);
+                $('#search_guide').trigger('change');
+            }
+
+            // var manage_id = (search.dataset['manage'] !== undefined) ? search.dataset['manage'] : 0;
+            var serializedData = $('#order-guide-search-form').serialize();
+
+            $.blockUI({
+                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                css: {
+                    backgroundColor: 'transparent',
+                    border: '0'
+                },
+                overlayCSS: {
+                    backgroundColor: '#fff',
+                    opacity: 0.8
+                }
+            });
+
+            $.ajax({
+                url: "pages/order-guide/function/search.php",
+                type: "POST",
+                data: serializedData + "&action=search",
+                success: function(response) {
+                    if (response !== 'false') {
+                        search_start_date('custom', $('#date_travel_form').val());
+                        $("#order-guide-search-table").html(response);
+                    }
+                },
+                error: function() {
+                    alert("เกิดข้อผิดพลาดในการค้นหา");
+                },
+                complete: function() {
+                    $.unblockUI();
+                }
+            });
+
         }
 
         function checkbox(mange_id) {

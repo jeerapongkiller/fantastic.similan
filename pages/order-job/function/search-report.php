@@ -7,7 +7,7 @@ $times = date("H:i:s");
 
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['type']) && !empty($_POST['date'])) {
 
-    $all_manages = $manageObj->fetch_all_manageboat($_POST['date'], 'all', 0);
+    $all_manages = $manageObj->fetch_all_manageboat($_POST['date'], 'all', 'all', 0);
 ?>
     <div class="text-center">
         <h5 class="card-title text-danger"><?php echo date('j F Y', strtotime($_POST['date'])); ?></h5>

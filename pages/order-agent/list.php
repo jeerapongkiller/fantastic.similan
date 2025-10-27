@@ -49,7 +49,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 col-12">
-                                                    <button type="submit" class="btn btn-primary">Search</button>
+                                                    <button type="submit" class="btn btn-primary"><i data-feather='search'></i> Search</button>
                                                 </div>
                                             </div>
                                         </form>

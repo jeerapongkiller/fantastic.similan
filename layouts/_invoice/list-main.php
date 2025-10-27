@@ -47,6 +47,17 @@
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- END: Custom CSS-->
 
+    <style>
+        .table-black {
+            color: #FFFFFF;
+            background-color: #333;
+        }
+
+        .table-black-2 {
+            color: #FFFFFF;
+            background-color: #4f4e4e;
+        }
+    </style>
 </head>
 <!-- END: Head-->
 
@@ -113,19 +124,12 @@
         // --------------------------------------------------------------------
         function deleteInvoice() {
             var cover_id = $('#cover_id').val();
-            if (cover_id > 0) {
-                var inv_arr = [];
-                var bo_arr = [];
-                var cover_arr = $('.cover' + cover_id);
-                for (let index = 0; index < cover_arr.length; index++) {
-                    inv_arr.push(cover_arr[index].value);
-                    bo_arr.push($('#inv' + cover_arr[index].value).attr('data-bo_id'));
+            var bo_arr = document.getElementsByName('bo_id[]');
+            var bo_id = [];
+            if (bo_arr.length) {
+                for (let index = 0; index < bo_arr.length; index++) {
+                    bo_id.push(bo_arr[index].value);
                 }
-                var inv_id = JSON.stringify(inv_arr);
-                var bo_id = JSON.stringify(bo_arr);
-            } else {
-                var inv_id = $('#inv_id').val();
-                var bo_id = $('#inv' + inv_id).attr('data-bo_id');
             }
             Swal.fire({
                 title: 'Are you sure?',
@@ -145,7 +149,6 @@
                         type: "POST",
                         data: {
                             cover_id: cover_id,
-                            inv_id: inv_id,
                             bo_id: bo_id,
                             action: 'delete'
                         },
@@ -192,6 +195,7 @@
                 jqFormInv = $('#invoice-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
+                range = $('.flatpickr-range'),
                 select = $('.select2');
 
             // select2
@@ -207,6 +211,22 @@
                         $(this).valid();
                     });
             });
+
+            // Range
+            if (range.length) {
+                range.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    mode: 'range',
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d'
+                });
+            }
 
             // Picker
             if (picker.length) {
@@ -242,12 +262,12 @@
             jqForm.on("submit", function(e) {
                 var serializedData = $(this).serialize();
                 $.ajax({
-                    url: "pages/invoice/function/search-list.php",
+                    url: "pages/invoice/function/search-agent.php",
                     type: "POST",
-                    data: serializedData + "&action=search",
+                    data: serializedData + "&action=search-invoice",
                     success: function(response) {
                         if (response != false) {
-                            $("#invoice-search-table").html(response);
+                            $("#div-invoice-custom").html(response);
                         }
                     }
                 });
@@ -270,21 +290,9 @@
                     messages: {},
                     submitHandler: function(form) {
                         // update ajax request data
-                        var cover_id = $('#cover_id').val();
-                        if (cover_id > 0) {
-                            var inv_arr = [];
-                            var cover_arr = $('.cover' + cover_id);
-                            for (let index = 0; index < cover_arr.length; index++) {
-                                inv_arr.push(cover_arr[index].value);
-                            }
-                            var inv_id = JSON.stringify(inv_arr);
-                        } else {
-                            var inv_id = $('#inv_id').val();
-                        }
                         var formData = new FormData(form);
                         formData.append('action', 'edit');
                         formData.append('cover_id', $('#cover_id').val());
-                        formData.append('inv_id', inv_id);
                         $.ajax({
                             url: "pages/invoice/function/edit.php",
                             type: "POST",
@@ -313,421 +321,168 @@
                     }
                 });
             }
+
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
         });
+
+        function search_start_date(tabs, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search-invoice');
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/invoice/function/search-agent.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#' + tabs).html(response);
+                    }
+                }
+            });
+        }
+
+        function modal_detail(agent_id, agent_name, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('agent_id', agent_id);
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/invoice/function/search-invoice.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#div-modal-detail').html(response);
+                    }
+                }
+            });
+        }
 
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
 
-        function fun_search_period() {
-            var search_period = document.getElementById('search_period').value;
-            document.getElementById('div-form').hidden = search_period == 'custom' ? false : true;
-            document.getElementById('div-to').hidden = search_period == 'custom' ? false : true;
-
-            const date = new Date();
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            switch (search_period) {
-                case 'tomorrow':
-                    day = date.getDate() + 1;
-                    break;
-                case 'week':
-                    day = date.getDate() + 7;
-                    break;
-                case 'month':
-                    month = date.getMonth() + 2;
-                    break;
-                case 'year':
-                    year = date.getFullYear() + 1;
-                    break;
-            }
-            let currentDate = `${year}-${month}-${day}`;
-
-            $('#search_inv_form').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-
-            $('#search_inv_to').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: currentDate
-            });
-        }
-
-        function modal_edit_invoice(inv_id, cover_id) {
-            $('#modal-show-invoice').modal('toggle');
+        function modal_invoice() {
+            $('#modal-show').modal('toggle');
             $('#modal-add-invoice').modal('show');
             $("#modal-add-invoice").css({
                 "overflow-y": "auto"
             });
 
-            if (inv_id > 0) {
-                var no = 3;
-                var id = inv_id;
-                var res_transfer = JSON.parse($('#inv' + id).attr('data-transfer'));
-                var res_extra = $('#inv' + id).attr('data-extra') != '' ? JSON.parse($('#inv' + id).attr('data-extra')) : '';
-                var inv_date = $('#inv' + id).attr('data-inv_date');
-                var rec_date = $('#inv' + id).attr('data-rec_date');
-                var vat = $('#inv' + id).attr('data-vat_id');
-                var branche = $('#inv' + id).attr('data-branche');
-                var bank_account = $('#inv' + id).attr('data-bank_account');
-                document.getElementById('div-only-invoice').hidden = false;
-                document.getElementById('div-multi-invoice').hidden = true;
-                document.getElementById('type').value = 'only';
-                document.getElementById('inv_id').value = id;
-                document.getElementById('cover_id').value = 0;
-                document.getElementById('is_approved').checked = $('#inv' + id).attr('data-is_approved') == 1 ? true : false;
-                document.getElementById('inv_date').value = $('#inv' + id).attr('data-inv_date');
-                document.getElementById('rec_date').value = $('#inv' + id).attr('data-rec_date');
-                document.getElementById('vat').value = $('#inv' + id).attr('data-vat_id');
-                document.getElementById('withholding').value = $('#inv' + id).attr('data-withholding');
-                document.getElementById('branch').value = $('#inv' + id).attr('data-branche');
-                document.getElementById('bank_account').value = $('#inv' + id).attr('data-bank_account');
-                document.getElementById('note').value = $('#inv' + id).attr('data-note');
-                document.getElementById('voucher_no_text').innerHTML = $('#inv' + id).attr('data-voucher');
-                document.getElementById('booking_no_text').innerHTML = $('#inv' + id).attr('data-book_full');
-                document.getElementById('invoice_no_text').innerHTML = $('#inv' + id).attr('data-inv_full');
-                document.getElementById('programe_text').innerHTML = $('#inv' + id).attr('data-programe_name');
-                document.getElementById('travel_date_text').innerHTML = $('#inv' + id).attr('data-travel_date');
-                document.getElementById('cus_name_text').innerHTML = $('#inv' + id).attr('data-cus_name');
-                document.getElementById('hotel_text').innerHTML = $('#inv' + id).attr('data-hotel_pickup');
-                document.getElementById('room_text').innerHTML = $('#inv' + id).attr('data-room_no');
-                document.getElementById('pickup_time_text').innerHTML = $('#inv' + id).attr('data-pickup_time');
-                document.getElementById('agent_name_text').innerHTML = $('#inv' + id).attr('data-agent_name');
-                document.getElementById('agent_address_text').innerHTML = $('#inv' + id).attr('data-agent_address');
-                document.getElementById('agent_tel_text').innerHTML = $('#inv' + id).attr('data-agent_telephone');
-                document.getElementById('agent_tax_text').innerHTML = $('#inv' + id).attr('data-agent_tat');
+            var array_booking = document.getElementById('array_booking').value;
+            var array_extar = document.getElementById('array_extar').value;
+            if (array_booking !== '') {
+                document.getElementById('cover_id').value = document.getElementById('agent_value').dataset.cover;
+                document.getElementById('inv_date').value = document.getElementById('agent_value').dataset.inv_date;
+                document.getElementById('rec_date').value = document.getElementById('agent_value').dataset.rec_date;
+                document.getElementById('vat').value = document.getElementById('agent_value').dataset.vat;
+                document.getElementById('withholding').value = document.getElementById('agent_value').dataset.withholding;
+                document.getElementById('bank_account').value = document.getElementById('agent_value').dataset.bank_account;
+                document.getElementById('note').value = document.getElementById('agent_value').dataset.note;
 
-                if ($('#inv' + id).attr('data-bo_type') == 2) {
-                    var text_html = '<tr>' +
-                        '<td class="text-center">1</td>' +
-                        '<td>Adult</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-adult') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_adult')) + '</td>' +
-                        '<td class="text-center" rowspan="3">' + numberWithCommas(Number($('#inv' + id).attr('data-rate_total'))) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">2</td>' +
-                        '<td>Children</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-child') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_child')) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">3</td>' +
-                        '<td>Infant</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-infant') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_infant')) + '</td>' +
-                        '</tr>';
-                } else {
-                    var text_html = '<tr>' +
-                        '<td class="text-center">1</td>' +
-                        '<td>Adult</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-adult') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_adult')) + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(Number($('#inv' + id).attr('data-adult') * $('#inv' + id).attr('data-rate_adult'))) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">2</td>' +
-                        '<td>Children</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-child') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_child')) + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(Number($('#inv' + id).attr('data-child') * $('#inv' + id).attr('data-rate_child'))) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">3</td>' +
-                        '<td>Infant</td>' +
-                        '<td class="text-center">' + $('#inv' + id).attr('data-infant') + '</td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-rate_infant')) + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(Number($('#inv' + id).attr('data-infant') * $('#inv' + id).attr('data-rate_infant'))) + '</td>' +
-                        '</tr>';
-                }
-
-                if ($('#inv' + id).attr('data-transfer_type') == 1) {
+                document.getElementById('inv_no_text').innerHTML = document.getElementById('agent_value').dataset.inv_full;
+                document.getElementById('agent_name_text').innerHTML = document.getElementById('agent_value').dataset.name;
+                document.getElementById('agent_tax_text').innerHTML = document.getElementById('agent_value').dataset.license;
+                document.getElementById('agent_tel_text').innerHTML = document.getElementById('agent_value').dataset.telephone;
+                document.getElementById('agent_address_text').innerHTML = document.getElementById('agent_value').dataset.address;
+                var res = $.parseJSON(array_booking);
+                var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : undefined;
+                var text_html = '';
+                var total = 0;
+                var amount = 0;
+                var cot = 0;
+                var discount = 0;
+                var no = 1;
+                for (let index = 0; index < res.id.length; index++) {
+                    var id = res.id[index];
+                    discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                    cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+                    amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
+                    
                     text_html += '<tr>' +
-                        '<td colspan="6">Transfer : <b>Join</b></td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">4</td>' +
-                        '<td>Adult</td>' +
-                        '<td class="text-center">' + res_transfer['bt_adult'] + '</td>' +
-                        '<td class="text-center">' + res_transfer['btr_rate_adult'] + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(res_transfer['bt_adult'] * res_transfer['btr_rate_adult']) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">5</td>' +
-                        '<td>Children</td>' +
-                        '<td class="text-center">' + res_transfer['bt_child'] + '</td>' +
-                        '<td class="text-center">' + res_transfer['btr_rate_child'] + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(res_transfer['bt_child'] * res_transfer['btr_rate_child']) + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<td class="text-center">6</td>' +
-                        '<td>Infant</td>' +
-                        '<td class="text-center">' + res_transfer['bt_infant'] + '</td>' +
-                        '<td class="text-center">' + res_transfer['btr_rate_infant'] + '</td>' +
-                        '<td class="text-center">' + numberWithCommas(res_transfer['bt_infant'] * res_transfer['btr_rate_infant']) + '</td>' +
+                        '<td class="text-center">' + Number(no++) + '<input type="hidden" name="bo_id[]" value="' + id + '"></td>' +
+                        '<td class="text-center"> ' + res[id].text_date + ' </td>' +
+                        '<td> ' + res[id].cus_name + ' </td>' +
+                        '<td> ' + res[id].product_name + ' </td>' +
+                        '<td class="text-center"> ' + res[id].voucher_no + ' </td>' +
+                        '<td class="text-center"> ' + res[id].adult + ' </td>' +
+                        '<td class="text-center"> ' + res[id].child + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_adult) + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_child) + ' </td>' +
+                        '<td class="text-center"> ' + res[id].discount + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].total) + ' </td>' +
+                        '<td class="text-center"> ' + numberWithCommas(res[id].cot) + ' </td>' +
                         '</tr>';
-                    no = 6;
-                } else if ($('#inv' + id).attr('data-transfer_type') == 2) {
-                    text_html += '<tr><td colspan="6">Transfer : <b>Private</b></td></tr>';
-                    for (let index = 0; index < res_transfer['cars_category'].length; index++) {
-                        no++;
-                        text_html += '<tr>' +
-                            '<td class="text-center">' + no + '</td>' +
-                            '<td>' + res_transfer['cars_category'][index] + '</td>' +
-                            '<td class="text-center">1</td>' +
-                            '<td class="text-center">' + numberWithCommas(res_transfer['rate_private'][index]) + '</td>' +
-                            '<td class="text-center">' + numberWithCommas(res_transfer['rate_private'][index]) + '</td>' +
-                            '</tr>';
-                    }
-                }
 
-                if (res_extra != '') {
-                    text_html += '<tr><td colspan="6">Extra Charge</td></tr>';
-                    for (let index = 0; index < res_extra['bec_id'].length; index++) {
-                        var extra_name = res_extra['extra_name'][index] != '' ? res_extra['extra_name'][index] : res_extra['bec_name'][index];
-                        if (res_extra['bec_type'][index] == 1) {
-                            no++;
+                    if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+                        for (let index = 0; index < res_extar[id].id.length; index++) {
+                            amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
                             text_html += '<tr>' +
-                                '<td class="text-center">' + no + '</td>' +
-                                '<td>' + extra_name + ' (Adult)</td>' +
-                                '<td class="text-center">' + res_extra['bec_adult'][index] + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_rate_adult'][index]) + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_adult'][index] * res_extra['bec_rate_adult'][index]) + '</td>' +
-                                '</tr>';
-                            no++;
-                            text_html += '<tr>' +
-                                '<td class="text-center">' + no + '</td>' +
-                                '<td>' + extra_name + ' (Children)</td>' +
-                                '<td class="text-center">' + res_extra['bec_child'][index] + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_rate_child'][index]) + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_child'][index] * res_extra['bec_rate_child'][index]) + '</td>' +
-                                '</tr>';
-                            no++;
-                            text_html += '<tr>' +
-                                '<td class="text-center">' + no + '</td>' +
-                                '<td>' + extra_name + ' (Infant)</td>' +
-                                '<td class="text-center">' + res_extra['bec_infant'][index] + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_rate_infant'][index]) + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_infant'][index] * res_extra['bec_rate_infant'][index]) + '</td>' +
-                                '</tr>';
-                        } else {
-                            no++;
-                            text_html += '<tr>' +
-                                '<td class="text-center">' + no + '</td>' +
-                                '<td>' + extra_name + '</td>' +
-                                '<td class="text-center">' + res_extra['bec_privates'][index] + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_rate_private'][index]) + '</td>' +
-                                '<td class="text-center">' + numberWithCommas(res_extra['bec_privates'][index] * res_extra['bec_rate_private'][index]) + '</td>' +
+                                '<td class="text-left" colspan="2"> ' + res_extar[id].name[index] + ' </td>' +
+                                '<td class="text-left" colspan="3">  </td>' +
+                                '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+                                '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
                                 '</tr>';
                         }
                     }
                 }
 
                 text_html += '<tr>' +
-                    '<td colspan="3"></td>' +
-                    '<td class="text-center">' +
-                    '<b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                    '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-total')) + '</td>' +
-                    '</tr>';
-
-                if ($('#inv' + id).attr('data-discount') > 0) {
-                    text_html += '<tr>' +
-                        '<td colspan="3"></td>' +
-                        '<td class="text-center">' +
-                        '<b>ส่วนลด</b><br><small>(Discount)</small></td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-discount')) + ' <input type="hidden" id="discount" name="discount[]" value="' + $('#inv' + id).attr('data-discount') + '"></td>' +
-                        '</tr>';
-                }
-
-                text_html += '<tr id="tr-only-vat" hidden>' +
-                    '<td colspan="3"></td>' +
-                    '<td class="text-center">' +
-                    '<b id="vat-only-text"></b><br><small>(Vat)</small></td>' +
-                    '<td class="text-center" id="price-only-vat"></td>' +
-                    '</tr>';
-
-                text_html += '<tr id="tr-only-withholding" hidden>' +
-                    '<td colspan="3"></td>' +
-                    '<td class="text-center">' +
-                    '<b id="withholding-only-text"></b><br><small>(Withholding Tax)</small></td>' +
-                    '<td class="text-center" id="price-only-withholding"></td>' +
-                    '</tr>';
-
-                if ($('#inv' + id).attr('data-payment_id') == 4) {
-                    text_html += '<tr>' +
-                        '<td colspan="3"></td>' +
-                        '<td class="text-center">' +
-                        '<b>Cash on tour</b></td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-total_paid')) + '</td>' +
-                        '</tr>';
-                } else if ($('#inv' + id).attr('data-payment_id') == 5) {
-                    text_html += '<tr>' +
-                        '<td colspan="3"></td>' +
-                        '<td class="text-center">' +
-                        '<b>Deposit</b></td>' +
-                        '<td class="text-center">' + numberWithCommas($('#inv' + id).attr('data-total_paid')) + '</td>' +
-                        '</tr>';
-                }
-
-                text_html += '<tr>' +
-                    '<td colspan="3"></td>' +
-                    '<td class="text-center">' +
-                    '<b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
-                    '<td class="text-center" id="price-only-amount">' + numberWithCommas(Number($('#inv' + id).attr('data-total') - $('#inv' + id).attr('data-discount') - $('#inv' + id).attr('data-total_paid'))) + '</td>' +
-                    '</tr>';
-
-                $('#tbody-only-invoice').html(text_html);
-                document.getElementById('price_total').value = Number($('#inv' + id).attr('data-total') - $('#inv' + id).attr('data-discount') - $('#inv' + id).attr('data-total_paid'));
-            } else if (cover_id > 0) {
-                document.getElementById('div-only-invoice').hidden = true;
-                document.getElementById('div-multi-invoice').hidden = false;
-                document.getElementById('inv_id').value = 0;
-                document.getElementById('cover_id').value = cover_id;
-                document.getElementById('type').value = 'multi';
-                var id_cover = $('.cover' + cover_id);
-                var inv_date = $('#inv' + id_cover[0].value).attr('data-inv_date');
-                var rec_date = $('#inv' + id_cover[0].value).attr('data-rec_date');
-                var vat = $('#inv' + id_cover[0].value).attr('data-vat_id');
-                var branche = $('#inv' + id_cover[0].value).attr('data-branche');
-                var bank_account = $('#inv' + id_cover[0].value).attr('data-bank_account');
-                document.getElementById('is_approved').checked = $('#inv' + id_cover[0].value).attr('data-is_approved') == 1 ? true : false;
-                document.getElementById('inv_date').value = $('#inv' + id_cover[0].value).attr('data-inv_date');
-                document.getElementById('rec_date').value = $('#inv' + id_cover[0].value).attr('data-rec_date');
-                document.getElementById('vat').value = $('#inv' + id_cover[0].value).attr('data-vat_id');
-                document.getElementById('withholding').value = $('#inv' + id_cover[0].value).attr('data-withholding');
-                document.getElementById('branch').value = $('#inv' + id_cover[0].value).attr('data-branche');
-                document.getElementById('bank_account').value = $('#inv' + id_cover[0].value).attr('data-bank_account');
-                document.getElementById('note').value = $('#inv' + id_cover[0].value).attr('data-note');
-                document.getElementById('agent_name_text').innerHTML = $('#inv' + id_cover[0].value).attr('data-agent_name');
-                document.getElementById('agent_address_text').innerHTML = $('#inv' + id_cover[0].value).attr('data-agent_address');
-                document.getElementById('agent_tel_text').innerHTML = $('#inv' + id_cover[0].value).attr('data-agent_telephone');
-                document.getElementById('agent_tax_text').innerHTML = $('#inv' + id_cover[0].value).attr('data-agent_tat');
-                var text_html = '';
-                var payment_name = '';
-                var total = 0;
-                var amount = 0;
-                var discount = 0;
-                var no = 1;
-                for (let index = 0; index < id_cover.length; index++) {
-                    var id = id_cover[index].value;
-                    total = 0;
-                    payment_name = '<b>' + $('#inv' + id).attr('data-payment_name') + '</b>';
-                    payment_name = ($('#inv' + id).attr('data-payment_id') == 4 || $('#inv' + id).attr('data-payment_id') == 5) ? payment_name + '</br>(' + numberWithCommas($('#inv' + id).attr('data-total_paid')) + ')' : payment_name;
-                    total = Number(total) + Number($('#inv' + id).attr('data-total'));
-                    total = ($('#inv' + id).attr('data-payment_id') == 4 || $('#inv' + id).attr('data-payment_id') == 5) ? Number(total - $('#inv' + id).attr('data-total_paid')) : total;
-
-                    text_html += '<tr>' +
-                        '<td class="text-center">' + Number(no++) + '</td>' +
-                        '<td class="text-center text-nowrap"> ' + $('#inv' + id).attr('data-inv_full') + ' </td>' +
-                        '<td class="text-center text-nowrap"> ' + $('#inv' + id).attr('data-book_full') + ' </td>' +
-                        '<td class="text-center text-nowrap"> ' + $('#inv' + id).attr('data-voucher') + ' </td>' +
-                        '<td class="text-center"> ' + $('#inv' + id).attr('data-cus_name') + ' </td>' +
-                        '<td class="text-center"> ' + $('#inv' + id).attr('data-programe_name') + ' </td>' +
-                        '<td class="text-center"> ' + $('#inv' + id).attr('data-travel_date') + ' </td>' +
-                        '<td class="text-center"> ' + payment_name + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(Number(total)) + ' </td>' +
-                        '</tr>';
-
-                    discount = ($('#inv' + id).attr('data-discount') > 0) ? Number(discount) + Number($('#inv' + id).attr('data-discount')) : discount;
-                    amount = amount + total;
-                }
-
-                text_html += '<tr>' +
-                    '<td colspan="7"></td>' +
+                    '<td colspan="10"></td>' +
                     '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
-                    '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                    '<td class="text-center" id="price-multi-total"></td>' +
                     '</tr>'
 
                 if (discount > 0) {
                     text_html += '<tr>' +
-                        '<td colspan="7"></td>' +
+                        '<td colspan="10"></td>' +
                         '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
                         '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
                         '</tr>'
                 }
 
+                if (cot > 0) {
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>Cash on tour</b></td>' +
+                        '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                        '</tr>'
+                }
+
                 text_html += '<tr id="tr-multi-vat" hidden>' +
-                    '<td colspan="7"></td>' +
+                    '<td colspan="10"></td>' +
                     '<td class="text-center"><b id="vat-multi-text"></b><br><small>(Vat)</small></td>' +
                     '<td class="text-center" id="price-multi-vat"></td>' +
                     '</tr>';
 
                 text_html += '<tr id="tr-multi-withholding" hidden>' +
-                    '<td colspan="7"></td>' +
+                    '<td colspan="10"></td>' +
                     '<td class="text-center"><b id="withholding-multi-text"></b><br><small>(Withholding Tax)</small></td>' +
                     '<td class="text-center" id="price-multi-withholding"></td>' +
                     '</tr>';
 
                 text_html += '<tr>' +
-                    '<td colspan="7"></td>' +
+                    '<td colspan="10"></td>' +
                     '<td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
                     '<td class="text-center" id="price-multi-amount"></td>' +
                     '</tr>';
 
-                $('#tbody-multi-invoice').html(text_html);
+                $('#tbody-multi-booking').html(text_html);
 
-                document.getElementById('price_total').value = amount - discount;
+                document.getElementById('discount').value = discount;
+                document.getElementById('cot').value = cot;
+                document.getElementById('price_total').value = amount;
             }
-
-            $('#vat').each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent(),
-                        'val': vat
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    })
-            });
-
-            $('#branch').each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent(),
-                        'val': branch
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    })
-            });
-
-            $('#bank_account').each(function() {
-                var $this = $(this);
-                $this.wrap('<div class="position-relative"></div>');
-                $this
-                    .select2({
-                        placeholder: 'Select ...',
-                        dropdownParent: $this.parent(),
-                        'val': bank_account
-                    })
-                    .change(function() {
-                        $(this).valid();
-                    })
-            });
 
             $('#inv_date').flatpickr({
                 onReady: function(selectedDates, dateStr, instance) {
@@ -739,7 +494,7 @@
                 altInput: true,
                 altFormat: 'j F Y',
                 dateFormat: 'Y-m-d',
-                defaultDate: inv_date
+                defaultDate: document.getElementById('agent_value').dataset.inv_date
             });
 
             $('#rec_date').flatpickr({
@@ -752,16 +507,19 @@
                 altInput: true,
                 altFormat: 'j F Y',
                 dateFormat: 'Y-m-d',
-                defaultDate: rec_date
+                defaultDate: document.getElementById('agent_value').dataset.rec_date
             });
 
-            calculator_price(type);
+            calculator_price();
+
+            $("#vat").val(document.getElementById('agent_value').dataset.vat).trigger("change");
+            $("#withholding").val(document.getElementById('agent_value').dataset.withholding).trigger("change");
+            $("#bank_account").val(document.getElementById('agent_value').dataset.bank_account).trigger("change");
         }
 
-        function modal_show_invoice(inv_id, cover_id) {
+        function modal_show_invoice(cover_id) {
             var formData = new FormData();
             formData.append('action', 'preview');
-            formData.append('inv_id', inv_id);
             formData.append('cover_id', cover_id);
             $.ajax({
                 url: "pages/invoice/print.php",
@@ -778,7 +536,7 @@
         }
 
         function check_diff_date(type) {
-            var today = document.getElementById('today').value;
+            var today = document.getElementById('input_today').value;
             var rec_date = document.getElementById(type).value;
             const date1 = new Date(today);
             const date2 = new Date(rec_date);
@@ -789,21 +547,24 @@
         }
 
         function calculator_price() {
+            // var type = 'multi';
             var vat_total = 0;
             var vat_cut = 0;
             var withholding_total = 0;
             var total = 0;
-            var type = document.getElementById('type').value;
-            var price_amount = document.getElementById('price-' + type + '-amount');
+            var price_amount = document.getElementById('price-multi-amount');
             var vat = document.getElementById('vat');
             var withholding = document.getElementById('withholding');
-            var price_withholding = document.getElementById('price-' + type + '-withholding');
+            var price_withholding = document.getElementById('price-multi-withholding');
             var price_total = document.getElementById('price_total');
-            var tr_vat = document.getElementById('tr-' + type + '-vat');
-            var vat_text = document.getElementById('vat-' + type + '-text');
-            var price_vat = document.getElementById('price-' + type + '-vat');
-            var tr_withholding = document.getElementById('tr-' + type + '-withholding');
-            var withholding_text = document.getElementById('withholding-' + type + '-text');
+            var tr_vat = document.getElementById('tr-multi-vat');
+            var vat_text = document.getElementById('vat-multi-text');
+            var price_vat = document.getElementById('price-multi-vat');
+            var price_total_1 = document.getElementById('price-multi-total');
+            var tr_withholding = document.getElementById('tr-multi-withholding');
+            var withholding_text = document.getElementById('withholding-multi-text');
+            var discount = document.getElementById('discount');
+            var cot = document.getElementById('cot');
             var amount = document.getElementById('amount');
             tr_vat.hidden = vat.value > 0 ? false : true;
             vat_text.innerHTML = vat.value > 0 ? vat.value == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%' : '';
@@ -824,15 +585,26 @@
                 withholding_total = withholding.value > 0 ? Number(((total - vat_total) * withholding.value) / 100) : 0;
                 total = Number(total - withholding_total);
             }
+
             price_vat.innerHTML = Number(vat_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
             price_withholding.innerHTML = Number(withholding_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
+            price_total_1.innerHTML = Number(price_total.value).toLocaleString("en-US", {
+                maximumFractionDigits: 2
+            });
+
+            total = discount.value > 0 ? Number(total - discount.value) : total;
+            total = cot.value > 0 ? Number(total - cot.value) : total;
+
             price_amount.innerHTML = Number(total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
             amount.value = total;
         }
 

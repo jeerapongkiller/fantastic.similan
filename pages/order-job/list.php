@@ -3,12 +3,12 @@ require_once 'controllers/Order.php';
 
 $manageObj = new Order();
 
-// $today = date("Y-m-d");
-$today = '2025-09-25';
+$today = date("Y-m-d");
+// $today = '2025-09-25';
 $tomorrow = date("Y-m-d", strtotime(" +1 day"));
 
 # --- get data --- #
-$all_manages = $manageObj->fetch_all_manageboat($today, $search_boat = 'all', 0);
+$all_manages = $manageObj->fetch_all_manageboat($today, $search_boat = 'all', $search_guide = 'all', 0);
 
 $categorys_array = array();
 $all_bookings = $manageObj->fetch_all_bookingboat('all', $today, $search_status = 'all', $search_agent = 'all', $search_product = 'all', $search_voucher_no = '', $refcode = '', $name = '', $hotel = '', 0);
@@ -158,7 +158,7 @@ $name_img = 'ใบงาน [' . date('j F Y', strtotime($today)) . ']';
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-12">
-                                    <button type="submit" class="btn btn-primary" name="submit" value="Submit">Search</button>
+                                    <button type="submit" class="btn btn-primary" name="submit" value="Submit"><i data-feather='search'></i> Search</button>
                                 </div>
                             </div>
                         </form>
@@ -167,8 +167,8 @@ $name_img = 'ใบงาน [' . date('j F Y', strtotime($today)) . ']';
                     <div id="order-jobs-search-table">
                         <div class="content-header">
                             <div class="pl-1 pt-0 pb-0">
-                                <a href="./?pages=order-job/print&action=print" target="_blank" class="btn btn-info">Print</a>
-                                <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
+                                <a href="./?pages=order-job/print&action=print" target="_blank" class="btn btn-info"><i data-feather='printer'></i> Print</a>
+                                <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();"><i data-feather='image'></i> Image</button></a>
                             </div>
                         </div>
                         <hr class="pb-0 pt-0">

@@ -10,195 +10,6 @@ class Invoice extends DB
         parent::__construct();
     }
 
-    public function fetch_all_booking($travel_date, $agent)
-    {
-        $query = "SELECT BO.*,
-                    BONO.bo_full as bo_full,
-                    BSTA.name_class as status_class, BSTA.name as status_name,
-                    BOPA.total_paid as cot,
-                    COMP.id as agent_id, COMP.name as agent_name,
-                    PROD.id as product_id, PROD.name as product_name,
-                    CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
-                    CUS.name as cus_name,
-                    BP.id as bp_id, BP.note as bp_note,
-                    BPRS.adult, BPRS.child, BPRS.infant, BPRS.foc, BPRS.max_tourist,
-                    BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-                    BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside_pickup, 
-                    BT.hotel_dropoff as outside_dropoff, BT.pickup_type as pickup_type,
-                    HOTELP.name_th as hotelp_name,
-                    HOTELD.name_th as hoteld_name,
-                    ZONE_P.name_th as zonep_name,
-                    ZONE_D.name_th as zoned_name
-                FROM bookings BO
-                LEFT JOIN bookings_no BONO
-                    ON BO.id = BONO.booking_id
-                LEFT JOIN booking_status BSTA
-                    ON BO.booking_status_id = BSTA.id
-                LEFT JOIN booking_paid BOPA
-                    ON BO.id = BOPA.booking_id
-                    AND BOPA.booking_payment_id = 4
-                LEFT JOIN companies COMP
-                    ON BO.company_id = COMP.id
-                LEFT JOIN customers CUS
-                    ON BO.id = CUS.booking_id
-                LEFT JOIN booking_products BP
-                    ON BO.id = BP.booking_id
-                LEFT JOIN products PROD
-                    ON BP.product_id = PROD.id
-                LEFT JOIN (
-                    SELECT BP.booking_id, BPR.category_id,
-                        SUM(BPR.adult) AS adult,
-                        SUM(BPR.child) AS child,
-                        SUM(BPR.infant) AS infant,
-                        SUM(BPR.foc) AS foc,
-                        SUM(BPR.adult) + SUM(BPR.child) + SUM(BPR.infant) + SUM(BPR.foc) AS max_tourist
-                    FROM booking_products BP
-                    JOIN booking_product_rates BPR 
-                        ON BP.id = BPR.booking_products_id
-                    GROUP BY BP.booking_id, BPR.category_id
-                ) BPRS 
-                    ON BPRS.booking_id = BO.id
-                LEFT JOIN product_category CATE 
-                    ON BPRS.category_id = CATE.id
-                LEFT JOIN booking_transfer BT
-                    ON BP.id = BT.booking_products_id
-                LEFT JOIN hotel HOTELP
-                    ON BT.hotel_pickup_id = HOTELP.id
-                LEFT JOIN hotel HOTELD
-                    ON BT.hotel_dropoff_id = HOTELD.id
-                LEFT JOIN zones ZONE_P
-                    ON BT.pickup_id = ZONE_P.id
-                LEFT JOIN zones ZONE_D
-                    ON BT.dropoff_id = ZONE_D.id
-                LEFT JOIN invoices INV
-                    ON BO.id = INV.booking_id
-                WHERE BO.id > 0
-                AND BO.booking_status_id != 3
-                AND BO.booking_status_id != 4
-                AND INV.id IS NULL
-        ";
-
-        $query .= (!empty($travel_date) && $travel_date != '') ? " AND BP.travel_date = '" . $travel_date . "'" : "";
-        $query .= (!empty($travel_date) && $travel_date != '') ? !empty(substr($_POST['travel_date'], 14, 24)) ? " BP.travel_date BETWEEN '" . substr($_POST['travel_date'], 0, 10) . "' AND '" . substr($_POST['travel_date'], 14, 24) . "'" : " AND BP.travel_date = '" . $travel_date . "'" : "";
-        // $query .= (!empty($type) && $type != 'all') ? ($type == 'manage') ? " AND MANGE.id = " . $manages_id : " AND MANGE.id IS NULL" : '';
-        // $query .= (!empty($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
-        $query .= (!empty($agent) && $agent != 'all') ? ($agent != 'IS-NULL') ? " AND COMP.id = " . $agent : " AND COMP.id IS NULL " : "";
-        // $query .= (!empty($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
-        // $query .= (!empty($voucher_no)) ? " AND BO.voucher_no_agent = '" . $voucher_no . "' " : "";
-        // $query .= (!empty($refcode)) ? " AND BONO.bo_full = '" . $refcode . "' " : "";
-        // $query .= (!empty($match_query)) ? (!empty($nameisThai)) ? " AND CUS.name LIKE '%" . $name . "%' " : " AND MATCH(CUS.name) AGAINST('$match_query' IN BOOLEAN MODE)" : '';
-        // $query .= (!empty($hotel)) ? $match : "";
-
-        // $query .= (!empty($match_query)) ? " AND MATCH(CUS.name) AGAINST('$match_query' IN BOOLEAN MODE)" : '';
-        // $query .= (!empty($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
-        // $query .= (!empty($hotel)) ? " AND BT.hotel_pickup_id LIKE '%" . $hotel . "%' " : "";
-
-        // echo $query;
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
-
-    public function get_extra_charge(int $bo_id)
-    {
-        $query = "SELECT booking_extra_charge.*,
-                    extra_charges.name as extra_name
-                FROM booking_extra_charge 
-                LEFT JOIN extra_charges
-                    ON booking_extra_charge.extra_charge_id = extra_charges.id
-                WHERE booking_extra_charge.id > 0
-                AND booking_extra_charge.booking_id = $bo_id
-        ";
-
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
-
-    public function fetch_assoc_booking(int $id)
-    {
-        $query = "SELECT BO.*,
-                    BONO.bo_full as bo_full,
-                    BSTA.name_class as status_class, BSTA.name as status_name,
-                    BOPA.total_paid as cot,
-                    COMP.id as agent_id, COMP.name as agent_name,
-                    PROD.id as product_id, PROD.name as product_name,
-                    -- CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
-                    CUS.name as cus_name,
-                    BP.id as bp_id, BP.travel_date as travel_date, BP.note as bp_note,
-                    -- BPRS.adult, BPRS.child, BPRS.infant, BPRS.foc, BPRS.max_tourist,
-                    BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-                    BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside_pickup, 
-                    BT.hotel_dropoff as outside_dropoff, BT.pickup_type as pickup_type,
-                    HOTELP.name_th as hotelp_name,
-                    HOTELD.name_th as hoteld_name,
-                    ZONE_P.name_th as zonep_name,
-                    ZONE_D.name_th as zoned_name
-                FROM bookings BO
-                LEFT JOIN bookings_no BONO
-                    ON BO.id = BONO.booking_id
-                LEFT JOIN booking_status BSTA
-                    ON BO.booking_status_id = BSTA.id
-                LEFT JOIN booking_paid BOPA
-                    ON BO.id = BOPA.booking_id
-                    AND BOPA.booking_payment_id = 4
-                LEFT JOIN companies COMP
-                    ON BO.company_id = COMP.id
-                LEFT JOIN customers CUS
-                    ON BO.id = CUS.booking_id
-                LEFT JOIN booking_products BP
-                    ON BO.id = BP.booking_id
-                LEFT JOIN products PROD
-                    ON BP.product_id = PROD.id
-                -- LEFT JOIN (
-                --     SELECT BP.booking_id, BPR.category_id,
-                --         SUM(BPR.adult) AS adult,
-                --         SUM(BPR.child) AS child,
-                --         SUM(BPR.infant) AS infant,
-                --         SUM(BPR.foc) AS foc,
-                --         SUM(BPR.adult) + SUM(BPR.child) + SUM(BPR.infant) + SUM(BPR.foc) AS max_tourist
-                --     FROM booking_products BP
-                --     JOIN booking_product_rates BPR 
-                --         ON BP.id = BPR.booking_products_id
-                --     GROUP BY BP.booking_id, BPR.category_id
-                -- ) BPRS 
-                --     ON BPRS.booking_id = BO.id
-                -- LEFT JOIN product_category CATE 
-                --     ON BPRS.category_id = CATE.id
-                LEFT JOIN booking_transfer BT
-                    ON BP.id = BT.booking_products_id
-                LEFT JOIN hotel HOTELP
-                    ON BT.hotel_pickup_id = HOTELP.id
-                LEFT JOIN hotel HOTELD
-                    ON BT.hotel_dropoff_id = HOTELD.id
-                LEFT JOIN zones ZONE_P
-                    ON BT.pickup_id = ZONE_P.id
-                LEFT JOIN zones ZONE_D
-                    ON BT.dropoff_id = ZONE_D.id
-                LEFT JOIN invoices INV
-                    ON BO.id = INV.booking_id
-                WHERE BO.id = $id
-                AND BO.booking_status_id != 3
-                AND BO.booking_status_id != 4
-        ";
-
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_assoc();
-
-        return $data;
-    }
-
-
-
-
     public function showlistinvoice($type, $travel_date, $agent)
     {
         $bind_types = "";
@@ -211,23 +22,22 @@ class Invoice extends DB
                     BANACC.id as banacc_id, BANACC.account_name as account_name, BANACC.account_no as account_no,
                     BANK.id as bank_id, BANK.name as bank_name, 
                     BRCH.id as brch_id, BRCH.name as brch_name,
-                    BO.id as bo_id, BO.voucher_no_agent as voucher_no_agent, BO.discount as discount, BO.booking_type_id as bo_type, BO.created_at as created_at, 
+                    BO.id as bo_id, BO.voucher_no_agent as voucher_no_agent, BO.discount as discount, BO.booking_type_id as bo_type, 
                     BONO.bo_full as book_full,
                     BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
                     BTYE.id as booktye_id, BTYE.name as booktye_name,
-                    COMP.id as comp_id, COMP.name as comp_name, COMP.address as comp_address, COMP.telephone as comp_telephone, COMP.tat_license as comp_tat, COMP.email as comp_email,
+                    COMP.id as comp_id, COMP.name as comp_name, COMP.address as comp_address, COMP.telephone as comp_telephone, COMP.tat_license as comp_tat,
                     BOPA.id as bopa_id, BOPA.date_paid as date_paid, BOPA.total_paid as total_paid, BOPA.card_no as card_no, BOPA.photo as bopa_photo, BOPA.note as bopa_note, BOPA.payment_type_id as payment_type_id,
                     BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class, BOPAY.created_at as bopay_created,
-                    BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bpr_adult, BP.child as bpr_child, BP.infant as bpr_infant, BP.note as bp_note,
+                    BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bp_adult, BP.child as bp_child, BP.infant as bp_infant, BP.note as bp_note,
                     BP.private_type as bp_private_type,
-                    -- BPR.id as bpr_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total, 
+                    BPR.id as bpr_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total, 
                     PROD.id as product_id, PROD.name as product_name,
                     CUS.id as cus_id, CUS.name as cus_name, CUS.head as cus_head,
                     BT.id as bt_id, BT.adult as bt_adult, BT.child as bt_child, BT.infant as bt_infant, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
                     BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.room_no as room_no, BT.note as bt_note, BT.transfer_type as transfer_type,
                     BT.pickup_type as pickup_type,
-                    BPR.id as bpr_id, BPR.adult as bpr_adult, BPR.child as bpr_child, BPR.infant as bpr_infant, BPR.foc as bpr_foc, 
-                    BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total,  
+                    BTR.id as btr_id, BTR.rate_adult as btr_rate_adult, BTR.rate_child as btr_rate_child, BTR.rate_infant as btr_rate_infant, BTR.rate_private as rate_private,
                     CARC.id as cars_category_id, CARC.name as cars_category,
                     BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
@@ -235,9 +45,7 @@ class Invoice extends DB
                     PICK.id as pickup_id, PICK.name as pickup_name,
                     HOTPIK.id as hotel_pickup_id, HOTPIK.name as hotel_pickup_name,
                     HOTDRO.id as hotel_dropoff_id, HOTDRO.name as hotel_dropoff_name,
-                    REC.id as rec_id,
-                    USER.id as user_id, USER.firstname as user_fname, USER.lastname as user_lname,
-                    BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname
+                    REC.id as rec_id
                 FROM invoices INV
                 LEFT JOIN invoice_cover COVER
                     ON INV.cover_id = COVER.id
@@ -291,10 +99,6 @@ class Invoice extends DB
                     ON BT.hotel_dropoff_id = HOTDRO.id
                 LEFT JOIN receipts REC
                     ON COVER.id = REC.cover_id
-                LEFT JOIN users USER
-                    ON INV.user_id = USER.id
-                LEFT JOIN users BOOKER
-                    ON BO.booker_id = BOOKER.id
                 WHERE INV.is_deleted = 0
                 AND REC.id IS NULL
         ";
@@ -319,7 +123,7 @@ class Invoice extends DB
         return $data;
     }
 
-    public function showlist($type, $agent, $invoice_no, $booking_no, $voucher, $travel_date)
+    public function showlist($type, $travel_date, $agent, $cover_id)
     {
         $bind_types = "";
         $params = array();
@@ -331,11 +135,11 @@ class Invoice extends DB
                     COMP.id as comp_id, COMP.name as comp_name, COMP.tat_license as tat_license, COMP.telephone as comp_telephone, COMP.address as comp_address,
                     BOPA.id as bopa_id, BOPA.date_paid as date_paid, BOPA.total_paid as total_paid, BOPA.card_no as card_no, BOPA.photo as bopa_photo, BOPA.note as bopa_note, BOPA.payment_type_id as payment_type_id,
                     BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class, BOPAY.created_at as bopay_created,
-                    BP.id as bp_id, BP.travel_date as travel_date,  BP.note as bp_note, BP.private_type as bp_private_type,
-                    BPR.id as bpr_id, BPR.adult as bpr_adult, BPR.child as bpr_child, BPR.infant as bpr_infant, BPR.foc as bpr_foc, 
-                    BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total,  
+                    BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bp_adult, BP.child as bp_child, BP.infant as bp_infant, BP.foc as bp_foc, BP.note as bp_note,
+                    BP.private_type as bp_private_type,
+                    BPR.id as bpr_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total, 
                     PROD.id as product_id, PROD.name as product_name,
-                    CATE.id as category_id, CATE.name as category_name, CATE.customer as category_cus, CATE.transfer as category_transfer, 
+                    CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer, 
                     CUS.id as cus_id, CUS.name as cus_name, CUS.head as cus_head,
                     BT.id as bt_id, BT.adult as bt_adult, BT.child as bt_child, BT.infant as bt_infant, BT.foc as bt_foc, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
                     BT.pickup_type, pickup_type, BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside, BT.hotel_dropoff as outside_dropoff,
@@ -343,6 +147,7 @@ class Invoice extends DB
                     DROPOFF.id as dropoff_id, DROPOFF.name_th as dropoff_name,
                     ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name,
                     ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
+                    BTR.id as btr_id, BTR.rate_adult as btr_rate_adult, BTR.rate_child as btr_rate_child, BTR.rate_infant as btr_rate_infant, BTR.rate_private as rate_private,
                     CARC.id as cars_category_id, CARC.name as cars_category,
                     BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
@@ -360,9 +165,7 @@ class Invoice extends DB
                     COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
                     BRCH.id as brch_id, BRCH.name as brch_name,
                     BANACC.id as banacc_id, BANACC.account_name as account_name, BANACC.account_no as account_no,
-                    BANK.id as bank_id, BANK.name as bank_name,
-                    USER.id as user_id, USER.firstname as user_fname, USER.lastname as user_lname,
-                    REC.id as rec_id
+                    BANK.id as bank_id, BANK.name as bank_name
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -400,7 +203,7 @@ class Invoice extends DB
                 LEFT JOIN products PROD
                     ON BP.product_id = PROD.id
                 LEFT JOIN product_category CATE
-                    ON BPR.category_id = CATE.id
+                    ON BP.category_id = CATE.id
                 LEFT JOIN customers CUS
                     ON BO.id = CUS.booking_id
                 LEFT JOIN extra_charges EXTRA
@@ -434,132 +237,48 @@ class Invoice extends DB
                     ON INV.bank_account_id = BANACC.id
                 LEFT JOIN banks BANK
                     ON BANACC.bank_id = BANK.id
-                LEFT JOIN users USER
-                    ON INV.user_id = USER.id
-                LEFT JOIN receipts REC
-                    ON COVER.id = REC.cover_id
                 WHERE BO.is_deleted = 0
                 AND BP.id > 0
                 AND BSTA.id != 3
                 AND BP.is_deleted = 0
         ";
 
-        $query .= " AND INV.id IS NOT NULL ";
-        $query .= !empty($invoice_no) ? "AND COVER.inv_full LIKE '%" . $invoice_no . "%'"  : '';
-        $query .= !empty($booking_no) ? "AND BONO.bo_full LIKE '%" . $booking_no . "%'"  : '';
-        $query .= !empty($voucher) ? "AND BO.voucher_no_agent LIKE '%" . $voucher . "%'"  : '';
-
-        if (isset($travel_date) && $travel_date != '') { // 11, 20
+        if (isset($travel_date) && $travel_date != '0000-00-00') { // 11, 20
             $query .= !empty(substr($travel_date, 14, 24)) ? " AND BP.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 14, 24) . "'" : " AND BP.travel_date = '" . $travel_date . "' ";
         }
 
-        if (isset($agent) && $agent != "all") {
-            $query .= " AND COMP.id = ?";
-            $bind_types .= "i";
-            array_push($params, $agent);
+        if (isset($type) && $type == "bookings") {
+            $query .= " AND INV.id IS NULL ";
+
+            if (isset($agent) && $agent != "all") {
+                $query .= " AND COMP.id = ?";
+                $bind_types .= "i";
+                array_push($params, $agent);
+            }
+
+            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
-        if (isset($type) && $type == 'overdue') {
-            $query .= " AND INV.rec_date < '" . date("Y-m-d") . "'";
-            $query .= " AND REC.id IS NULL";
+        if (isset($type) && $type == "invoices") {
+            $query .= " AND INV.id IS NOT NULL ";
+
+            if (isset($agent) && $agent != "all") {
+                $query .= " AND COMP.id = ?";
+                $bind_types .= "i";
+                array_push($params, $agent);
+            }
+
+            if (isset($cover_id) && $cover_id > 0) {
+                $query .= " AND COVER.id = ?";
+                $bind_types .= "i";
+                array_push($params, $cover_id);
+            }
+
+            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
-        if (isset($type) && $type == 'paid') {
-            $query .= " AND REC.id IS NOT NULL";
-        }
-
-        $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
-
-    public function showlistbooking(int $id, int $cover_id)
-    {
-        if ($id > 0) {
-            $query = "SELECT BO.*,
-                    BONO.bo_full as book_full,
-                    CUS.name as cus_name,
-                    BOPA.total_paid as cot,
-                    BP.travel_date as travel_date, BP.note as bp_note, BP.private_type as bp_private_type,
-                    PROD.name as product_name,
-                    BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
-                    BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_private as rate_private, BPR.rate_total as rate_total,
-                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
-                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-                    EXTRA.name as extra_name
-                FROM bookings BO  
-                LEFT JOIN bookings_no BONO
-                    ON BO.id = BONO.booking_id
-                LEFT JOIN customers CUS
-                    ON BO.id = CUS.booking_id
-                    AND CUS.head = 1
-                LEFT JOIN booking_paid BOPA
-                    ON BO.id = BOPA.booking_id
-                    AND BOPA.booking_payment_id = 4
-                LEFT JOIN booking_products BP
-                    ON BO.id = BP.booking_id
-                LEFT JOIN products PROD
-                    ON BP.product_id = PROD.id
-                LEFT JOIN booking_product_rates BPR
-                    ON BP.id = BPR.booking_products_id
-                LEFT JOIN booking_extra_charge BEC
-                    ON BO.id = BEC.booking_id
-                LEFT JOIN extra_charges EXTRA
-                    ON BEC.extra_charge_id = EXTRA.id
-                WHERE BO.id = $id ";
-        } else {
-            $query = "SELECT invoices.id as id, invoices.booking_id as bo_id, invoices.inv_date as inv_date, invoices.rec_date as rec_date, invoices.vat_id as vat_id, invoices.withholding as withholding, 
-                    invoice_cover.inv_full as inv_full, branches.name as brch_name,
-                    bookings.id as bo_id, bookings.discount as discount, bookings.voucher_no_agent as voucher_no_agent,
-                    bookings_no.bo_full as book_full,
-                    booking_products.travel_date as travel_date, booking_products.private_type as private_type,
-                    BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
-                    BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total,
-                    products.name as product_name,
-                    customers.name as cus_name,
-                    booking_paid.total_paid as cot,
-                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
-                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-                    extra_charges.name as extra_name,
-                    bank_account.id as bank_account_id
-                FROM invoices 
-                LEFT JOIN invoice_cover 
-                    ON invoices.cover_id = invoice_cover.id  
-                LEFT JOIN branches 
-                    ON invoices.branche_id = branches.id
-                LEFT JOIN bookings
-                    ON invoices.booking_id = bookings.id
-                LEFT JOIN bookings_no
-                    ON bookings.id = bookings_no.booking_id
-                LEFT JOIN booking_products 
-                    ON bookings.id = booking_products.booking_id
-                LEFT JOIN booking_product_rates BPR
-                    ON booking_products.id = BPR.booking_products_id
-                LEFT JOIN booking_extra_charge BEC 
-                    ON bookings.id = BEC.booking_id
-                LEFT JOIN extra_charges
-                    ON BEC.extra_charge_id = extra_charges.id
-                LEFT JOIN products
-                    ON booking_products.product_id = products.id
-                LEFT JOIN customers 
-                    ON bookings.id = customers.booking_id
-                    AND customers.head =  1
-                LEFT JOIN booking_paid
-                    ON bookings.id = booking_paid.booking_id
-                    AND booking_paid.booking_payment_id	= 4
-                LEFT JOIN bank_account
-                    ON invoices.bank_account_id = bank_account.id
-                LEFT JOIN banks 
-                    ON bank_account.bank_id = banks.id
-                WHERE invoice_cover.id =  $cover_id";
-        }
-
-        $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -661,21 +380,6 @@ class Invoice extends DB
         return $data;
     }
 
-    public function showbank()
-    {
-        $query = "SELECT id, name
-            FROM banks 
-            WHERE id > 0
-        ";
-        $query .= " ORDER BY name ASC";
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
-
     public function showbankaccount()
     {
         $query = "SELECT BAA.*,
@@ -690,21 +394,6 @@ class Invoice extends DB
         $statement->execute();
         $result = $statement->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
-
-    public function get_value(string $select, string $from, string $where, int $type)
-    {
-        $query = "SELECT $select
-            FROM $from 
-            WHERE $where
-        ";
-
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $type == 0 ? $result->fetch_assoc() : $result->fetch_all(MYSQLI_ASSOC);
 
         return $data;
     }
@@ -754,19 +443,16 @@ class Invoice extends DB
         return $data;
     }
 
-    public function insert_data(int $no, string $inv_date, string $rec_date, int $withholding, string $note, int $branche_id, int $booking_id, int $payment_id, int $vat_id, int $currency_id, int $cover_id, int $bank_account_id, int $is_approved)
+    public function insert_data(int $no, string $rec_date, int $withholding, string $note, int $branche_id, int $booking_id, int $payment_id, int $vat_id, int $currency_id, int $cover_id, int $bank_account_id, int $is_approved)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO  invoices (no, inv_date, rec_date, withholding, note, branche_id, booking_id, payment_id, vat_id, currency_id, cover_id, bank_account_id, user_id, is_approved, is_deleted, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
+        $query = "INSERT INTO  invoices (no, rec_date, withholding, note, branche_id, booking_id, payment_id, vat_id, currency_id, cover_id, bank_account_id, user_id, is_approved, is_deleted, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), NOW())";
 
         $bind_types .= "i";
         array_push($params, $no);
-
-        $bind_types .= "s";
-        array_push($params, $inv_date);
 
         $bind_types .= "s";
         array_push($params, $rec_date);
@@ -841,16 +527,12 @@ class Invoice extends DB
         return $this->response;
     }
 
-    public function update_data(string $inv_date, string $rec_date, int $withholding, string $note, int $branch, int $payment_id, int $vat_id, int $currency_id, int $bank_account_id, int $is_approved, int $cover_id)
+    public function update_data(string $rec_date, int $withholding, string $note, int $branch, int $payment_id, int $vat_id, int $currency_id, int $bank_account_id, int $is_approved, int $cover_id)
     {
         $bind_types = "";
         $params = array();
 
         $query = "UPDATE invoices SET";
-
-        $query .= " inv_date = ?,";
-        $bind_types .= "s";
-        array_push($params, $inv_date);
 
         $query .= " rec_date = ?,";
         $bind_types .= "s";
@@ -972,33 +654,5 @@ class Invoice extends DB
         }
 
         return $this->response;
-    }
-
-    public function showlistagentSearch($agent_id = null)
-    {
-        $query = "SELECT companies.*, 
-            companies_type.id as comptypeId, companies_type.name as comptypeName
-            FROM companies 
-            LEFT JOIN companies_type
-                ON companies.company_type_id = companies_type.id
-            WHERE companies.is_deleted = 0 AND companies.company_type_id = 2";
-
-        // If an agent ID is provided, add a condition to filter by that ID
-        if ($agent_id !== null) {
-            $query .= " AND companies.id = ?";
-        }
-
-        $statement = $this->connection->prepare($query);
-
-        // If an agent ID is provided, bind the parameter
-        if ($agent_id !== null) {
-            $statement->bind_param("i", $agent_id);  // "i" is for integer parameter
-        }
-
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
     }
 }

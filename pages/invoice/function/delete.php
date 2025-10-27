@@ -7,13 +7,23 @@ $invObj = new Invoice();
 if (isset($_POST['action']) && $_POST['action'] == "delete" && isset($_POST['cover_id'])) {
     // get value from ajax
     $cover_id = !empty($_POST['cover_id']) ? $_POST['cover_id'] : 0;
-    $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : '';
+
+    $bookings = $invObj->get_value(
+        'bookings.id as id ',
+        ' bookings LEFT JOIN invoices ON bookings.id = invoices.booking_id LEFT JOIN booking_paid ON bookings.id = booking_paid.booking_id ',
+        ' invoices.cover_id = ' . $cover_id,
+        1
+    );
 
     $response = $invObj->delete_data_cover($cover_id);
     $response = $invObj->delete_data($cover_id);
-    if (!empty($bo_id)) {
-        for ($i = 0; $i < count($bo_id); $i++) {
-            $response = $invObj->delete_booking_paid($bo_id[$i]);
+    if (!empty($bookings)) {
+        $array_booking = array();
+        foreach ($bookings as $booking) {
+            if (in_array($booking['id'], $array_booking) == false) {
+                $array_booking[] = $booking['id'];
+                $response = $invObj->delete_booking_paid($booking['id']);
+            }
         }
     }
 

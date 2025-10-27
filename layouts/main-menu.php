@@ -53,7 +53,10 @@
             <li class="nav-item <?php echo ((strstr($_GET['pages'], "quotation/"))) ? 'active' : ''; ?>">
                 <a class="d-flex align-items-center" href="./?pages=quotation/list"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="quotation">Quotation</span></a>
             </li>
-            <li class="nav-item <?php echo $guide_menu; ?>"><a class="d-flex align-items-center" href="#"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="invoice">Invoice</span></a>
+            <li class="nav-item <?php echo ((strstr($_GET['pages'], "invoice/"))) ? 'active' : ''; ?>">
+                <a class="d-flex align-items-center" href="./?pages=invoice/list"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="invoice">Invoice</span></a>
+            </li>
+            <li hidden class="nav-item <?php echo $guide_menu; ?>"><a class="d-flex align-items-center" href="#"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="invoice">Invoice</span></a>
                 <ul class="menu-content">
                     <li class="<?php echo ((strstr($_GET['pages'], "invoice/create"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=invoice/create"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="invoice">สร้าง Invoice</span></a>
                     </li>
@@ -61,7 +64,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item <?php echo $guide_menu; ?>"><a class="d-flex align-items-center" href="#"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="receipt">Receipt</span></a>
+            <li hidden class="nav-item <?php echo $guide_menu; ?>"><a class="d-flex align-items-center" href="#"><i data-feather='file-text'></i><span class="menu-title text-truncate" data-i18n="receipt">Receipt</span></a>
                 <ul class="menu-content">
                     <li class="<?php echo ((strstr($_GET['pages'], "receipt/create"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=receipt/create"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="receipt">สร้าง Receipt</span></a>
                     </li>

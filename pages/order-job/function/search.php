@@ -6,11 +6,6 @@ $manageObj = new Order();
 $today = date("Y-m-d");
 $tomorrow = date("Y-m-d", strtotime(" +1 day"));
 
-function check_in($var)
-{
-    return ($var > 0);
-}
-
 if (isset($_POST['action']) && $_POST['action'] == "search") {
     // get value from ajax
     $get_date = !empty($_POST['date_travel_form']) ? $_POST['date_travel_form'] : $tomorrow; // $tomorrow->format("Y-m-d")
@@ -34,10 +29,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $href .= "&refcode=" . $refcode;
     $href .= "&name=" . $name;
     $href .= "&hotel=" . $hotel;
+    $href .= "&manage_id=" . $manage_id;
     $href .= "&action=print";
 
     # --- get data --- #
-    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, $manage_id);
+    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, $search_guide = 'all', $manage_id);
 
     $categorys_array = array();
     $all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, 0);
@@ -50,8 +46,24 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
 ?>
     <div class="content-header">
         <div class="pl-1 pt-0 pb-0">
-            <a href='<?php echo $href; ?>' target="_blank" class="btn btn-info">Print</a>
-            <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
+            <a href='<?php echo $href; ?>' target="_blank" class="btn btn-info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print
+            </a>
+            <a href="javascript:void(0)">
+                <button type="button" class="btn btn-info" value="image" onclick="download_image();">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    Image
+                </button>
+            </a>
         </div>
     </div>
     <hr class="pb-0 pt-0">

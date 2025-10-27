@@ -16,8 +16,10 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
     $refcode = $_GET['refcode'] != "" ? $_GET['refcode'] : '';
     $name = $_GET['name'] != "" ? $_GET['name'] : '';
     $hotel = $_GET['hotel'] != "" ? $_GET['hotel'] : '';
+    $manage_id = !empty($_GET['manage_id']) ? $_GET['manage_id'] : 0;
 
-    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, 0);
+    # --- get data --- #
+    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, $search_guide = 'all', $manage_id);
 
     $categorys_array = array();
     $all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, 0);
@@ -76,7 +78,6 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                             <th class="text-center" width="1%">C</th>
                             <th class="text-center" width="1%">Inf</th>
                             <th class="text-center" width="1%">FOC</th>
-                            <!-- <th class="text-center">รวม</th> -->
                             <th width="5%">COT</th>
                             <th width="8%">Remark</th>
                     </thead>
@@ -88,7 +89,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                         $total_infant = 0;
                         $total_foc = 0;
                         $bomange_arr = array();
-                        $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, '', $manages['id']);
+                        $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, $manages['id']);
                         foreach ($all_bookings as $bookings) {
                             if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                                 $bomange_arr[] = $bookings['bomange_id'];
@@ -112,8 +113,6 @@ if (isset($_GET['action']) && $_GET['action'] == "print") {
                                     'booking_order_transfer.booking_transfer_id = ' . $bookings['bt_id'],
                                     1
                                 );
-
-                                $check_in = $manageObj->get_values('id', 'check_in', 'booking_id = ' . $bookings['id'] . ' AND type = 1', 0);
                         ?>
                                 <tr>
                                     <td class="cell-fit"><?php echo date('H:i', strtotime($bookings['start_pickup'])) . ' - ' . date('H:i', strtotime($bookings['end_pickup'])); ?></td>

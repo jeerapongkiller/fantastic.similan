@@ -146,8 +146,24 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
     </div>
     <input type="hidden" id="name_img" value="<?php echo 'Re Confirm Agent - ' . $all_bookings[0]['agent_name'] . ' (' . date('j F Y', strtotime($travel_date)) . ')'; ?>">
     <div class="modal-footer">
-        <a href="./?pages=order-agent/print&action=print&search_period=today&agent_id=<?php echo $agent_id; ?>&travel_date=<?php echo $travel_date; ?>" target="_blank" class="btn btn-info">Print</a>
-        <a href="javascript:void(0)"><button type="button" class="btn btn-info" value="image" onclick="download_image();">Image</button></a>
+        <a href="./?pages=order-agent/print&action=print&search_period=today&agent_id=<?php echo $agent_id; ?>&travel_date=<?php echo $travel_date; ?>" target="_blank" class="btn btn-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print
+        </a>
+        <a href="javascript:void(0)">
+            <button type="button" class="btn btn-info" value="image" onclick="download_image();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                Image
+            </button>
+        </a>
     </div>
 <?php
 } else {

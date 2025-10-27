@@ -22,6 +22,10 @@
     <link rel="stylesheet" type="text/css" href="app-assets/css/themes/bordered-layout.css">
     <link rel="stylesheet" type="text/css" href="app-assets/css/themes/semi-dark-layout.css">
 
+    <!-- BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <!-- END: Custom CSS-->
+
     <style>
         table,
         td,
@@ -49,6 +53,10 @@
         }
 
         @media print {
+            .pagebreak {
+                page-break-after: always;
+            }
+
             table {
                 page-break-after: auto
             }
