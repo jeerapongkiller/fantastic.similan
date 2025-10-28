@@ -121,7 +121,7 @@ class Invoice extends DB
         return $data;
     }
 
-    public function fetch_assoc_booking(int $id)
+    public function fetch_all_bookingdetail(int $id)
     {
         $query = "SELECT BO.*,
                     BONO.bo_full as bo_full,
@@ -129,10 +129,10 @@ class Invoice extends DB
                     BOPA.total_paid as cot,
                     COMP.id as agent_id, COMP.name as agent_name,
                     PROD.id as product_id, PROD.name as product_name,
-                    -- CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
+                    CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
                     CUS.name as cus_name,
                     BP.id as bp_id, BP.travel_date as travel_date, BP.note as bp_note,
-                    -- BPRS.adult, BPRS.child, BPRS.infant, BPRS.foc, BPRS.max_tourist,
+                    BPR.id as bpr_id, BPR.adult, BPR.child, BPR.infant, BPR.foc, BPR.rates_adult, BPR.rates_child, BPR.rates_infant, BPR.rates_private,
                     BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
                     BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside_pickup, 
                     BT.hotel_dropoff as outside_dropoff, BT.pickup_type as pickup_type,
@@ -156,21 +156,10 @@ class Invoice extends DB
                     ON BO.id = BP.booking_id
                 LEFT JOIN products PROD
                     ON BP.product_id = PROD.id
-                -- LEFT JOIN (
-                --     SELECT BP.booking_id, BPR.category_id,
-                --         SUM(BPR.adult) AS adult,
-                --         SUM(BPR.child) AS child,
-                --         SUM(BPR.infant) AS infant,
-                --         SUM(BPR.foc) AS foc,
-                --         SUM(BPR.adult) + SUM(BPR.child) + SUM(BPR.infant) + SUM(BPR.foc) AS max_tourist
-                --     FROM booking_products BP
-                --     JOIN booking_product_rates BPR 
-                --         ON BP.id = BPR.booking_products_id
-                --     GROUP BY BP.booking_id, BPR.category_id
-                -- ) BPRS 
-                --     ON BPRS.booking_id = BO.id
-                -- LEFT JOIN product_category CATE 
-                --     ON BPRS.category_id = CATE.id
+				LEFT JOIN booking_product_rates BPR
+                    ON BP.id = BPR.booking_products_id
+                LEFT JOIN product_category CATE 
+                ON BPR.category_id = CATE.id
                 LEFT JOIN booking_transfer BT
                     ON BP.id = BT.booking_products_id
                 LEFT JOIN hotel HOTELP
@@ -191,12 +180,40 @@ class Invoice extends DB
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
+        // $data = $result->fetch_assoc();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
+
+    public function checkinvno()
+    {
+        $query = "SELECT *,
+            MAX(inv_no) as max_inv_no
+            FROM invoice_cover 
+        ";
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
         $data = $result->fetch_assoc();
 
         return $data;
     }
 
+    public function get_value(string $select, string $from, string $where, int $type)
+    {
+        $query = "SELECT $select
+            FROM $from 
+            WHERE $where
+        ";
 
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $result = $statement->get_result();
+        $data = $type == 0 ? $result->fetch_assoc() : $result->fetch_all(MYSQLI_ASSOC);
+
+        return $data;
+    }
 
 
     public function showlistinvoice($type, $travel_date, $agent)
@@ -694,20 +711,7 @@ class Invoice extends DB
         return $data;
     }
 
-    public function get_value(string $select, string $from, string $where, int $type)
-    {
-        $query = "SELECT $select
-            FROM $from 
-            WHERE $where
-        ";
 
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $type == 0 ? $result->fetch_assoc() : $result->fetch_all(MYSQLI_ASSOC);
-
-        return $data;
-    }
 
     public function get_data(string $select, string $from, string $where)
     {
@@ -727,19 +731,7 @@ class Invoice extends DB
         return $data;
     }
 
-    public function checkinvno()
-    {
-        $query = "SELECT *,
-            MAX(inv_no) as max_inv_no
-            FROM invoice_cover 
-        ";
-        $statement = $this->connection->prepare($query);
-        $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_assoc();
 
-        return $data;
-    }
 
     public function sumbtrprivate(int $bt_id)
     {

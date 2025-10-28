@@ -44,7 +44,7 @@ function diff_date($today, $diff_date)
             </div>
             <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
                 <div class="form-group breadcrumb-right">
-                    <button class="btn btn-success btn-page-block-spinner" data-toggle="modal" data-target="#modal-invoice" onclick="modal_invoice(0);"><i data-feather='plus'></i> New Invoice</button>
+                    <button class="btn btn-success" data-toggle="modal" data-target="#modal-invoice" onclick="modal_invoice(0);"><i data-feather='plus'></i> New Invoice</button>
                 </div>
             </div>
         </div>

@@ -11,21 +11,12 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
     // get value from ajax
     $cover_id = !empty($_POST['cover_id']) ? $_POST['cover_id'] : 0;
     $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id']) : [];
-    $agent = $invObj->get_value('companies.name as name, companies.tat_license as license, companies.telephone as telephone, companies.address as address', 'bookings LEFT JOIN companies ON bookings.company_id = companies.id', 'bookings.id = ' . $bo_id[0], 0);
-
-    echo 'cover_id : ' . $cover_id;
-    echo '</br> bo_id : </br>';
-    print_r($_POST['bo_id']);
-
-    // if ($cover_id > 0) {
-    //     $invoices = $invObj->showlistbooking(0, $cover_id);
-    //     $agent = $invObj->get_value('companies.name as name, companies.tat_license as license, companies.telephone as telephone, companies.address as address', 'bookings LEFT JOIN companies ON bookings.company_id = companies.id', 'bookings.id = ' . $invoices[0]['bo_id'], 0);
-    //     foreach ($invoices as $invoice) {
-    //         $bo_id[] = $invoice['bo_id'];
-    //     }
-    // } else {
-
-    // }
+    $agent = $invObj->get_value(
+        'companies.name as name, companies.tat_license as license, companies.telephone as telephone, companies.address as address',
+        'bookings LEFT JOIN companies ON bookings.company_id = companies.id',
+        'bookings.id = ' . $bo_id[0],
+        0
+    );
 ?>
     <input type="hidden" id="action" name="action" value="<?php echo ($cover_id > 0) ? 'edit' : 'create'; ?>">
     <input type="hidden" id="input_today" name="today" value="<?php echo $today; ?>">
@@ -198,10 +189,11 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <td class="text-center"><b>ชื่อลูกค้า</b></td>
                     <td class="text-center"><b>โปรแกรม</b></td>
                     <td class="text-center"><b>หมายเลข</b></td>
+                    <td class="text-center"><b>ลูกค้า</b></td>
                     <td class="text-center" colspan="2"><b>จํานวน</b></td>
                     <td class="text-center" colspan="2"><b>ราคาต่อหน่วย</b></td>
-                    <td class="text-center"><b>ส่วนลด</b></td>
                     <td class="text-center"><b>จำนวนเงิน</b></td>
+                    <td class="text-center"><b>ส่วนลด</b></td>
                     <td class="text-center" style="border-radius: 0px 15px 0px 0px;"><b>Cash on tour</b></td>
                 </tr>
                 <tr class="table-black-2">
@@ -210,177 +202,151 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <td class="text-center p-50"><small>Customer's name</small></td>
                     <td class="text-center p-50"><small>Programe</small></td>
                     <td class="text-center p-50"><small>Voucher No.</small></td>
-                    <td class="text-center p-50"><small>Adult/Rider</small></td>
-                    <td class="text-center p-50"><small>Child/Paasenger</small></td>
-                    <td class="text-center p-50"><small>Adult/Rider</small></td>
-                    <td class="text-center p-50"><small>Child/Paasenger</small></td>
-                    <td class="text-center p-50"><small>Discount</small></td>
+                    <td class="text-center p-50"><small>Category</small></td>
+                    <td class="text-center p-50"><small>Adult</small></td>
+                    <td class="text-center p-50"><small>Child</small></td>
+                    <td class="text-center p-50"><small>Adult</small></td>
+                    <td class="text-center p-50"><small>Child</small></td>
                     <td class="text-center p-50"><small>Amount</small></td>
+                    <td class="text-center p-50"><small>Discount</small></td>
                     <td class="text-center p-50"><small>COT</small></td>
                 </tr>
             </thead>
             <?php if (!empty($bo_id)) { ?>
                 <tbody>
                     <?php
-                    for ($i = 0; $i < count($bo_id); $i++) {
-                        $bookings = $invObj->fetch_assoc_booking($bo_id[$i]);
-
-                        $adult = 0;
-                        $child = 0;
-                        $rates_adult = 0;
-                        $rates_child = 0;
-                        $rates_private = 0;
-                        $amount = 0;
-                        $all_rates = $invObj->get_value('*', ' booking_product_rates', 'booking_products_id = ' . $bookings['bp_id'], 1);
-                        foreach ($all_rates as $rates) {
-                            $adult += $rates['adult'];
-                            $child += $rates['child'];
-                            if ($bookings['booking_type_id'] == 1) {
-                                $rates_adult += $rates['rates_adult'];
-                                $rates_child += $rates['rates_child'];
-                                $amount += $rates['adult'] * $rates['rates_adult'];
-                                $amount += $rates['child'] * $rates['rates_child'];
-                            } elseif ($bookings['booking_type_id'] == 2) {
-                                $rates_private += $rates['rates_private'];
-                                $amount += $rates['rates_private'];
-                            }
-                        }
-
-                        // $e = 0;
-                        // $extra = '';
-                        // $extra_charges = $invObj->get_extra_charge($bookings['id']);
-                        // if (!empty($extra_charges)) {
-                        //     foreach ($extra_charges as $extra_charge) {
-                        //         if ($extra_charge['type'] == 1) {
-                        //             $amount += $extra_charge['adult'] * $extra_charge['rate_adult'];
-                        //             $amount += $extra_charge['child'] * $extra_charge['rate_child'];
-                        //             $amount += $extra_charge['infant'] * $extra_charge['rate_infant'];
-                        //         } elseif ($extra_charge['type'] == 2) {
-                        //             $amount += $extra_charge['privates'] * $extra_charge['rate_private'];
-                        //         }
-                        //         $extra = $e == 0 ? $extra_charge['extra_name'] : ' : ' . $extra_charge['extra_name'];
-                        //         $e++;
-                        //     }
-                        // }
-                    ?>
-                        <tr>
-                            <td class="text-center"><?php echo $i + 1 . ' | ' . $bookings['id'] ?></td>
-                            <td class="text-center"><?php echo date('j F Y', strtotime($bookings['travel_date'])); ?></td>
-                            <td><?php echo $bookings['cus_name']; ?></td>
-                            <td><?php echo $bookings['product_name']; ?></td>
-                            <td class="text-center"><?php echo !empty($bookings['voucher_no_agent']) ? $bookings['voucher_no_agent'] : $bookings['bo_full']; ?> </td>
-                            <td class="text-center"><?php echo $adult; ?></td>
-                            <td class="text-center"><?php echo $child; ?></td>
-                            <td class="text-center"><?php echo number_format($rates_adult, 2); ?></td>
-                            <td class="text-center"><?php echo number_format($rates_child, 2); ?></td>
-                            <td class="text-center"><?php echo number_format($bookings['discount'], 2); ?></td>
-                            <td class="text-center"><?php echo number_format($amount, 2); ?></td>
-                            <td class="text-center"><?php echo number_format($bookings['cot'], 2); ?></td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-                <tbody>
-                    <?php
-                    $no = 1;
                     $discount = 0;
                     $cot = 0;
-                    $total = 0;
-                    $in_booking = array();
-                    $in_charge = array();
+                    $amount = 0;
                     for ($i = 0; $i < count($bo_id); $i++) {
-                        $bookings = $invObj->showlistbooking($bo_id[$i], 0);
-                        if (!empty($bookings)) {
-                            foreach ($bookings as $booking) {
-                                if (in_array($booking['id'], $in_booking) == false) {
-                                    $in_booking[] = $booking['id'];
-                                    $discount = $discount + $booking['discount'];
-                                    $cot = $cot + $booking['cot'];
-                                    $total = $booking['bp_private_type'] == 1 ? $total + ($booking['adult'] * $booking['rate_adult']) + ($booking['child'] * $booking['rate_child']) : $total + $booking['rate_total'];
+                        $all_bookings = $invObj->fetch_all_bookingdetail($bo_id[$i]);
+                        $bo_arr = array();
+                        $rates_arr = array();
+                        foreach ($all_bookings as $bookings) {
+                            if (in_array($bookings['bpr_id'], $rates_arr) == false) {
+                                $rates_arr[] = $bookings['bpr_id'];
+                                $rates_adult = 0;
+                                if ($bookings['booking_type_id'] == 1) {
+                                    $rates_adult += $bookings['adult'] * $bookings['rates_adult'];
+                                    $rates_adult += $bookings['child'] * $bookings['rates_child'];
+                                } elseif ($bookings['booking_type_id'] == 2) {
+                                    $rates_adult += $bookings['rates_private'];
+                                }
+                                $amount += $rates_adult;
+                                if (in_array($bookings['id'], $bo_arr) == false) {
+                                    $bo_arr[] = $bookings['id'];
+                                    $discount += $bookings['discount'];
+                                    $cot += $bookings['cot'];
+                                    $check_bpr = $invObj->get_value('id', 'booking_product_rates', 'booking_products_id = ' . $bookings['bp_id'], 1);
                     ?>
                                     <tr>
-                                        <td class="text-center"><?php echo $no++; ?></td>
-                                        <td class="text-center"><?php echo date('j F Y', strtotime($booking['travel_date'])); ?></td>
-                                        <td><?php echo $booking['cus_name']; ?></td>
-                                        <td><?php echo $booking['product_name']; ?></td>
-                                        <td class="text-center"><?php echo !empty($booking['voucher_no_agent']) ? $booking['voucher_no_agent'] : $booking['book_full']; ?> </td>
-                                        <td class="text-center"><?php echo $booking['adult']; ?></td>
-                                        <td class="text-center"><?php echo $booking['child']; ?></td>
-                                        <td class="text-center"><?php echo number_format($booking['rate_adult'], 2); ?></td>
-                                        <td class="text-center"><?php echo number_format($booking['rate_child'], 2); ?></td>
-                                        <td class="text-center"><?php echo number_format($booking['discount'], 2); ?></td>
-                                        <td class="text-center"><?php echo number_format($booking['bp_private_type'] == 1 ? ($booking['adult'] * $booking['rate_adult']) + ($booking['child'] * $booking['rate_child']) : $booking['rate_total'], 2); ?></td>
-                                        <td class="text-center"><?php echo number_format($booking['cot'], 2); ?></td>
+                                        <td class="text-center" rowspan="<?php echo count($check_bpr); ?>"><?php echo $i + 1; ?></td>
+                                        <td class="text-center" rowspan="<?php echo count($check_bpr); ?>"><?php echo date('j F Y', strtotime($bookings['travel_date'])); ?></td>
+                                        <td rowspan="<?php echo count($check_bpr); ?>"><?php echo $bookings['cus_name']; ?></td>
+                                        <td rowspan="<?php echo count($check_bpr); ?>"><?php echo $bookings['product_name']; ?></td>
+                                        <td class="text-center" rowspan="<?php echo count($check_bpr); ?>"><?php echo !empty($bookings['voucher_no_agent']) ? $bookings['voucher_no_agent'] : $bookings['bo_full']; ?> </td>
+
+                                        <td class="text-center cell-fit"><?php echo $bookings['category_name']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo $bookings['adult']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo $bookings['child']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_adult'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_child'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($rates_adult, 2); ?></td>
+
+                                        <td class="text-center cell-fit" rowspan="<?php echo count($check_bpr); ?>"><?php echo !empty($bookings['discount']) ? number_format($bookings['discount'], 2) : '-'; ?></td>
+                                        <td class="text-center cell-fit" rowspan="<?php echo count($check_bpr); ?>"><?php echo !empty($bookings['cot']) > 0 ?  number_format($bookings['cot'], 2) : '-'; ?></td>
                                     </tr>
-                                    <?php
+                                <?php } else { ?>
+                                    <tr>
+                                        <td class="text-center cell-fit"><?php echo $bookings['category_name']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo $bookings['adult']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo $bookings['child']; ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_adult'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_child'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo number_format($rates_adult, 2); ?></td>
+                                    </tr>
+                        <?php }
+                            }
+                        } ?>
+
+                        <?php
+                        $e = 0;
+                        $amount_extar = 0;
+                        $extra_charges = $invObj->get_extra_charge($bo_id[$i]);
+                        if (!empty($extra_charges)) {
+                            foreach ($extra_charges as $extra_charge) {
+                                if ($extra_charge['type'] == 1) {
+                                    $amount_extar += $extra_charge['adult'] * $extra_charge['rate_adult'];
+                                    $amount_extar += $extra_charge['child'] * $extra_charge['rate_child'];
+                                    $amount_extar += $extra_charge['infant'] * $extra_charge['rate_infant'];
+                                } elseif ($extra_charge['type'] == 2) {
+                                    $amount_extar += $extra_charge['privates'] * $extra_charge['rate_private'];
                                 }
-                                if (in_array($booking['bec_id'], $in_charge) == false) {
-                                    if (!empty($booking['extra_name']) || !empty($booking['bec_name'])) {
-                                        $in_charge[] = $booking['bec_id'];
-                                        $total = $booking['bec_type'] == 1 ? $total + ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) + ($booking['bec_infant'] * $booking['bec_rate_infant']) : $total + ($booking['bec_privates'] * $booking['bec_rate_private']);
-                                    ?>
-                                        <tr>
-                                            <td class="text-left" colspan="5"><?php echo !empty($booking['extra_name']) ? $booking['extra_name'] : $booking['bec_name']; ?></td>
-                                            <td class="text-center"><?php echo $booking['bec_type'] == 1 ? $booking['bec_adult'] : $booking['bec_privates']; ?></td>
-                                            <td class="text-center"><?php echo $booking['bec_type'] == 1 ? $booking['bec_child'] : ''; ?></td>
-                                            <td class="text-center"><?php echo $booking['bec_type'] == 1 ? number_format($booking['bec_rate_adult'], 2) : ''; ?></td>
-                                            <td class="text-center"><?php echo $booking['bec_type'] == 1 ? number_format($booking['bec_rate_child'], 2) : ''; ?></td>
-                                            <td class="text-center">-</td>
-                                            <td class="text-center"><?php echo number_format($booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) + ($booking['bec_infant'] * $booking['bec_rate_infant']) : ($booking['bec_privates'] * $booking['bec_rate_private'])); ?></td>
-                                            <td class="text-center">-</td>
-                                        </tr>
-                    <?php   }
-                                }
+                                $amount += $amount_extar;
+                                $e++;
+                        ?>
+                                <tr>
+                                    <td class="text-left" colspan="6"><?php echo !empty($extra_charge['extra_name']) ? $extra_charge['extra_name'] : $extra_charge['name']; ?></td>
+                                    <td class="text-center"><?php echo $extra_charge['type'] == 1 ? $extra_charge['adult'] : $extra_charge['privates']; ?></td>
+                                    <td class="text-center"><?php echo $extra_charge['type'] == 1 ? $extra_charge['child'] : ''; ?></td>
+                                    <td class="text-center"><?php echo $extra_charge['type'] == 1 ? number_format($extra_charge['rate_adult'], 2) : ''; ?></td>
+                                    <td class="text-center"><?php echo $extra_charge['type'] == 1 ? number_format($extra_charge['rate_child'], 2) : ''; ?></td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center"><?php echo number_format($amount_extar, 2); ?></td>
+                                    <td class="text-center">-</td>
+                                </tr>
+                        <?php
                             }
                         }
-                    }
-                    ?>
+                        ?>
+                    <?php } ?>
 
                     <tr>
-                        <td colspan="10"></td>
-                        <td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>
-                        <td class="text-center" id="price-total"><?php echo number_format($total, 2); ?></td>
+                        <td colspan="9"></td>
+                        <td class="text-center" colspan="2"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>
+                        <td class="text-center" colspan="2" id="price-total"><?php echo number_format($amount, 2); ?></td>
                     </tr>
 
                     <?php if ($discount > 0) { ?>
                         <tr>
-                            <td colspan="10"></td>
-                            <td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>
-                            <td class="text-center"><?php echo number_format($discount, 2); ?></td>
+                            <td colspan="9"></td>
+                            <td class="text-center" colspan="2"><b>ส่วนลด</b><br><small>(Discount)</small></td>
+                            <td class="text-center" colspan="2"><?php echo number_format($discount, 2); ?></td>
                         </tr>
                     <?php } ?>
 
                     <?php if ($cot > 0) { ?>
                         <tr>
-                            <td colspan="10"></td>
-                            <td class="text-center"><b>Cash on tour</b></td>
-                            <td class="text-center"><?php echo number_format($cot, 2); ?></td>
+                            <td colspan="9"></td>
+                            <td class="text-center" colspan="2"><b>Cash on tour</b></td>
+                            <td class="text-center" colspan="2"><?php echo number_format($cot, 2); ?></td>
                         </tr>
                     <?php } ?>
 
                     <tr id="tr-vat" hidden>
-                        <td colspan="10"></td>
-                        <td class="text-center"><b id="vat-text"></b><br><small>(Vat)</small></td>
-                        <td class="text-center" id="price-vat"></td>
+                        <td colspan="9"></td>
+                        <td class="text-center" colspan="2"><b id="vat-text"></b><br><small>(Vat)</small></td>
+                        <td class="text-center" colspan="2" id="price-vat"></td>
                     </tr>
 
                     <tr id="tr-withholding" hidden>
-                        <td colspan="10"></td>
-                        <td class="text-center"><b id="withholding-text"></b><br><small>(Withholding Tax)</small></td>
-                        <td class="text-center" id="price-withholding"></td>
+                        <td colspan="9"></td>
+                        <td class="text-center" colspan="2"><b id="withholding-text"></b><br><small>(Withholding Tax)</small></td>
+                        <td class="text-center" colspan="2" id="price-withholding"></td>
                     </tr>
 
                     <tr>
-                        <td colspan="10"></td>
-                        <td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>
-                        <td class="text-center" id="price-amount"><?php echo number_format($total, 2); ?></td>
+                        <td colspan="9"></td>
+                        <td class="text-center" colspan="2"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>
+                        <td class="text-center" colspan="2" id="price-amount"><?php echo number_format($amount, 2); ?></td>
                     </tr>
                 </tbody>
             <?php } ?>
         </table>
     </div>
-    <input type="hidden" id="discount" name="discount" value="<?php echo $discount; ?>">
-    <input type="hidden" id="cot" name="cot" value="<?php echo $cot; ?>">
-    <input type="hidden" id="price_total" name="price_total" value="<?php echo $total; ?>">
+    <input type="text" id="discount" name="discount" value="<?php echo $discount; ?>">
+    <input type="text" id="cot" name="cot" value="<?php echo $cot; ?>">
+    <input type="text" id="price_total" name="price_total" value="<?php echo $amount; ?>">
     <div class="row">
         <div class="form-group col-md-12">
             <div class="form-group">

@@ -310,36 +310,36 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                // console.log(response);
-                                if (response != false && response > 0) {
-                                    Swal.fire({
-                                        title: "The information has been added successfully.",
-                                        icon: "success",
-                                    }).then(function(isConfirm) {
-                                        if (isConfirm) {
-                                            // location.reload(); // refresh page
-                                            $('#modal-invoice').modal('hide');
-                                            var serializedData = $('#invoice-search-form').serialize();
-                                            $.ajax({
-                                                url: "pages/invoice/function/search.php",
-                                                type: "POST",
-                                                data: serializedData + "&action=search",
-                                                success: function(response) {
-                                                    if (response != false) {
-                                                        $("#invoice-search-table").html(response);
-                                                    } else {
-                                                        $("#invoice-search-table").html('');
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: "Please try again.",
-                                        icon: "error",
-                                    });
-                                }
+                                console.log(response);
+                                // if (response != false && response > 0) {
+                                //     Swal.fire({
+                                //         title: "The information has been added successfully.",
+                                //         icon: "success",
+                                //     }).then(function(isConfirm) {
+                                //         if (isConfirm) {
+                                //             // location.reload(); // refresh page
+                                //             $('#modal-invoice').modal('hide');
+                                //             var serializedData = $('#invoice-search-form').serialize();
+                                //             $.ajax({
+                                //                 url: "pages/invoice/function/search.php",
+                                //                 type: "POST",
+                                //                 data: serializedData + "&action=search",
+                                //                 success: function(response) {
+                                //                     if (response != false) {
+                                //                         $("#invoice-search-table").html(response);
+                                //                     } else {
+                                //                         $("#invoice-search-table").html('');
+                                //                     }
+                                //                 }
+                                //             });
+                                //         }
+                                //     });
+                                // } else {
+                                //     Swal.fire({
+                                //         title: "Please try again.",
+                                //         icon: "error",
+                                //     });
+                                // }
                             }
                         });
                     }
@@ -405,6 +405,18 @@
             if (cover_id > 0) {
                 modal_page_invoice('edit');
 
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8
+                    }
+                });
+
                 var formData = new FormData();
                 formData.append('action', 'div');
                 formData.append('cover_id', cover_id);
@@ -436,11 +448,26 @@
 
                             calculator_price();
                         }
+                    },
+                    complete: function() {
+                        $.unblockUI();
                     }
                 });
             } else {
                 modal_page_invoice('previous');
                 var travel_date = document.getElementById('travel_date').value;
+
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8
+                    }
+                });
 
                 var formData = new FormData();
                 formData.append('action', 'search');
@@ -457,6 +484,9 @@
                         } else {
                             $('#div-agent').html('');
                         }
+                    },
+                    complete: function() {
+                        $.unblockUI();
                     }
                 });
             }
@@ -464,6 +494,18 @@
 
         function search_booking(agent_id) {
             var travel_date = document.getElementById('travel_date').value;
+
+            $.blockUI({
+                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                css: {
+                    backgroundColor: 'transparent',
+                    border: '0'
+                },
+                overlayCSS: {
+                    backgroundColor: '#fff',
+                    opacity: 0.8
+                }
+            });
 
             var formData = new FormData();
             formData.append('action', 'search');
@@ -479,6 +521,9 @@
                     if (response != 'false') {
                         $('#div-booking').html(response);
                     }
+                },
+                complete: function() {
+                    $.unblockUI();
                 }
             });
         }
