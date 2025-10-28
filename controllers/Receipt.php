@@ -550,8 +550,12 @@ class Receipt extends DB
         return $data;
     }
 
-    public function insert_data(int $rec_no, string $rec_full, string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $cover_id, int $payment_id, int $is_approved, string $note)
+    public function insert_data(int $rec_no, string $rec_full, string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $cover_id, int $payment_id, int $is_approved, string $note, array $fileimg)
     {
+        // upload logo file
+        $logoResponse = $this->uploadFile($fileimg);
+        $countlogo = count($logoResponse);
+
         $bind_types = "";
         $params = array();
 
@@ -576,8 +580,10 @@ class Receipt extends DB
         $bind_types .= "s";
         array_push($params, $cheque_date);
 
-        $bind_types .= "s";
-        array_push($params, '');
+        for ($i = 0; $i < $countlogo; $i++) {
+            $bind_types .= "s";
+            array_push($params, $logoResponse['filename'][$i]);
+        }
 
         $bind_types .= "s";
         array_push($params, $note);
@@ -610,8 +616,12 @@ class Receipt extends DB
         return $this->response;
     }
 
-    public function update_data(string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $payment_id, int $is_approved, string $note, int $id)
+    public function update_data(string $rec_date, int $cheque_no, string $cheque_date, int $bank_account_id, int $bank_cheque_id, int $payment_id, int $is_approved, string $note, array $fileimg, int $id)
     {
+        // upload logo file
+        $logoResponse = $this->uploadFile($fileimg);
+        $countlogo = count($logoResponse);
+
         $bind_types = "";
         $params = array();
 
@@ -628,6 +638,12 @@ class Receipt extends DB
         $query .= " cheque_date = ?,";
         $bind_types .= "s";
         array_push($params, $cheque_date);
+
+        for ($i = 0; $i < $countlogo; $i++) {
+            $query .= " file = ?,";
+            $bind_types .= "s";
+            array_push($params, $logoResponse['filename'][$i]);
+        }
 
         $query .= " bank_account_id = ?,";
         $bind_types .= "s";
@@ -776,5 +792,43 @@ class Receipt extends DB
         // }
 
         // return $this->response;
+    }
+
+    public function uploadFile(array $fileArray)
+    {
+        $responseFilename = array();
+        $countfiles = count($fileArray);
+        for ($i = 0; $i < $countfiles; $i++) {
+            $fileTmpPath = !empty($fileArray['fileTmpPath'][$i]) ? $fileArray['fileTmpPath'][$i] : '';
+            $fileName = !empty($fileArray['fileName'][$i]) ? $fileArray['fileName'][$i] : '';
+            $fileSize = !empty($fileArray['fileSize'][$i]) ? $fileArray['fileSize'][$i] : '';
+            $fileBefore = !empty($fileArray['fileBefore'][$i]) ? $fileArray['fileBefore'][$i] : '';
+            $fileDelete = !empty($fileArray['fileDelete'][$i]) ? $fileArray['fileDelete'][$i] : '';
+            $uploadFileDir = !empty($fileArray['uploadFileDir'][$i]) ? $fileArray['uploadFileDir'][$i] : '../../../storage/uploads/receipt/';
+
+            if (!empty($fileName)) {
+                $fileNameCmps = explode(".", $fileName);
+                $fileExtension = strtolower(end($fileNameCmps));
+                $allowedfileExtensions = array('jpg', 'jpeg', 'png');
+                if (in_array($fileExtension, $allowedfileExtensions)) {
+                    $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+
+                    // directory in which the uploaded file will be moved
+                    $targetPath = $uploadFileDir . $newFileName;
+
+                    if (move_uploaded_file($fileTmpPath, $targetPath)) {
+                        $responseFilename['filename'][$i] = $newFileName;
+                        !empty($fileBefore) ? unlink($uploadFileDir . $fileBefore) : '';
+                    }
+                }
+            } elseif ($fileDelete == 1) {
+                !empty($fileBefore) ? unlink($uploadFileDir . $fileBefore) : '';
+                $responseFilename['filename'][$i] = "";
+            } else {
+                $responseFilename['filename'][$i] = $fileBefore;
+            }
+        }
+
+        return $responseFilename;
     }
 }

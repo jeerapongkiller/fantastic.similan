@@ -10,7 +10,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
     $agent_id = $_POST['agent_id'] != "" ? $_POST['agent_id'] : '';
     $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : $today;
 
-    $all_bookings = $invObj->fetch_all_booking($travel_date, $agent_id);
+    $all_bookings = $invObj->fetch_all_booking($travel_date, $agent_id, $refcode = '', $voucher_no = '', $inv_id = 0);
 
     if (!empty($all_bookings)) {
 ?>

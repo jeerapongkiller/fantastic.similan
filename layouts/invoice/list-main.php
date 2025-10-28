@@ -266,6 +266,32 @@
                 });
             }
 
+            $('#search_inv_date').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                mode: 'range',
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d'
+            });
+
+            $('#search_travel').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                mode: 'range',
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d'
+            });
+
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
@@ -405,17 +431,17 @@
             if (cover_id > 0) {
                 modal_page_invoice('edit');
 
-                $.blockUI({
-                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                    css: {
-                        backgroundColor: 'transparent',
-                        border: '0'
-                    },
-                    overlayCSS: {
-                        backgroundColor: '#fff',
-                        opacity: 0.8
-                    }
-                });
+                // $.blockUI({
+                //     message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                //     css: {
+                //         backgroundColor: 'transparent',
+                //         border: '0'
+                //     },
+                //     overlayCSS: {
+                //         backgroundColor: '#fff',
+                //         opacity: 0.8
+                //     }
+                // });
 
                 var formData = new FormData();
                 formData.append('action', 'div');
@@ -448,10 +474,11 @@
 
                             calculator_price();
                         }
-                    },
-                    complete: function() {
-                        $.unblockUI();
                     }
+                    // ,
+                    // complete: function() {
+                    //     $.unblockUI();
+                    // }
                 });
             } else {
                 modal_page_invoice('previous');
@@ -756,18 +783,14 @@
                 withholding_total = withholding.value > 0 ? Number(((total - vat_total) * withholding.value) / 100) : 0;
                 total = Number(total - withholding_total);
             }
+
             price_vat.innerHTML = Number(vat_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
+
             price_withholding.innerHTML = Number(withholding_total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
-            // price_total_1.innerHTML = Number(total).toLocaleString("en-US", {
-            //     maximumFractionDigits: 2
-            // });
-
-            // total = discount.value > 0 ? Number(total - discount.value) : total;
-            // total = cot.value > 0 ? Number(total - cot.value) : total;
 
             price_amount.innerHTML = Number(total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
@@ -814,11 +837,6 @@
                     break;
             }
 
-            // if (search_period == 'custom') {
-            //     document.getElementById('div_search_travel').hidden = false;
-            // } else {
-            //     document.getElementById('div_search_travel').hidden = true;
-            // }
             $('#search_travel').flatpickr({
                 onReady: function(selectedDates, dateStr, instance) {
                     if (instance.isMobile) {

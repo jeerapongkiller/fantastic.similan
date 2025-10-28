@@ -10,7 +10,16 @@ $times = date("H:i:s");
 if (isset($_POST['action']) && $_POST['action'] == "div") {
     // get value from ajax
     $cover_id = !empty($_POST['cover_id']) ? $_POST['cover_id'] : 0;
-    $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id']) : [];
+
+    if ($cover_id > 0) {
+        $all_invocies = $invObj->fetch_all_invocie($inv_date = '', $inv_no = '', $cover_id);
+        foreach ($all_invocies as $invocies) {
+            $bo_id[] = $invocies['bo_id'];
+        }
+    } else {
+        $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id']) : [];
+    }
+
     $agent = $invObj->get_value(
         'companies.name as name, companies.tat_license as license, companies.telephone as telephone, companies.address as address',
         'bookings LEFT JOIN companies ON bookings.company_id = companies.id',
@@ -37,7 +46,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
             <input type="hidden" id="inv_no" name="inv_no" value="">
             <input type="hidden" id="inv_full" name="inv_full" value="">
             <div class="input-group">
-                <span id="inv_no_text"><?php echo $invoices[0]['inv_full']; ?></span>
+                <span id="inv_no_text"><?php echo $all_invocies[0]['inv_full']; ?></span>
             </div>
         </div>
     </div>
@@ -45,13 +54,13 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
         <div class="form-group col-md-3 col-12">
             <div class="form-group">
                 <label class="form-label" for="inv_date">วันที่วางบิล</label></br>
-                <input type="text" class="form-control" id="inv_date" name="inv_date" value="<?php echo (!empty($invoices[0]['inv_date']) && $invoices[0]['inv_date'] != '0000-00-00') ? $invoices[0]['inv_date'] : $today; ?>" />
+                <input type="text" class="form-control" id="inv_date" name="inv_date" value="<?php echo (!empty($all_invocies[0]['inv_date']) && $all_invocies[0]['inv_date'] != '0000-00-00') ? $all_invocies[0]['inv_date'] : $today; ?>" />
             </div>
         </div>
         <div class="form-group col-md-3 col-12">
             <div class="form-group">
                 <label class="form-label" for="rec_date">กำหนดครบชำระภายในวันที่</label></br>
-                <input type="text" class="form-control" id="rec_date" name="rec_date" value="<?php echo (!empty($invoices[0]['rec_date']) && $invoices[0]['rec_date'] != '0000-00-00') ? $invoices[0]['rec_date'] : $today; ?>" onchange="check_diff_date('rec_date')" />
+                <input type="text" class="form-control" id="rec_date" name="rec_date" value="<?php echo (!empty($all_invocies[0]['rec_date']) && $all_invocies[0]['rec_date'] != '0000-00-00') ? $all_invocies[0]['rec_date'] : $today; ?>" onchange="check_diff_date('rec_date')" />
                 <p class="text-danger font-weight-bold" id="diff_rec_date"></small>
             </div>
         </div>
@@ -103,7 +112,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <?php
                     $currencys = $invObj->showcurrency();
                     foreach ($currencys as $currency) {
-                        // $select = $currency['id'] == $invoices[0]['rec_date'] ? 'selected' : '';
+                        // $select = $currency['id'] == $all_invocies[0]['rec_date'] ? 'selected' : '';
                     ?>
                         <option value="<?php echo $currency['id']; ?>" data-name="<?php echo $currency['name']; ?>" <?php echo $currency['id'] == 4 ? 'selected' : ''; ?>><?php echo $currency['name']; ?></option>
                     <?php } ?>
@@ -121,7 +130,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <?php
                     $vats = $invObj->showvat();
                     foreach ($vats as $vat) {
-                        $select = $vat['id'] == $invoices[0]['vat_id'] ? 'selected' : '';
+                        $select = $vat['id'] == $all_invocies[0]['vat_id'] ? 'selected' : '';
                     ?>
                         <option value="<?php echo $vat['id']; ?>" data-name="<?php echo $vat['name']; ?>" <?php echo $select; ?>><?php echo $vat['name']; ?></option>
                     <?php } ?>
@@ -134,7 +143,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
         <div class="form-group col-md-3 col-12">
             <label for="withholding">หัก ณ ที่จ่าย (%)</label>
             <div id="div-withholding">
-                <input type="text" class="form-control numeral-mask" id="withholding" name="withholding" value="<?php echo !empty($invoices[0]['withholding']) ? $invoices[0]['withholding'] : 0; ?>" oninput="calculator_price();" />
+                <input type="text" class="form-control numeral-mask" id="withholding" name="withholding" value="<?php echo !empty($all_invocies[0]['withholding']) ? $all_invocies[0]['withholding'] : 0; ?>" oninput="calculator_price();" />
             </div>
             <div class="input-group">
                 <span id="withholding"></span>
@@ -157,7 +166,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <option value="">Please choose Branch ... </option>
                     <?php
                     foreach ($branches as $branch) {
-                        $select = $branch['id'] == $invoices[0]['branche_id'] ? 'selected' : '';
+                        $select = $branch['id'] == $all_invocies[0]['branche_id'] ? 'selected' : '';
                     ?>
                         <option value="<?php echo $branch['id']; ?>" data-name="<?php echo $branch['name']; ?>" <?php echo $select; ?>><?php echo $branch['name']; ?></option>
                     <?php } ?>
@@ -172,7 +181,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <option value="">Please choose bank account ... </option>
                     <?php
                     foreach ($banks_acc as $bank_acc) {
-                        $select = $bank_acc['id'] == $invoices[0]['bank_account_id'] ? 'selected' : '';
+                        $select = $bank_acc['id'] == $all_invocies[0]['bank_account_id'] ? 'selected' : '';
                     ?>
                         <option value="<?php echo $bank_acc['id']; ?>" data-name="<?php echo $bank_acc['account_name']; ?>" <?php echo $select; ?>><?php echo $bank_acc['banName'] . ' ' . $bank_acc['account_no'] . ' (' . $bank_acc['account_name'] . ')'; ?></option>
                     <?php } ?>
@@ -194,7 +203,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <td class="text-center" colspan="2"><b>ราคาต่อหน่วย</b></td>
                     <td class="text-center"><b>จำนวนเงิน</b></td>
                     <td class="text-center"><b>ส่วนลด</b></td>
-                    <td class="text-center" style="border-radius: 0px 15px 0px 0px;"><b>Cash on tour</b></td>
+                    <td class="text-center" rowspan="2" style="border-radius: 0px 15px 0px 0px;"><b>COT</b></td>
                 </tr>
                 <tr class="table-black-2">
                     <td class="text-center p-50"><small>Items</small></td>
@@ -209,7 +218,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <td class="text-center p-50"><small>Child</small></td>
                     <td class="text-center p-50"><small>Amount</small></td>
                     <td class="text-center p-50"><small>Discount</small></td>
-                    <td class="text-center p-50"><small>COT</small></td>
+                    <!-- <td class="text-center p-50"><small>COT</small></td> -->
                 </tr>
             </thead>
             <?php if (!empty($bo_id)) { ?>
@@ -344,14 +353,14 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
             <?php } ?>
         </table>
     </div>
-    <input type="text" id="discount" name="discount" value="<?php echo $discount; ?>">
-    <input type="text" id="cot" name="cot" value="<?php echo $cot; ?>">
-    <input type="text" id="price_total" name="price_total" value="<?php echo $amount; ?>">
+    <input type="hidden" id="discount" name="discount" value="<?php echo $discount; ?>">
+    <input type="hidden" id="cot" name="cot" value="<?php echo $cot; ?>">
+    <input type="hidden" id="price_total" name="price_total" value="<?php echo $amount; ?>">
     <div class="row">
         <div class="form-group col-md-12">
             <div class="form-group">
                 <label class="form-label" for="note">Note</label>
-                <textarea class="form-control" name="note" id="note" rows="3"><?php echo !empty($invoices[0]['note']) ? $invoices[0]['note'] : ''; ?></textarea>
+                <textarea class="form-control" name="note" id="note" rows="3"><?php echo !empty($all_invocies[0]['note']) ? $all_invocies[0]['note'] : ''; ?></textarea>
             </div>
         </div>
     </div>

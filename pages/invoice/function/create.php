@@ -38,19 +38,19 @@ if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['bo_
     $no = !empty($inv_no['max_inv_no']) ? $inv_no['max_inv_no'] + 1 : 1;
     $inv['full'] = 'IN-' . setNumberLength($no, 7);
     $inv['no'] = $no;
-    // $cover_id = (!empty($inv['no']) && !empty($inv['full'])) ? $invObj->insert_cover_inv($today, $inv['no'], $inv['full']) : 0;
+    $cover_id = (!empty($inv['no']) && !empty($inv['full'])) ? $invObj->insert_cover_inv($today, $inv['no'], $inv['full']) : 0;
     # --- create invoice --- #
-    // if (!empty($bo_id)) {
-    //     $no = 1;
-    //     for ($i = 0; $i < count($bo_id); $i++) {
-    //         $response = $response != false && $response > 0 ? $invObj->insert_data($no, $inv_date, $rec_date, $withholding, $note, $branch, $bo_id[$i], $payment_id, $vat_id, $currency_id, $cover_id, $bank_account_id, $is_approved) : false;
-    //         # --- insert booking paid --- #
-    //         $response = $response != false && $response > 0 ? $invObj->insert_booking_paid($bo_id[$i], 6) : false;
-    //         $no++;
-    //     }
-    // }
+    if (!empty($bo_id)) {
+        $no = 1;
+        for ($i = 0; $i < count($bo_id); $i++) {
+            $response = $response != false && $response > 0 ? $invObj->insert_data($no, $inv_date, $rec_date, $withholding, $note, $branch, $bo_id[$i], $payment_id, $vat_id, $currency_id, $cover_id, $bank_account_id, $is_approved) : false;
+            # --- insert booking paid --- #
+            $response = $response != false && $response > 0 ? $invObj->insert_booking_paid($bo_id[$i], 6) : false;
+            $no++;
+        }
+    }
 
-    // echo $response != false && $response > 0 ? $response : false;
+    echo $response != false && $response > 0 ? $response : false;
 } else {
     echo $response = false;
 }

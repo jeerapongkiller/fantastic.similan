@@ -100,6 +100,12 @@ function diff_date($today, $diff_date)
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-3 col-12" id="div_search_travel" hidden>
+                                <div class="form-group">
+                                    <label class="form-label" for="search_travel">Travel Date</label>
+                                    <input type="text" class="form-control" id="search_travel" name="search_travel"/>
+                                </div>
+                            </div>
                             <div class="col-md-3 col-12">
                                 <div class="form-group">
                                     <label class="form-label" for="search_invoice">Invoice No #</label>
@@ -118,10 +124,10 @@ function diff_date($today, $diff_date)
                                     <input type="text" class="form-control" id="search_voucher" name="search_voucher" />
                                 </div>
                             </div>
-                            <div class="col-md-3 col-12" id="div_search_travel" hidden>
+                            <div class="col-md-3 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="search_travel">Travel Date</label>
-                                    <input type="text" class="form-control" id="search_travel" name="search_travel" />
+                                    <label class="form-label" for="search_inv_date">Invoice Date</label>
+                                    <input type="text" class="form-control range" id="search_inv_date" name="search_inv_date" value="<?php echo $today; ?>"/>
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">

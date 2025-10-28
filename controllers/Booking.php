@@ -542,7 +542,7 @@ class Booking extends DB
                         BONO.bo_full as book_full,
                         BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
                         BTYE.name as booktye_name,
-                        BOPA.id as bopa_id, BOPA.total_paid as total_paid, BOPA.updated_at as bopa_updated,
+                        BOPA.id as bopa_id, BOPA.total_paid as total_paid, BOPA.booking_payment_id as bopay_id, BOPA.updated_at as bopa_updated,
                         COMP.name as comp_name,
                         CUS.id as cus_id, CUS.name as cus_name, CUS.head as cus_head, CUS.telephone as telephone,
                         BP.id as bp_id, BP.travel_date as travel_date, BP.note as note,
