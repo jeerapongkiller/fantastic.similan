@@ -26,7 +26,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
     $agents = $invObj->get_value(
         'bookings.id as bo_id, companies.id as agent_id, companies.name as agent_name',
         ' bookings LEFT JOIN companies ON companies.id = bookings.company_id LEFT JOIN booking_products ON bookings.id = booking_products.booking_id LEFT JOIN invoices ON bookings.id = invoices.booking_id',
-        !empty(substr($_POST['travel_date'], 14, 24)) ? ' booking_products.travel_date BETWEEN ' . $travel_date . ' AND invoices.id IS NULL' : ' booking_products.travel_date = ' . $travel_date . ' AND invoices.id IS NULL',
+        !empty(substr($_POST['travel_date'], 14, 24)) ? ' booking_products.travel_date BETWEEN ' . $travel_date . ' AND invoices.id IS NULL AND companies.id != 1331' : ' booking_products.travel_date = ' . $travel_date . ' AND invoices.id IS NULL AND companies.id != 1331',
         1
     );
 

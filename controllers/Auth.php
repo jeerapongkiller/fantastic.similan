@@ -10,7 +10,7 @@ class Auth extends DB
     {
         parent::__construct();
     }
-    
+
     public function check_login(string $username, string $password)
     {
         $query = "SELECT login.*, 
@@ -39,24 +39,23 @@ class Auth extends DB
                 $_SESSION["supplier"]["role_id"] = $login['role_id'];
                 $_SESSION["supplier"]["role_name"] = $login['roleName'];
                 $_SESSION["supplier"]["department_id"] = $login['department_id'];
+            }
 
-                # --- permission --- #
-                $query = "SELECT id, permission_id 
+            # --- permission --- #
+            $query = "SELECT id, permission_id 
                     FROM permission_user
                     WHERE user_id = ?
                 ";
-                $statement = $this->connection->prepare($query);
-                $statement->bind_param("i", $login['id']);
-                $statement->execute();
-                $result = $statement->get_result();
-                $data = $result->fetch_all(MYSQLI_ASSOC);
-                foreach ($data as $permission) {
-                    $_SESSION["supplier"]["permission"][] = $permission['permission_id'];
-                }
-
-                $this->response = $login['id'];
+            $statement = $this->connection->prepare($query);
+            $statement->bind_param("i", $login['id']);
+            $statement->execute();
+            $result = $statement->get_result();
+            $data = $result->fetch_all(MYSQLI_ASSOC);
+            foreach ($data as $permission) {
+                $_SESSION["supplier"]["permission"][] = $permission['permission_id'];
             }
-            
+
+            $this->response = $login['id'];
         }
 
         $this->connection->close();

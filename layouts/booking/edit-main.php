@@ -104,6 +104,7 @@
     <!-- BEGIN: Theme JS-->
     <script src="app-assets/js/core/app-menu.js"></script>
     <script src="app-assets/js/core/app.js"></script>
+    <script src="app-assets/js/scripts/header.js"></script>
     <!-- END: Theme JS-->
 
     <!-- BEGIN: Page JS-->
@@ -366,6 +367,16 @@
                         // }
                     },
                     submitHandler: function(form) {
+                        $.blockUI({
+                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                            css: {
+                                backgroundColor: 'transparent',
+                                border: '0'
+                            },
+                            overlayCSS: {
+                                opacity: 0.8
+                            }
+                        });
                         // update ajax request data
                         var formData = new FormData(form);
                         formData.append('action', 'edit');
@@ -392,6 +403,12 @@
                                         icon: "error",
                                     });
                                 }
+                            },
+                            error: function() {
+                                console.log('Plases contact admininstator!');
+                            },
+                            complete: function() {
+                                $.unblockUI();
                             }
                         });
                     }

@@ -103,7 +103,7 @@ function diff_date($today, $diff_date)
                             <div class="col-md-3 col-12" id="div_search_travel" hidden>
                                 <div class="form-group">
                                     <label class="form-label" for="search_travel">Travel Date</label>
-                                    <input type="text" class="form-control" id="search_travel" name="search_travel"/>
+                                    <input type="text" class="form-control" id="search_travel" name="search_travel" />
                                 </div>
                             </div>
                             <div class="col-md-3 col-12">
@@ -127,7 +127,7 @@ function diff_date($today, $diff_date)
                             <div class="col-md-3 col-12">
                                 <div class="form-group">
                                     <label class="form-label" for="search_inv_date">Invoice Date</label>
-                                    <input type="text" class="form-control range" id="search_inv_date" name="search_inv_date" value="<?php echo $today; ?>"/>
+                                    <input type="text" class="form-control range" id="search_inv_date" name="search_inv_date" value="<?php echo $today; ?>" />
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -141,13 +141,12 @@ function diff_date($today, $diff_date)
                 <!-- invoice table start -->
                 <div id="invoice-search-table">
                     <?php
-
                     $first_cover = array();
                     $first_company = array();
                     $first_booking = array();
                     $first_bpr = array();
                     $first_extar = array();
-                    // $invoices = $invObj->showlist('all', 'all', '', '', '', '');
+                    $invoices = $invObj->showlist($search_type = 'all', $search_agent = 'all', $search_invoice = '', $search_booking = '', $search_voucher = '', $search_travel = '', $today);
                     if (!empty($invoices)) {
                         foreach ($invoices as $invoice) {
                             # --- get value agent --- #
@@ -173,24 +172,28 @@ function diff_date($today, $diff_date)
                                 $first_booking[] = $invoice['id'];
                                 $bo_id[$invoice['comp_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
                                 $bo_inv[$invoice['cover_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
-                                $cot[$invoice['comp_id']][] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : 0;
-                                $cot_comp[$invoice['comp_id']][] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : 0;
-                                $cot_inv[$invoice['cover_id']][] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : 0;
-                            }
-                            # --- get value rates --- #
-                            if ((in_array($invoice['bpr_id'], $first_bpr) == false) && !empty($invoice['bpr_id'])) {
-                                $first_bpr[] = $invoice['bpr_id'];
-                                $bpr_id[$invoice['comp_id']][] = !empty($invoice['bpr_id']) ? $invoice['bpr_id'] : 0;
-                                $category_id[$invoice['comp_id']][] = !empty($invoice['category_id']) ? $invoice['category_id'] : 0;
-                                $category_name[$invoice['comp_id']][] = !empty($invoice['category_name']) ? $invoice['category_name'] : 0;
-                                $category_cus[$invoice['comp_id']][] = !empty($invoice['category_cus']) ? $invoice['category_cus'] : 0;
-                                $adult[$invoice['comp_id']][] = !empty($invoice['bpr_adult']) ? $invoice['bpr_adult'] : 0;
-                                $child[$invoice['comp_id']][] = !empty($invoice['bpr_child']) ? $invoice['bpr_child'] : 0;
-                                $infant[$invoice['comp_id']][] = !empty($invoice['bpr_infant']) ? $invoice['bpr_infant'] : 0;
-                                $foc[$invoice['comp_id']][] = !empty($invoice['bpr_foc']) ? $invoice['bpr_foc'] : 0;
-                                $tourrist[$invoice['comp_id']][] = $invoice['bpr_adult'] + $invoice['bpr_child'] + $invoice['bpr_infant'] + $invoice['bpr_foc'];
-                                $total_comp[$invoice['comp_id']][] = $invoice['bp_private_type'] == 1 ? ($invoice['booksta_id'] != 2 && $invoice['booksta_id'] != 4) ? ($invoice['bpr_adult'] * $invoice['rate_adult']) + ($invoice['bpr_child'] * $invoice['rate_child']) : $invoice['rate_total'] : $invoice['rate_total'];
-                                $total_inv[$invoice['cover_id']][] = $invoice['bp_private_type'] == 1 ? ($invoice['booksta_id'] != 2 && $invoice['booksta_id'] != 4) ? ($invoice['bpr_adult'] * $invoice['rate_adult']) + ($invoice['bpr_child'] * $invoice['rate_child']) : $invoice['rate_total'] : $invoice['rate_total'];
+                                $cot[$invoice['comp_id']][] = !empty($invoice['cot']) ? $invoice['cot'] : 0;
+                                $cot_comp[$invoice['comp_id']][] = !empty($invoice['cot']) ? $invoice['cot'] : 0;
+                                $cot_inv[$invoice['cover_id']][] = !empty($invoice['cot']) ? $invoice['cot'] : 0;
+
+                                # --- get value rates --- #
+                                $all_bookings = $invObj->fetch_all_bookingdetail($invoice['id']);
+                                $amount = 0;
+                                $rates_arr = array();
+                                foreach ($all_bookings as $rates) {
+                                    if (in_array($rates['bpr_id'], $rates_arr) == false) {
+                                        $rates_arr[] = $rates['bpr_id'];
+                                        if ($rates['booking_type_id'] == 1) {
+                                            $amount += $rates['adult'] * $rates['rates_adult'];
+                                            $amount += $rates['child'] * $rates['rates_child'];
+                                        } elseif ($rates['booking_type_id'] == 2) {
+                                            $amount += $rates['rates_private'];
+                                        }
+                                    }
+                                }
+
+                                $total_comp[$invoice['comp_id']][] = $amount;
+                                $total_inv[$invoice['cover_id']][] = $amount;
                             }
                             # --- get value booking --- #
                             if (in_array($invoice['bec_id'], $first_extar) == false && (!empty($invoice['extra_id']) || !empty($invoice['bec_name']))) {
@@ -248,7 +251,14 @@ function diff_date($today, $diff_date)
                                                     <td <?php echo $modal; ?> class="text-center"><?php echo !empty($cot_inv[$cover_id[$agent_id[$i]][$a]]) ? number_format(array_sum($cot_inv[$cover_id[$agent_id[$i]][$a]]), 2) : '-'; ?></td>
                                                     <td <?php echo $modal; ?> class="text-center" width="8%"><?php echo !empty($total_inv[$cover_id[$agent_id[$i]][$a]]) ? !empty($extar['inv'][$cover_id[$agent_id[$i]][$a]]) ? number_format((array_sum($total_inv[$cover_id[$agent_id[$i]][$a]]) + array_sum($extar['inv'][$cover_id[$agent_id[$i]][$a]]) - array_sum($cot_inv[$cover_id[$agent_id[$i]][$a]])), 2) : number_format(array_sum($total_inv[$cover_id[$agent_id[$i]][$a]]) - array_sum($cot_inv[$cover_id[$agent_id[$i]][$a]]), 2) : '-'; ?></td>
                                                     <td class="text-center"><button type="button" class="btn btn-sm btn-gradient-info" data-toggle="modal" data-target="#modal-receipt" onclick="modal_receipt(<?php echo $cover_id[$agent_id[$i]][$a]; ?>, <?php echo $agent_id[$i]; ?>)">ชำระ</button></td>
-                                                    <td class="text-center"><a href="javascript:void(0)" onclick="deleteInvoice(<?php echo $cover_id[$agent_id[$i]][$a]; ?>);"><i data-feather='trash-2'></i></a></td>
+                                                    <td class="text-center"><a href="javascript:void(0)" onclick="deleteInvoice(<?php echo $cover_id[$agent_id[$i]][$a]; ?>);">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
+                                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                            </svg>
+                                                        </a></td>
                                                 </tr>
                                         <?php }
                                         } ?>

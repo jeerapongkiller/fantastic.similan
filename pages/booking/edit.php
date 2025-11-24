@@ -96,23 +96,23 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <h5>Booking Detail</h5>
                                         </div>
                                         <div class="card-body mt-2">
-                                            <input type="text" name="bo_id" value="<?php echo $bo_id; ?>">
-                                            <input type="text" id="bp_id" name="bp_id" value="<?php echo $bp_id; ?>">
-                                            <input type="text" id="bt_id" name="bt_id" value="<?php echo $bt_id; ?>">
-                                            <input type="text" name="agent_id" value="<?php echo $agent_id; ?>">
-                                            <input type="text" name="book_type_id" value="<?php echo $book_type; ?>">
-                                            <input type="text" name="book_full" value="<?php echo $book_full; ?>">
-                                            <input type="text" name="mange_transfer_id" value="<?php echo $mange_transfer_id; ?>" /> <!-- manage transfer booking id -->
-                                            <input type="text" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
-                                            <input type="text" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
-                                            <input type="text" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
-                                            <input type="text" name="confirm_id" value="<?php echo $confirm_id; ?>" /> <!-- confirm agent id -->
+                                            <input type="hidden" name="bo_id" value="<?php echo $bo_id; ?>">
+                                            <input type="hidden" id="bp_id" name="bp_id" value="<?php echo $bp_id; ?>">
+                                            <input type="hidden" id="bt_id" name="bt_id" value="<?php echo $bt_id; ?>">
+                                            <input type="hidden" name="agent_id" value="<?php echo $agent_id; ?>">
+                                            <input type="hidden" name="book_type_id" value="<?php echo $book_type; ?>">
+                                            <input type="hidden" name="book_full" value="<?php echo $book_full; ?>">
+                                            <input type="hidden" name="mange_transfer_id" value="<?php echo $mange_transfer_id; ?>" /> <!-- manage transfer booking id -->
+                                            <input type="hidden" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
+                                            <input type="hidden" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
+                                            <input type="hidden" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
+                                            <input type="hidden" name="confirm_id" value="<?php echo $confirm_id; ?>" /> <!-- confirm agent id -->
                                             <!-- <input type="hidden" id="pror_id" name="pror_id" value="" /> -->
                                             <!-- <input type="hidden" id="bopa_id" name="bopa_id" value="<?php echo $bopa_id; ?>"> -->
                                             <!-- get value default  -->
-                                            <input type="text" id="json_bpr" name="json_bpr" value='<?php echo json_encode($bpr_id, true); ?>'>
-                                            <input type="text" id="cate_id" name="cate_id" value='<?php echo json_encode($categorys, true); ?>'>
-                                            <input type="text" id="travel" name="travel" value="<?php echo $travel_date; ?>">
+                                            <input type="hidden" id="json_bpr" name="json_bpr" value='<?php echo json_encode($bpr_id, true); ?>'>
+                                            <input type="hidden" id="cate_id" name="cate_id" value='<?php echo json_encode($categorys, true); ?>'>
+                                            <input type="hidden" id="travel" name="travel" value="<?php echo $travel_date; ?>">
                                             <div class="row">
                                                 <div class="form-group col-md-3">
                                                     <label class="form-label" for="booking_no">Booking No.</label>

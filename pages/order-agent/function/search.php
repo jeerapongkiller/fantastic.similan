@@ -95,15 +95,15 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
                         foreach ($bookings as $booking) {
                             if (in_array($booking['id'], $booking_arr) == false) {
                                 $booking_arr[] = $booking['id'];
-                                $tourist += $booking['max_tourist'];
-                                $adult += $booking['adult'];
-                                $child += $booking['child'];
-                                $infant += $booking['infant'];
-                                $foc += $booking['foc'];
                                 $cot += $booking['cot'];
                                 $confirm = $booking['confirm'];
                                 $no++;
                             }
+                            $tourist += $booking['max_tourist'];
+                            $adult += $booking['adult'];
+                            $child += $booking['child'];
+                            $infant += $booking['infant'];
+                            $foc += $booking['foc'];
                         }
             ?>
                         <tr <?php echo !empty($confirm) ? 'class="table-success"' : ''; ?>>

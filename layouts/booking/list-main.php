@@ -100,6 +100,7 @@
     <!-- BEGIN: Theme JS-->
     <script src="app-assets/js/core/app-menu.js"></script>
     <script src="app-assets/js/core/app.js"></script>
+    <script src="app-assets/js/scripts/header.js"></script>
     <!-- END: Theme JS-->
 
     <?php
@@ -344,6 +345,18 @@
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
+
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        opacity: 0.8
+                    }
+                });
+
                 var serializedData = $(this).serialize();
                 $.ajax({
                     url: "pages/booking/function/search.php",
@@ -393,6 +406,12 @@
 
                             search_start_date('custom', 'booking', $('#search_travel').val());
                         }
+                    },
+                    error: function() {
+                        console.log('Plases contact admininstator!');
+                    },
+                    complete: function() {
+                        $.unblockUI();
                     }
                 });
                 e.preventDefault();
@@ -416,6 +435,18 @@
 
                     },
                     submitHandler: function(form) {
+
+                        $.blockUI({
+                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                            css: {
+                                backgroundColor: 'transparent',
+                                border: '0'
+                            },
+                            overlayCSS: {
+                                opacity: 0.8
+                            }
+                        });
+
                         // update ajax request data
                         var formData = new FormData(form);
                         formData.append('action', 'create');
@@ -427,22 +458,28 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                console.log(response);
-                                // if (response != false && response > 0) {
-                                //     Swal.fire({
-                                //         title: "The information has been updated.",
-                                //         icon: "success",
-                                //     }).then(function(isConfirm) {
-                                //         if (isConfirm) {
-                                //             window.location.href = './?pages=booking/list';
-                                //         }
-                                //     })
-                                // } else {
-                                //     Swal.fire({
-                                //         title: "Please try again.",
-                                //         icon: "error",
-                                //     });
-                                // }
+                                // console.log(response);
+                                if (response != false && response > 0) {
+                                    Swal.fire({
+                                        title: "The information has been updated.",
+                                        icon: "success",
+                                    }).then(function(isConfirm) {
+                                        if (isConfirm) {
+                                            window.location.href = './?pages=booking/list';
+                                        }
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        title: "Please try again.",
+                                        icon: "error",
+                                    });
+                                }
+                            },
+                            error: function() {
+                                console.log('Plases contact admininstator!');
+                            },
+                            complete: function() {
+                                $.unblockUI();
                             }
                         });
                     }

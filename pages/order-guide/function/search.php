@@ -41,6 +41,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     foreach ($all_bookings as $categorys) {
         $categorys_array[] = $categorys['id'];
         $category_name[$categorys['id']][] = $categorys['category_name'];
+        $adult[$categorys['id']][] = $categorys['adult'];
+        $child[$categorys['id']][] = $categorys['child'];
+        $infant[$categorys['id']][] = $categorys['infant'];
+        $foc[$categorys['id']][] = $categorys['foc'];
+        $tourist_array[$categorys['id']][] = $categorys['adult'] + $categorys['child'] + $categorys['infant'] + $categorys['foc'];
     }
 
     $name_img = 'ใบงาน [' . date('j F Y', strtotime($get_date)) . ']';
@@ -143,12 +148,12 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                             foreach ($all_bookings as $bookings) {
                                 if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
                                     $bomange_arr[] = $bookings['bomange_id'];
-                                    $total_adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
-                                    $total_child += !empty($bookings['child']) ? $bookings['child'] : 0;
-                                    $total_infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
-                                    $total_foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
-                                    $total_tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
-                                    $tourist = $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
+                                    $total_adult += !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0;
+                                    $total_child += !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0;
+                                    $total_infant += !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0;
+                                    $total_foc += !empty($foc[$bookings['id']]) ? array_sum($foc[$bookings['id']]) : 0;
+                                    $total_tourist += !empty($tourist_array[$bookings['id']]) ? array_sum($tourist_array[$bookings['id']]) : 0;
+                                    $tourist = !empty($tourist_array[$bookings['id']]) ? array_sum($tourist_array[$bookings['id']]) : 0;
                                     $text_hotel = '';
                                     $text_hotel = (!empty($bookings['hotelp_name'])) ? '<b>Pickup : </b>' . $bookings['hotelp_name'] : '<b>Pickup : </b>' . $bookings['outside_pickup'];
                                     $text_hotel .= (!empty($bookings['zonep_name'])) ? ' (' . $bookings['zonep_name'] . ')</br>' : '</br>';
@@ -194,10 +199,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         <td style="padding: 5px;"><?php echo $text_hotel; ?></td>
                                         <td class="cell-fit"><?php echo $bookings['room_no']; ?></td>
                                         <td class="cell-fit text-center"><?php echo $tourist; ?></td>
-                                        <td class="cell-fit text-center"><?php echo !empty($bookings['adult']) ? $bookings['adult'] : 0; ?></td>
-                                        <td class="cell-fit text-center"><?php echo !empty($bookings['child']) ? $bookings['child'] : 0; ?></td>
-                                        <td class="cell-fit text-center"><?php echo !empty($bookings['infant']) ? $bookings['infant'] : 0; ?></td>
-                                        <td class="cell-fit text-center"><?php echo !empty($bookings['foc']) ? $bookings['foc'] : 0; ?></td>
+                                        <td class="text-center"><?php echo !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0; ?></td>
+                                        <td class="text-center"><?php echo !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0; ?></td>
+                                        <td class="text-center"><?php echo !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0; ?></td>
+                                        <td class="text-center"><?php echo !empty($foc[$bookings['id']]) ? array_sum($foc[$bookings['id']]) : 0; ?></td>
+                                        <td class="cell-fit text-nowrap"><b class="text-warning"><?php echo number_format($bookings['cot']); ?></b></td>
                                         <td class="cell-fit text-nowrap"><b class="text-warning"><?php echo number_format($bookings['cot']); ?></b></td>
                                         <td>
                                             <b class="text-info">

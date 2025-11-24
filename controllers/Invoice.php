@@ -24,25 +24,10 @@ class Invoice extends DB
                     BP.id as bp_id, BP.travel_date as travel_date,  BP.note as bp_note,
                     PROD.id as product_id, PROD.name as product_name,
                     CUS.id as cus_id, CUS.name as cus_name, CUS.head as cus_head,
-                    BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-                    BT.pickup_type, pickup_type, BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside, BT.hotel_dropoff as outside_dropoff,
-                    PICKUP.id as pickup_id, PICKUP.name_th as pickup_name,
-                    DROPOFF.id as dropoff_id, DROPOFF.name_th as dropoff_name,
-                    ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name,
-                    ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
-                    CARC.id as cars_category_id, CARC.name as cars_category,
                     BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
-                    BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
-                    CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
-                    BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
-                    MANGE.id as mange_id, MANGE.time as manage_time,
-                    COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
-                    GUIDE.id as guide_id, GUIDE.name as guide_name,
-                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode,
                     INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding, INV.vat_id as vat, INV.note as inv_note, INV.is_deleted as inv_deleted,
                     COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
                     BRCH.id as brch_id, BRCH.name as brch_name,
@@ -66,20 +51,6 @@ class Invoice extends DB
                     ON BOPA.booking_payment_id = BOPAY.id
                 LEFT JOIN booking_products BP
                     ON BO.id = BP.booking_id
-                LEFT JOIN booking_transfer BT
-                    ON BP.id = BT.booking_products_id
-                LEFT JOIN hotel PICKUP
-                    ON BT.hotel_pickup_id = PICKUP.id
-                LEFT JOIN hotel DROPOFF
-                    ON BT.hotel_dropoff_id = DROPOFF.id
-                LEFT JOIN zones ZONE_P
-                    ON BT.pickup_id = ZONE_P.id
-                LEFT JOIN zones ZONE_D
-                    ON BT.dropoff_id = ZONE_D.id
-                LEFT JOIN booking_transfer_rates BTR
-                    ON BT.id = BTR.booking_transfer_id
-                LEFT JOIN cars_category CARC
-                    ON BTR.cars_category_id = CARC.id 
                 LEFT JOIN booking_extra_charge BEC
                     ON BO.id = BEC.booking_id
                 LEFT JOIN products PROD
@@ -88,23 +59,6 @@ class Invoice extends DB
                     ON BO.id = CUS.booking_id
                 LEFT JOIN extra_charges EXTRA
                     ON BEC.extra_charge_id = EXTRA.id
-                LEFT JOIN booking_order_transfer BOMANGE
-                    ON BT.id = BOMANGE.booking_transfer_id
-                LEFT JOIN order_transfer MANGET 
-                    ON BOMANGE.order_id = MANGET.id
-                    AND MANGET.pickup = 1
-                LEFT JOIN cars CAR 
-                    ON MANGET.car_id = CAR.id
-                LEFT JOIN booking_order_boat BORDB
-                    ON BO.id = BORDB.booking_id
-                LEFT JOIN order_boat MANGE 
-                    ON BORDB.manage_id = MANGE.id
-                LEFT JOIN colors COLOR 
-                    ON MANGE.color_id = COLOR.id
-                LEFT JOIN guides GUIDE
-                    ON MANGE.guide_id = GUIDE.id
-                LEFT JOIN boats BOAT
-                    ON MANGE.boat_id = BOAT.id
                 LEFT JOIN users BOOKER 
                     ON BO.booker_id = BOOKER.id
                 LEFT JOIN invoices INV
@@ -155,7 +109,7 @@ class Invoice extends DB
             $query .= " AND REC.id IS NOT NULL";
         }
 
-        $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC";
+        $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC";
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
         $statement->execute();
@@ -281,24 +235,12 @@ class Invoice extends DB
                 AND BO.booking_status_id != 4
         ";
 
-        $query .= (!empty($travel_date) && $travel_date != '') ? " AND BP.travel_date = '" . $travel_date . "'" : "";
-        $query .= (!empty($travel_date) && $travel_date != '') ? !empty(substr($_POST['travel_date'], 14, 24)) ? " BP.travel_date BETWEEN '" . substr($_POST['travel_date'], 0, 10) . "' AND '" . substr($_POST['travel_date'], 14, 24) . "'" : " AND BP.travel_date = '" . $travel_date . "'" : "";
+        $query .= (!empty($travel_date) && $travel_date != '') ? !empty(substr($_POST['travel_date'], 14, 24)) ? " AND BP.travel_date BETWEEN '" . substr($_POST['travel_date'], 0, 10) . "' AND '" . substr($_POST['travel_date'], 14, 24) . "'" : " AND BP.travel_date = '" . $travel_date . "'" : "";
         $query .= (!empty($agent) && $agent != 'all') ? ($agent != 'IS-NULL') ? " AND COMP.id = " . $agent : " AND COMP.id IS NULL " : "";
         $query .= (!empty($voucher_no)) ? " AND BO.voucher_no_agent = '" . $voucher_no . "' " : "";
         $query .= (!empty($refcode)) ? " AND BONO.bo_full = '" . $refcode . "' " : "";
         $query .= (!empty($inv_id) && $inv_id > 0) ? " AND INV.id = " . $inv_id : " AND INV.id IS NULL";
 
-        // $query .= (!empty($type) && $type != 'all') ? ($type == 'manage') ? " AND MANGE.id = " . $manages_id : " AND MANGE.id IS NULL" : '';
-        // $query .= (!empty($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
-        // $query .= (!empty($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
-        // $query .= (!empty($match_query)) ? (!empty($nameisThai)) ? " AND CUS.name LIKE '%" . $name . "%' " : " AND MATCH(CUS.name) AGAINST('$match_query' IN BOOLEAN MODE)" : '';
-        // $query .= (!empty($hotel)) ? $match : "";
-
-        // $query .= (!empty($match_query)) ? " AND MATCH(CUS.name) AGAINST('$match_query' IN BOOLEAN MODE)" : '';
-        // $query .= (!empty($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
-        // $query .= (!empty($hotel)) ? " AND BT.hotel_pickup_id LIKE '%" . $hotel . "%' " : "";
-
-        // echo $query;
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
@@ -411,7 +353,7 @@ class Invoice extends DB
             FROM $from 
             WHERE $where
         ";
-
+  
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
@@ -884,8 +826,6 @@ class Invoice extends DB
         return $data;
     }
 
-
-
     public function get_data(string $select, string $from, string $where)
     {
         $query = "SELECT $select
@@ -904,8 +844,6 @@ class Invoice extends DB
         return $data;
     }
 
-
-
     public function sumbtrprivate(int $bt_id)
     {
         $query = "SELECT SUM(rate_private) as sum_rate_private
@@ -918,8 +856,6 @@ class Invoice extends DB
 
         return $data;
     }
-
-
 
     public function update_data(string $inv_date, string $rec_date, int $withholding, string $note, int $branch, int $payment_id, int $vat_id, int $currency_id, int $bank_account_id, int $is_approved, int $cover_id)
     {
@@ -1026,7 +962,6 @@ class Invoice extends DB
 
         return $this->response;
     }
-
 
     public function showlistagentSearch($agent_id = null)
     {

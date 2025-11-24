@@ -101,6 +101,7 @@ if (isset($_SESSION["supplier"]["id"]) && $_SESSION["supplier"]["role_id"] > 2) 
     <!-- BEGIN: Theme JS-->
     <script src="app-assets/js/core/app-menu.js"></script>
     <script src="app-assets/js/core/app.js"></script>
+    <script src="app-assets/js/scripts/header.js"></script>
     <script src="app-assets/js/scripts/node_modules/dom-to-image/src/dom-to-image.js"></script>
     <!-- END: Theme JS-->
 

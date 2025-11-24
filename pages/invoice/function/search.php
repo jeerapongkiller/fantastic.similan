@@ -18,7 +18,9 @@ function diff_date($today, $diff_date)
     return $diff_inv;
 }
 
-if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['search_period'])) {
+$date_action = (!empty($_POST['search_travel']) || !empty($_POST['search_inv_date'])) ? true : false;
+
+if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['search_period']) && $date_action == true) {
     // get value from ajax
     $search_type = !empty($_POST['search_type']) ? $_POST['search_type'] : 'all';
     $search_period = !empty($_POST['search_period']) ? $_POST['search_period'] : 'all';
@@ -83,21 +85,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['se
                 $total_comp[$invoice['comp_id']][] = $amount;
                 $total_inv[$invoice['cover_id']][] = $amount;
             }
-            // # --- get value rates --- #
-            // if ((in_array($invoice['bpr_id'], $first_bpr) == false) && !empty($invoice['bpr_id'])) {
-            //     $first_bpr[] = $invoice['bpr_id'];
-            //     $bpr_id[$invoice['comp_id']][] = !empty($invoice['bpr_id']) ? $invoice['bpr_id'] : 0;
-            //     $category_id[$invoice['comp_id']][] = !empty($invoice['category_id']) ? $invoice['category_id'] : 0;
-            //     $category_name[$invoice['comp_id']][] = !empty($invoice['category_name']) ? $invoice['category_name'] : 0;
-            //     $category_cus[$invoice['comp_id']][] = !empty($invoice['category_cus']) ? $invoice['category_cus'] : 0;
-            //     $adult[$invoice['comp_id']][] = !empty($invoice['bpr_adult']) ? $invoice['bpr_adult'] : 0;
-            //     $child[$invoice['comp_id']][] = !empty($invoice['bpr_child']) ? $invoice['bpr_child'] : 0;
-            //     $infant[$invoice['comp_id']][] = !empty($invoice['bpr_infant']) ? $invoice['bpr_infant'] : 0;
-            //     $foc[$invoice['comp_id']][] = !empty($invoice['bpr_foc']) ? $invoice['bpr_foc'] : 0;
-            //     $tourrist[$invoice['comp_id']][] = $invoice['bpr_adult'] + $invoice['bpr_child'] + $invoice['bpr_infant'] + $invoice['bpr_foc'];
-            //     $total_comp[$invoice['comp_id']][] = $invoice['bp_private_type'] == 1 ? ($invoice['booksta_id'] != 2 && $invoice['booksta_id'] != 4) ? ($invoice['bpr_adult'] * $invoice['rate_adult']) + ($invoice['bpr_child'] * $invoice['rate_child']) : $invoice['rate_total'] : $invoice['rate_total'];
-            //     $total_inv[$invoice['cover_id']][] = $invoice['bp_private_type'] == 1 ? ($invoice['booksta_id'] != 2 && $invoice['booksta_id'] != 4) ? ($invoice['bpr_adult'] * $invoice['rate_adult']) + ($invoice['bpr_child'] * $invoice['rate_child']) : $invoice['rate_total'] : $invoice['rate_total'];
-            // }
             # --- get value booking --- #
             if (in_array($invoice['bec_id'], $first_extar) == false && (!empty($invoice['extra_id']) || !empty($invoice['bec_name']))) {
                 $first_extar[] = $invoice['bec_id'];

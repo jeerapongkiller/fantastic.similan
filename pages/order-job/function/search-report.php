@@ -27,12 +27,12 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                         if (in_array($bookings['id'], $book_array) == false) {
                             $book_array[] = $bookings['id'];
                             $count_bo[$key][] = 1;
-                            $adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
-                            $child += !empty($bookings['child']) ? $bookings['child'] : 0;
-                            $infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
-                            $foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
-                            $tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
                         }
+                        $adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
+                        $child += !empty($bookings['child']) ? $bookings['child'] : 0;
+                        $infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
+                        $foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
+                        $tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
                     }
                 }
         ?>

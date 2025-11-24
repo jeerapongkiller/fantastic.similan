@@ -149,7 +149,7 @@ $userObj = new User();
                                     <hr>
                                     <div class="row mt-1 mb-1">
                                         <div class="col-md-12">
-                                            <p>Permissions</p>
+                                            <p>Permissions (สิทธิ์การเข้าถึง)</p>
                                         </div>
                                         <?php
                                         $permissions = $userObj->showpermissions();
@@ -157,14 +157,14 @@ $userObj = new User();
                                         ?>
                                             <div class="form-group col-md-2">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="<?php echo 'permission' . $permission['id']; ?>" name="permissions[]" value="<?php echo $permission['id']; ?>" <?php // echo $checked_day; 
-                                                                                                                                                                                                                            ?> />
+                                                    <input type="checkbox" class="custom-control-input" id="<?php echo 'permission' . $permission['id']; ?>" name="permissions[]" value="<?php echo $permission['id']; ?>" checked/>
                                                     <label class="custom-control-label" for="<?php echo 'permission' . $permission['id']; ?>"><?php echo $permission['name']; ?></label>
                                                 </div>
                                             </div>
                                         <?php } ?>
                                     </div>
                                     <div class="row">
+                                        <span></span>
                                         <div class="col-12">
                                             <button type="submit" class="btn btn-primary" name="submit" value="Submit">Submit</button>
                                         </div>

@@ -24,7 +24,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
         $bpr_values = implode(',', $sanitized_bpr);
         $before = (!empty($json_bpr)) ? $bookObj->get_values('*', 'booking_product_rates', 'id IN (' . $bpr_values . ')', 1) : [];
         foreach ($before as $bf) {
-            echo '<input type="text" id="before_bpr" name="before_bpr[]" value="'.$bf['id'].'">';
+            echo '<input type="hidden" id="before_bpr" name="before_bpr[]" value="'.$bf['id'].'">';
         }
     }
 

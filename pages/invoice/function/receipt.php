@@ -35,6 +35,7 @@ if (isset($_POST['action']) && $_POST['action'] == "modal" && !empty($_POST['cov
     <input type="hidden" id="rec_id" name="rec_id" value="<?php echo !empty($receipts['id']) ? $receipts['id'] : 0; ?>">
     <input type="hidden" id="cover_id" name="cover_id" value="<?php echo $cover_id; ?>">
     <input type="hidden" id="today" name="today" value="<?php echo $today; ?>">
+    <input type="hidden" id="bo_id" name="bo_id" value="<?php echo json_encode($bo_id, true); ?>">
     <div class="row">
         <div class="form-group col-md-3 col-12">
             <label class="form-label" for="is_approved"></label>

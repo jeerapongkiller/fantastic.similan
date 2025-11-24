@@ -7,7 +7,7 @@ $times = date("H:i:s");
 
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['type']) && !empty($_POST['date'])) {
 
-    $all_manages = $manageObj->fetch_all_manageboat($_POST['date'], 'all', 0);
+    $all_manages = $manageObj->fetch_all_manageboat($_POST['date'], 'all', 'all', 0);
 ?>
     <div class="text-center">
         <h5 class="card-title text-danger"><?php echo date('j F Y', strtotime($_POST['date'])); ?></h5>
@@ -23,16 +23,17 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                     $infant = 0;
                     $foc = 0;
                     $book_array = array();
+                    $book_array = array();
                     foreach ($all_bookings as $bookings) {
                         if (in_array($bookings['id'], $book_array) == false) {
                             $book_array[] = $bookings['id'];
                             $count_bo[$key][] = 1;
-                            $adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
-                            $child += !empty($bookings['child']) ? $bookings['child'] : 0;
-                            $infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
-                            $foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
-                            $tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
                         }
+                        $adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
+                        $child += !empty($bookings['child']) ? $bookings['child'] : 0;
+                        $infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
+                        $foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
+                        $tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
                     }
                 }
         ?>

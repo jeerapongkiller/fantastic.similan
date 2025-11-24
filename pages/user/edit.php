@@ -147,40 +147,6 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                 <input type="text" id="telephone" name="telephone" class="form-control" value="<?php echo $user['telephone']; ?>" />
                                             </div>
                                         </div>
-                                        <!-- <div class="col-md-3 col-12">
-                                            <div class="form-group">
-                                                <label class="form-label" for="dob">DOB</label>
-                                                <input type="text" class="form-control" name="dob" id="dob" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-12">
-                                            <div class="form-group">
-                                                <label>Profile pic</label>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="customFile" name="customFile" />
-                                                    <label class="custom-file-label" for="customFile">Choose profile pic</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-12">
-                                            <div class="form-group">
-                                                <label class="d-block">Gender</label>
-                                                <div class="custom-control custom-radio my-50">
-                                                    <input type="radio" id="validationRadiojq1" name="validationRadiojq" class="custom-control-input" />
-                                                    <label class="custom-control-label" for="validationRadiojq1">Male</label>
-                                                </div>
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" id="validationRadiojq2" name="validationRadiojq" class="custom-control-input" />
-                                                    <label class="custom-control-label" for="validationRadiojq2">Female</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-12">
-                                            <div class="form-group">
-                                                <label class="d-block" for="validationBio">Bio</label>
-                                                <textarea class="form-control" id="validationBio" name="validationBiojq" rows="3"></textarea>
-                                            </div>
-                                        </div> -->
                                     </div>
                                     <div class="row">
                                         <div class="col-md-3 col-12">
@@ -227,10 +193,10 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                     </div>
                                     <hr>
                                     <div class="d-flex justify-content-between">
-                                        <button type="submit" class="btn btn-primary" name="submit" value="Submit">Submit</button>
                                         <?php if ($_SESSION["supplier"]["role_id"] == 1 || $_SESSION["supplier"]["role_id"] == 2) { ?>
                                             <button type="button" class="btn btn-danger" onclick="deleteUser(<?php echo $id; ?>);"><i data-feather='trash-2'></i> Delete</button>
                                         <?php } ?>
+                                        <button type="submit" class="btn btn-primary" name="submit" value="Submit">Submit</button>
                                     </div>
                                 </form>
                             </div>

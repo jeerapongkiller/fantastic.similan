@@ -16,7 +16,7 @@ require_once 'controllers/Auth.php';
     <title>Supplier Login - Shambhala TMS</title>
     <link rel="apple-touch-icon" href="app-assets/images/ico/favicon.png">
     <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/ico/favicon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
@@ -104,7 +104,19 @@ require_once 'controllers/Auth.php';
         $response = $auth->check_login($username_signin, $password_signin);
 
         if ($response != false && $response > 0) {
-            $redirect_page = ($_SESSION["supplier"]["department_id"] == 5) ? 'order-job/list' : 'booking/list';
+            if (in_array(1, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'booking/list';
+            } elseif (in_array(2, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'order-driver/list';
+            } elseif (in_array(3, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'order-guide/list';
+            } elseif (in_array(4, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'invoice/list';
+            } elseif (in_array(5, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'report/list';
+            } elseif (in_array(6, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'tour/list';
+            }
             header('location:./?pages=' . $redirect_page);
         } else {
             echo '

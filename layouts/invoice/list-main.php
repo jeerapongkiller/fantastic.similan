@@ -103,6 +103,7 @@
     <!-- BEGIN: Theme JS-->
     <script src="app-assets/js/core/app-menu.js"></script>
     <script src="app-assets/js/core/app.js"></script>
+    <script src="app-assets/js/scripts/header.js"></script>
     <!-- <script src="app-assets/js/scripts/header.js"></script> -->
     <!-- END: Theme JS-->
 
@@ -187,24 +188,7 @@
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
                 range = $('.flatpickr-range'),
-                pageBlockSpinner = $('.btn-page-block-spinner'),
                 select = $('.select2');
-
-            if (pageBlockSpinner.length) {
-                pageBlockSpinner.on('click', function() {
-                    $.blockUI({
-                        message: '<div class="spinner-grow spinner-grow-sm text-white" role="status"></div>',
-                        timeout: 1000,
-                        css: {
-                            backgroundColor: 'transparent',
-                            border: '0'
-                        },
-                        overlayCSS: {
-                            opacity: 0.5
-                        }
-                    });
-                });
-            }
 
             // select2
             select.each(function() {
@@ -295,6 +279,19 @@
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
+
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        // backgroundColor: '#ffffff4d',
+                        opacity: 0.8
+                    }
+                });
+
                 var serializedData = $(this).serialize();
                 $.ajax({
                     url: "pages/invoice/function/search.php",
@@ -306,6 +303,9 @@
                         } else {
                             $("#invoice-search-table").html('');
                         }
+                    },
+                    complete: function() {
+                        $.unblockUI();
                     }
                 });
                 e.preventDefault();
@@ -326,6 +326,19 @@
                     },
                     messages: {},
                     submitHandler: function(form) {
+
+                        $.blockUI({
+                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                            css: {
+                                backgroundColor: 'transparent',
+                                border: '0'
+                            },
+                            overlayCSS: {
+                                // backgroundColor: '#ffffff4d',
+                                opacity: 0.8
+                            }
+                        });
+
                         // update ajax request data
                         var formData = new FormData(form);
                         formData.append('action', $('#action').val());
@@ -336,36 +349,39 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                console.log(response);
-                                // if (response != false && response > 0) {
-                                //     Swal.fire({
-                                //         title: "The information has been added successfully.",
-                                //         icon: "success",
-                                //     }).then(function(isConfirm) {
-                                //         if (isConfirm) {
-                                //             // location.reload(); // refresh page
-                                //             $('#modal-invoice').modal('hide');
-                                //             var serializedData = $('#invoice-search-form').serialize();
-                                //             $.ajax({
-                                //                 url: "pages/invoice/function/search.php",
-                                //                 type: "POST",
-                                //                 data: serializedData + "&action=search",
-                                //                 success: function(response) {
-                                //                     if (response != false) {
-                                //                         $("#invoice-search-table").html(response);
-                                //                     } else {
-                                //                         $("#invoice-search-table").html('');
-                                //                     }
-                                //                 }
-                                //             });
-                                //         }
-                                //     });
-                                // } else {
-                                //     Swal.fire({
-                                //         title: "Please try again.",
-                                //         icon: "error",
-                                //     });
-                                // }
+                                // console.log(response);
+                                if (response != false && response > 0) {
+                                    Swal.fire({
+                                        title: "The information has been added successfully.",
+                                        icon: "success",
+                                    }).then(function(isConfirm) {
+                                        if (isConfirm) {
+                                            // location.reload(); // refresh page
+                                            $('#modal-invoice').modal('hide');
+                                            var serializedData = $('#invoice-search-form').serialize();
+                                            $.ajax({
+                                                url: "pages/invoice/function/search.php",
+                                                type: "POST",
+                                                data: serializedData + "&action=search",
+                                                success: function(response) {
+                                                    if (response != false) {
+                                                        $("#invoice-search-table").html(response);
+                                                    } else {
+                                                        $("#invoice-search-table").html('');
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: "Please try again.",
+                                        icon: "error",
+                                    });
+                                }
+                            },
+                            complete: function() {
+                                $.unblockUI();
                             }
                         });
                     }
@@ -382,6 +398,18 @@
                     messages: {},
                     submitHandler: function(form) {
                         var action = $('#rec_id').val() > 0 ? 'edit' : 'create';
+
+                        $.blockUI({
+                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                            css: {
+                                backgroundColor: 'transparent',
+                                border: '0'
+                            },
+                            overlayCSS: {
+                                opacity: 0.8
+                            }
+                        });
+
                         // update ajax request data
                         var formData = new FormData(form);
                         formData.append('action', action);
@@ -392,7 +420,7 @@
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                console.log(response);
+                                // console.log(response);
                                 if (response != false && response > 0) {
                                     Swal.fire({
                                         title: "The information has been added successfully.",
@@ -420,6 +448,9 @@
                                         icon: "error",
                                     });
                                 }
+                            },
+                            complete: function() {
+                                $.unblockUI();
                             }
                         });
                     }
@@ -431,17 +462,17 @@
             if (cover_id > 0) {
                 modal_page_invoice('edit');
 
-                // $.blockUI({
-                //     message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                //     css: {
-                //         backgroundColor: 'transparent',
-                //         border: '0'
-                //     },
-                //     overlayCSS: {
-                //         backgroundColor: '#fff',
-                //         opacity: 0.8
-                //     }
-                // });
+                $.blockUI({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                    css: {
+                        backgroundColor: 'transparent',
+                        border: '0'
+                    },
+                    overlayCSS: {
+                        // backgroundColor: '#fff',
+                        opacity: 0.8
+                    }
+                });
 
                 var formData = new FormData();
                 formData.append('action', 'div');
@@ -474,11 +505,10 @@
 
                             calculator_price();
                         }
+                    },
+                    complete: function() {
+                        $.unblockUI();
                     }
-                    // ,
-                    // complete: function() {
-                    //     $.unblockUI();
-                    // }
                 });
             } else {
                 modal_page_invoice('previous');
@@ -491,7 +521,7 @@
                         border: '0'
                     },
                     overlayCSS: {
-                        backgroundColor: '#fff',
+                        // backgroundColor: '#fff',
                         opacity: 0.8
                     }
                 });
@@ -529,7 +559,7 @@
                     border: '0'
                 },
                 overlayCSS: {
-                    backgroundColor: '#fff',
+                    // backgroundColor: '#fff',
                     opacity: 0.8
                 }
             });
@@ -861,6 +891,17 @@
                 "overflow-y": "auto"
             });
 
+            $.blockUI({
+                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                css: {
+                    backgroundColor: 'transparent',
+                    border: '0'
+                },
+                overlayCSS: {
+                    opacity: 0.8
+                }
+            });
+
             var formData = new FormData();
             formData.append('action', 'modal');
             formData.append('cover_id', cover_id);
@@ -887,6 +928,9 @@
                         check_payment();
                         modal_page_invoice('receipt-form');
                     }
+                },
+                complete: function() {
+                    $.unblockUI();
                 }
             });
         }

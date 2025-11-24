@@ -6,13 +6,34 @@
             </ul>
         </div>
         <ul class="nav navbar-nav align-items-center ml-auto">
-            <!-- <li class="nav-item dropdown dropdown-language"><a class="nav-link dropdown-toggle" id="dropdown-flag" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flag-icon flag-icon-us"></i><span class="selected-language">English</span></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-flag">
-                    <a class="dropdown-item" href="javascript:void(0);" data-language="en"><i class="flag-icon flag-icon-us"></i>English</a>
-                    <a class="dropdown-item" href="javascript:void(0);" data-language="th"><i class="flag-icon flag-icon-th"></i>Thai</a>
-                </div>
-            </li> -->
-            <!-- <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-style"><i class="ficon" data-feather="moon"></i></a></li> -->
+            <li class="nav-item dropdown dropdown-notification mr-25"><a class="nav-link" href="javascript:void(0);" data-toggle="dropdown"><i class="ficon" data-feather="bell"></i><span class="badge badge-pill badge-danger badge-up"><span class="mt-25" id="span-header-main"></span></span></a>
+                <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                    <li class="scrollable-container media-list">
+                        <a class="d-flex" href="./?pages=order-boat/manage">
+                            <div class="media d-flex align-items-start">
+                                <div class="media-left mt-50">
+                                    <img src="app-assets/images/yacht.png" alt="avatar" width="50">
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="media-heading font-weight-bolder">Boats</h6><small class="notification-text">มี Booking ที่ยังไม่ได้จัดเรือ</small>
+                                </div>
+                                <div class="badge badge-pill badge-light-primary mt-50" id="header-div-boats"></div>
+                            </div>
+                        </a>
+                        <a class="d-flex" href="./?pages=order-driver/manage">
+                            <div class="media d-flex align-items-start">
+                                <div class="media-left">
+                                    <img src="app-assets/images/car.png" alt="avatar" width="50">
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="media-heading font-weight-bolder">Transfers</h6><small class="notification-text">มี Booking ที่ยังไม่ได้จัดรถ</small>
+                                </div>
+                                <div class="badge badge-pill badge-light-primary mt-50" id="header-div-transfers"></div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item dropdown dropdown-user"><a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="user-nav d-sm-flex d-none">
                         <span class="user-name font-weight-bolder"><?php echo $_SESSION["supplier"]["fullname"]; ?></span>
