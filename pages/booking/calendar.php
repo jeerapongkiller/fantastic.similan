@@ -7,20 +7,21 @@ $today = date("Y-m-d");
 $arr_travel = array();
 $arr_prod = array();
 $programed = $bookObj->get_values(
-    'booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
+    'booking_product_rates.id, booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
     'booking_products LEFT JOIN booking_product_rates ON booking_products.id = booking_product_rates.booking_products_id',
     'booking_products.id > 0 AND booking_products.travel_date >= "' . $today . '" ORDER BY booking_products.travel_date ASC',
     1
 );
 
 if (!empty($programed)) {
+    $arr_id = array();
     foreach ($programed as $programe) {
         $date = $programe['travel_date'];
         $prod = $programe['product_id'];
+        $id = $programe['id'];
         if (!in_array($date, $arr_travel)) {
             $arr_travel[] = $date;
             $travel_date[] = $date;
-            $tourist[$date][] = $programe['adult'] + $programe['child'] + $programe['infant'] + $programe['foc'];
         }
         if (!isset($arr_prod[$date])) {
             $arr_prod[$date] = array();
@@ -29,6 +30,7 @@ if (!empty($programed)) {
             $arr_prod[$date][] = $prod;
             $product_id[$date][] = $prod;
         }
+        $tourist[$date][$prod][] = $programe['adult'] + $programe['child'] + $programe['infant'] + $programe['foc'];
     }
 }
 ?>
@@ -46,11 +48,6 @@ if (!empty($programed)) {
                         <!-- Sidebar -->
                         <div class="col app-calendar-sidebar flex-grow-0 overflow-hidden d-flex flex-column" id="app-calendar-sidebar">
                             <div class="sidebar-wrapper">
-                                <!-- <div class="card-body d-flex justify-content-center">
-                                    <button class="btn btn-primary btn-toggle-sidebar btn-block" data-toggle="modal" data-target="#add-new-sidebar">
-                                        <span class="align-middle">Add Event</span>
-                                    </button>
-                                </div> -->
                                 <div class="card-body pb-0">
                                     <h5 class="section-label mb-1">
                                         <span class="align-middle">Filter</span>

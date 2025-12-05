@@ -7,6 +7,10 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
     // get value from ajax
     $agent_id = $_GET['agent_id'] != "" ? $_GET['agent_id'] : 0;
     $travel_date = $_GET['travel_date'] != "" ? $_GET['travel_date'] : '0000-00-00';
+    $travel_text = (!empty($travel_date) && $travel_date != '') ? !empty(substr($travel_date, 14, 24)) ?
+        date('j F Y', strtotime(substr($travel_date, 0, 10)))  . " - " . date('j F Y', strtotime(substr($travel_date, 14, 24))) :
+        date('j F Y', strtotime($travel_date)) :
+        "";
 
     $all_bookings = $orderObj->fetch_all_bookingagent($agent_id, $travel_date);
 
@@ -31,7 +35,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
         </div>
         <div class="text-center card-text">
             <h4 class="font-weight-bolder text-black">Re Confirm Agent</h4>
-            <h5 class="font-weight-bolder text-black"><?php echo date('j F Y', strtotime($travel_date)); ?></h5>
+            <h5 class="font-weight-bolder text-black"><?php echo $travel_text; ?></h5>
         </div>
     </div>
 
@@ -51,7 +55,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                     <th class="text-center" width="7%">V/C</th>
                     <th width="20%">Hotel</th>
                     <th width="5%">Room</th>
-                    <th class="text-center" width="1%">รวม</th>
+                    <!-- <th class="text-center" width="1%">รวม</th> -->
                     <th class="text-center" width="1%">A</th>
                     <th class="text-center" width="1%">C</th>
                     <th class="text-center" width="1%">Inf</th>
@@ -89,7 +93,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && !empty($_GET['agent_
                             <td class="text-nowrap"><?php echo !empty($bookings['voucher_no_agent']) ? $bookings['voucher_no_agent'] : $bookings['book_full']; ?></td>
                             <td><?php echo $text_hotel; ?></td>
                             <td><?php echo $bookings['room_no']; ?></td>
-                            <td class="cell-fit text-center"><?php echo $tourist; ?></td>
+                            <!-- <td class="cell-fit text-center"><?php echo $tourist; ?></td> -->
                             <td class="text-center"><?php echo !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0; ?></td>

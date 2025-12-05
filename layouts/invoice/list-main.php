@@ -15,6 +15,9 @@
 
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/forms/select/select2.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/forms/wizard/bs-stepper.min.css">
@@ -47,12 +50,12 @@
     <style>
         .table-black {
             color: #FFFFFF;
-            background-color: #003285;
+            background-color: #333;
         }
 
         .table-black-2 {
             color: #FFFFFF;
-            background-color: #0060ff;
+            background-color: #4f4e4e;
         }
     </style>
 </head>
@@ -86,6 +89,12 @@
     <!-- BEGIN Vendor JS-->
 
     <!-- BEGIN: Page Vendor JS-->
+    <script src="app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/responsive.bootstrap4.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js"></script>
     <script src="app-assets/vendors/js/forms/select/select2.full.min.js"></script>
     <script src="app-assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
     <script src="app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
@@ -104,14 +113,25 @@
     <script src="app-assets/js/core/app-menu.js"></script>
     <script src="app-assets/js/core/app.js"></script>
     <script src="app-assets/js/scripts/header.js"></script>
-    <!-- <script src="app-assets/js/scripts/header.js"></script> -->
     <!-- END: Theme JS-->
+
+    <?php
+    $columntarget = $_SESSION["supplier"]["role_id"] == 1 || $_SESSION["supplier"]["role_id"] == 2 ? '4, 5' : '4, 5';
+    ?>
 
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         // Ajax Delete Invoice
         // --------------------------------------------------------------------
-        function deleteInvoice(cover_id) {
+        function deleteInvoice() {
+            var cover_id = $('#cover_id').val();
+            var bo_arr = document.getElementsByName('bo_id[]');
+            var bo_id = [];
+            if (bo_arr.length) {
+                for (let index = 0; index < bo_arr.length; index++) {
+                    bo_id.push(bo_arr[index].value);
+                }
+            }
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -130,6 +150,7 @@
                         type: "POST",
                         data: {
                             cover_id: cover_id,
+                            bo_id: bo_id,
                             action: 'delete'
                         },
                         success: function(response) {
@@ -142,18 +163,7 @@
                                         confirmButton: 'btn btn-success'
                                     }
                                 }).then(function() {
-                                    $('#modal-invoice').modal('hide');
-                                    var serializedData = $('#invoice-search-form').serialize();
-                                    $.ajax({
-                                        url: "pages/invoice/function/search.php",
-                                        type: "POST",
-                                        data: serializedData + "&action=search",
-                                        success: function(response) {
-                                            if (response != false) {
-                                                $("#invoice-search-table").html(response);
-                                            }
-                                        }
-                                    });
+                                    location.reload(); // refresh page
                                 });
                             } else {
                                 Swal.fire({
@@ -184,7 +194,6 @@
         $(document).ready(function() {
             var jqForm = $('#invoice-search-form'),
                 jqFormInv = $('#invoice-form'),
-                jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
                 range = $('.flatpickr-range'),
@@ -216,14 +225,23 @@
                     static: true,
                     altInput: true,
                     altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: ["<?php echo $today; ?>", "<?php echo $tomorrow; ?>"]
+                    dateFormat: 'Y-m-d'
                 });
             }
 
             // Picker
             if (picker.length) {
                 picker.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    }
+                });
+            }
+
+            if (dtPicker.length) {
+                dtPicker.flatpickr({
                     onReady: function(selectedDates, dateStr, instance) {
                         if (instance.isMobile) {
                             $(instance.mobileInput).attr('step', null);
@@ -240,72 +258,18 @@
                 });
             });
 
-            if (dtPicker.length) {
-                dtPicker.flatpickr({
-                    onReady: function(selectedDates, dateStr, instance) {
-                        if (instance.isMobile) {
-                            $(instance.mobileInput).attr('step', null);
-                        }
-                    }
-                });
-            }
-
-            $('#search_inv_date').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                mode: 'range',
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d'
-            });
-
-            $('#search_travel').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                mode: 'range',
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d'
-            });
-
             // Ajax Search
             // --------------------------------------------------------------------
             jqForm.on("submit", function(e) {
-
-                $.blockUI({
-                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                    css: {
-                        backgroundColor: 'transparent',
-                        border: '0'
-                    },
-                    overlayCSS: {
-                        // backgroundColor: '#ffffff4d',
-                        opacity: 0.8
-                    }
-                });
-
                 var serializedData = $(this).serialize();
                 $.ajax({
-                    url: "pages/invoice/function/search.php",
+                    url: "pages/invoice/function/search-agent.php",
                     type: "POST",
-                    data: serializedData + "&action=search",
+                    data: serializedData + "&action=search-invoice",
                     success: function(response) {
                         if (response != false) {
-                            $("#invoice-search-table").html(response);
-                        } else {
-                            $("#invoice-search-table").html('');
+                            $("#div-invoice-custom").html(response);
                         }
-                    },
-                    complete: function() {
-                        $.unblockUI();
                     }
                 });
                 e.preventDefault();
@@ -326,51 +290,25 @@
                     },
                     messages: {},
                     submitHandler: function(form) {
-
-                        $.blockUI({
-                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                            css: {
-                                backgroundColor: 'transparent',
-                                border: '0'
-                            },
-                            overlayCSS: {
-                                // backgroundColor: '#ffffff4d',
-                                opacity: 0.8
-                            }
-                        });
-
                         // update ajax request data
                         var formData = new FormData(form);
-                        formData.append('action', $('#action').val());
+                        formData.append('action', 'edit');
+                        formData.append('cover_id', $('#cover_id').val());
                         $.ajax({
-                            url: "pages/invoice/function/" + $('#action').val() + ".php",
+                            url: "pages/invoice/function/edit.php",
                             type: "POST",
                             processData: false,
                             contentType: false,
                             data: formData,
                             success: function(response) {
-                                // console.log(response);
+                                // $('#div-show').html(response);
                                 if (response != false && response > 0) {
                                     Swal.fire({
                                         title: "The information has been added successfully.",
                                         icon: "success",
                                     }).then(function(isConfirm) {
                                         if (isConfirm) {
-                                            // location.reload(); // refresh page
-                                            $('#modal-invoice').modal('hide');
-                                            var serializedData = $('#invoice-search-form').serialize();
-                                            $.ajax({
-                                                url: "pages/invoice/function/search.php",
-                                                type: "POST",
-                                                data: serializedData + "&action=search",
-                                                success: function(response) {
-                                                    if (response != false) {
-                                                        $("#invoice-search-table").html(response);
-                                                    } else {
-                                                        $("#invoice-search-table").html('');
-                                                    }
-                                                }
-                                            });
+                                            location.reload(); // refresh page
                                         }
                                     });
                                 } else {
@@ -379,416 +317,277 @@
                                         icon: "error",
                                     });
                                 }
-                            },
-                            complete: function() {
-                                $.unblockUI();
                             }
                         });
                     }
                 });
             }
 
-            if (jqFormRec.length) {
-                $.validator.addMethod("regex", function(value, element, regexp) {
-                    return this.optional(element) || regexp.test(value);
-                }, "Please check your input.");
-
-                jqFormRec.validate({
-                    rules: {},
-                    messages: {},
-                    submitHandler: function(form) {
-                        var action = $('#rec_id').val() > 0 ? 'edit' : 'create';
-
-                        $.blockUI({
-                            message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                            css: {
-                                backgroundColor: 'transparent',
-                                border: '0'
-                            },
-                            overlayCSS: {
-                                opacity: 0.8
-                            }
-                        });
-
-                        // update ajax request data
-                        var formData = new FormData(form);
-                        formData.append('action', action);
-                        $.ajax({
-                            url: "pages/receipt/function/" + action + ".php",
-                            type: "POST",
-                            processData: false,
-                            contentType: false,
-                            data: formData,
-                            success: function(response) {
-                                // console.log(response);
-                                if (response != false && response > 0) {
-                                    Swal.fire({
-                                        title: "The information has been added successfully.",
-                                        icon: "success",
-                                    }).then(function(isConfirm) {
-                                        if (isConfirm) {
-                                            // location.reload(); // refresh page
-                                            $('#modal-receipt').modal('hide');
-                                            var serializedData = $('#invoice-search-form').serialize();
-                                            $.ajax({
-                                                url: "pages/invoice/function/search.php",
-                                                type: "POST",
-                                                data: serializedData + "&action=search",
-                                                success: function(response) {
-                                                    if (response != false) {
-                                                        $("#invoice-search-table").html(response);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: "Please try again.",
-                                        icon: "error",
-                                    });
-                                }
-                            },
-                            complete: function() {
-                                $.unblockUI();
-                            }
-                        });
-                    }
-                });
-            }
+            search_start_date('today', '<?php echo $today; ?>');
+            search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
         });
 
-        function modal_invoice(cover_id) {
-            if (cover_id > 0) {
-                modal_page_invoice('edit');
-
-                $.blockUI({
-                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                    css: {
-                        backgroundColor: 'transparent',
-                        border: '0'
-                    },
-                    overlayCSS: {
-                        // backgroundColor: '#fff',
-                        opacity: 0.8
-                    }
-                });
-
-                var formData = new FormData();
-                formData.append('action', 'div');
-                formData.append('cover_id', cover_id);
-                $.ajax({
-                    url: "pages/invoice/function/invoice.php",
-                    type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(response) {
-                        if (response != 'false') {
-                            $('#div-form-invoice-edit').html(response);
-
-                            $('#inv_date, #rec_date').flatpickr({
-                                static: true,
-                                altInput: true,
-                                altFormat: 'j F Y',
-                                dateFormat: 'Y-m-d'
-                            });
-
-                            $('#currency, #currency, #vat, #branch, #bank_account').select2();
-
-                            $('.numeral-mask').toArray().forEach(function(field) {
-                                new Cleave(field, {
-                                    numeral: true,
-                                    numeralThousandsGroupStyle: 'thousand'
-                                });
-                            });
-
-                            calculator_price();
-                        }
-                    },
-                    complete: function() {
-                        $.unblockUI();
-                    }
-                });
-            } else {
-                modal_page_invoice('previous');
-                var travel_date = document.getElementById('travel_date').value;
-
-                $.blockUI({
-                    message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                    css: {
-                        backgroundColor: 'transparent',
-                        border: '0'
-                    },
-                    overlayCSS: {
-                        // backgroundColor: '#fff',
-                        opacity: 0.8
-                    }
-                });
-
-                var formData = new FormData();
-                formData.append('action', 'search');
-                formData.append('travel_date', travel_date);
-                $.ajax({
-                    url: "pages/invoice/function/search-agent.php",
-                    type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(response) {
-                        if (response != 'false') {
-                            $('#div-agent').html(response);
-                        } else {
-                            $('#div-agent').html('');
-                        }
-                    },
-                    complete: function() {
-                        $.unblockUI();
-                    }
-                });
-            }
-        }
-
-        function search_booking(agent_id) {
-            var travel_date = document.getElementById('travel_date').value;
-
-            $.blockUI({
-                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                css: {
-                    backgroundColor: 'transparent',
-                    border: '0'
-                },
-                overlayCSS: {
-                    // backgroundColor: '#fff',
-                    opacity: 0.8
-                }
-            });
-
+        function search_start_date(tabs, travel_date) {
             var formData = new FormData();
-            formData.append('action', 'search');
+            formData.append('action', 'search-invoice');
             formData.append('travel_date', travel_date);
-            formData.append('agent_id', agent_id);
             $.ajax({
-                url: "pages/invoice/function/search-booking.php",
+                url: "pages/invoice/function/search-agent.php",
                 type: "POST",
                 processData: false,
                 contentType: false,
                 data: formData,
                 success: function(response) {
                     if (response != 'false') {
-                        $('#div-booking').html(response);
+                        $('#' + tabs).html(response);
                     }
-                },
-                complete: function() {
-                    $.unblockUI();
                 }
             });
         }
 
-        function checkbox() {
-            var checkbox_all = document.getElementById('checkbo_all').checked;
-            var checkbox = document.getElementsByClassName('checkbox-bookings');
-
-            if (checkbox_all == true && checkbox.length > 0) {
-                for (let index = 0; index < checkbox.length; index++) {
-                    checkbox[index].checked = true;
+        function modal_detail(agent_id, agent_name, travel_date) {
+            var formData = new FormData();
+            formData.append('action', 'search');
+            formData.append('agent_id', agent_id);
+            formData.append('travel_date', travel_date);
+            $.ajax({
+                url: "pages/invoice/function/search-invoice.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != 'false') {
+                        $('#div-modal-detail').html(response);
+                    }
                 }
-            } else if (checkbox_all == false && checkbox.length > 0) {
-                for (let index = 0; index < checkbox.length; index++) {
-                    checkbox[index].checked = false;
-                }
-            }
+            });
         }
 
-        function modal_page_invoice(type) {
-            if (type == 'next') {
-                var bo_id = [];
-                let checked = $(".checkbox-bookings");
-                for (let index = 0; index < checked.length; index++) {
-                    if (checked[index].checked == true) {
-                        bo_id.push(checked[index].value);
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function modal_invoice() {
+            $('#modal-show').modal('toggle');
+            $('#modal-add-invoice').modal('show');
+            $("#modal-add-invoice").css({
+                "overflow-y": "auto"
+            });
+
+            var array_booking = document.getElementById('array_booking').value;
+            var array_rates = document.getElementById('array_rates').value;
+            var array_extar = document.getElementById('array_extar').value;
+            if (array_booking !== '') {
+                document.getElementById('cover_id').value = document.getElementById('agent_value').dataset.cover;
+                document.getElementById('inv_date').value = document.getElementById('agent_value').dataset.inv_date;
+                document.getElementById('rec_date').value = document.getElementById('agent_value').dataset.rec_date;
+                document.getElementById('vat').value = document.getElementById('agent_value').dataset.vat;
+                document.getElementById('withholding').value = (document.getElementById('agent_value').dataset.withholding !== '-') ? document.getElementById('agent_value').dataset.withholding: 0;
+                document.getElementById('bank_account').value = document.getElementById('agent_value').dataset.bank_account;
+                document.getElementById('note').value = document.getElementById('agent_value').dataset.note;
+
+                document.getElementById('inv_no_text').innerHTML = document.getElementById('agent_value').dataset.inv_full;
+                document.getElementById('agent_name_text').innerHTML = document.getElementById('agent_value').dataset.name;
+                document.getElementById('agent_tax_text').innerHTML = document.getElementById('agent_value').dataset.license;
+                document.getElementById('agent_tel_text').innerHTML = document.getElementById('agent_value').dataset.telephone;
+                document.getElementById('agent_address_text').innerHTML = document.getElementById('agent_value').dataset.address;
+                var res = $.parseJSON(array_booking);
+                var res_rates = array_rates !== '' ? $.parseJSON(array_rates) : undefined;
+                var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : undefined;
+                var text_html = '';
+                var total = 0;
+                var amount = 0;
+                var cot = 0;
+                var discount = 0;
+                var no = 1;
+                for (let index = 0; index < res.id.length; index++) {
+                    var id = res.id[index];
+                    discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                    cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+
+                    if (res_rates !== undefined && (res_rates[id] !== undefined)) {
+                        rowspan = res_rates[id].id.length;
+                        for (let y = 0; y < res_rates[id].id.length; y++) {
+                            if (y == 0) {
+                                var customer = res[id].status == 2 || res[id].status == 4 ? ' (' + res_rates[id].category_name[y] + ') ' + res[id].status_name : ' (' + res_rates[id].category_name[y] + ')';
+                                text_html += '<tr>' +
+                                    '<td class="text-center">' + Number(no++) + '</td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].text_date + ' </td>' +
+                                    '<td rowspan="' + rowspan + '"> ' + res[id].cus_name + ' </td>' +
+                                    '<td> ' + res[id].product_name + customer + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].voucher_no + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].discount + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+                                    '</tr>';
+
+                                amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                            } else if (y > 0) {
+                                var customer = ' (' + res_rates[id].category_name[y] + ') ';
+                                text_html += '<tr>' +
+                                    '<td class="text-center">' + Number(no++) + '</td>' +
+                                    '<td> ' + res[id].product_name + customer + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                    '</tr>';
+
+                                amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                            }
+                        }
+                    }
+
+                    if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+                        for (let index = 0; index < res_extar[id].id.length; index++) {
+                            amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
+                            text_html += '<tr>' +
+                                '<td class="text-left" colspan="2"> ' + res_extar[id].name[index] + ' </td>' +
+                                '<td class="text-left" colspan="3">  </td>' +
+                                '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+                                '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
+                                '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+                                '<td class="text-center">-</td>' +
+                                '</tr>';
+                        }
                     }
                 }
 
-                if (bo_id != '') {
-                    // div hidden
-                    document.getElementById('div-select-invoice').hidden = true;
-                    document.getElementById('div-form-invoice').hidden = false;
-                    // document.getElementById('div-form-invoice-edit').hidden = true;
-                    // document.getElementById('div-preview-invoice').hidden = true;
-                    // button hidden
-                    document.getElementById('btn-modal-previous').hidden = false;
-                    document.getElementById('btn-modal-next').hidden = true;
-                    document.getElementById('btn-modal-submit').hidden = false;
-                    document.getElementById('btn-modal-preview').hidden = true;
-                    document.getElementById('btn-modal-preview-previous').hidden = true;
-                    document.getElementById('btn-modal-print').hidden = true;
-                    document.getElementById('btn-modal-image').hidden = true;
-                    document.getElementById('h4-title').innerHTML = 'สร้าง Invoice';
+                text_html += '<tr>' +
+                    '<td colspan="10"></td>' +
+                    '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+                    '<td class="text-center" id="price-multi-total"></td>' +
+                    '</tr>'
 
-                    var formData = new FormData();
-                    formData.append('action', 'div');
-                    formData.append('bo_id', JSON.stringify(bo_id));
-                    $.ajax({
-                        url: "pages/invoice/function/invoice.php",
-                        type: "POST",
-                        processData: false,
-                        contentType: false,
-                        data: formData,
-                        success: function(response) {
-                            if (response != 'false') {
-                                $('#div-form-invoice').html(response);
-
-                                $('#inv_date, #rec_date').flatpickr({
-                                    static: true,
-                                    altInput: true,
-                                    altFormat: 'j F Y',
-                                    dateFormat: 'Y-m-d'
-                                });
-
-                                $('#currency, #currency, #vat, #branch, #bank_account').select2();
-
-                                $('.numeral-mask').toArray().forEach(function(field) {
-                                    new Cleave(field, {
-                                        numeral: true,
-                                        numeralThousandsGroupStyle: 'thousand'
-                                    });
-                                });
-
-                                calculator_price();
-                            }
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: ' กรุณาเลือก Booking ที่ต้องการออก Invoice',
-                        icon: 'error',
-                        customClass: {
-                            confirmButton: 'btn btn-primary'
-                        },
-                        buttonsStyling: false
-                    });
+                if (discount > 0) {
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+                        '</tr>'
                 }
-            } else if (type == 'previous') {
-                $('#div-form-invoice').html('');
-                // div hidden
-                document.getElementById('div-form-invoice-edit').hidden = true;
-                document.getElementById('div-preview-invoice').hidden = true;
-                document.getElementById('div-select-invoice').hidden = false;
-                document.getElementById('div-form-invoice').hidden = true;
-                // button hidden
-                document.getElementById('btn-modal-previous').hidden = true;
-                document.getElementById('btn-modal-submit').hidden = true;
-                document.getElementById('btn-modal-next').hidden = false;
-                document.getElementById('btn-modal-preview').hidden = true;
-                document.getElementById('btn-modal-preview-previous').hidden = true;
-                document.getElementById('btn-modal-print').hidden = true;
-                document.getElementById('btn-modal-image').hidden = true;
 
-                document.getElementById('h4-title').innerHTML = 'เลือก Invoice';
-            } else if (type == 'edit') {
-                // div hidden
-                document.getElementById('div-form-invoice').innerHTML = '';
-                document.getElementById('div-form-invoice').hidden = true;
-                document.getElementById('div-preview-invoice').hidden = true;
-                document.getElementById('div-form-invoice-edit').hidden = false;
-                document.getElementById('div-select-invoice').hidden = true;
-                // button hidden
-                document.getElementById('btn-modal-previous').hidden = true;
-                document.getElementById('btn-modal-next').hidden = true;
-                document.getElementById('btn-modal-preview').hidden = false;
-                document.getElementById('btn-modal-submit').hidden = false;
-                document.getElementById('btn-modal-preview-previous').hidden = true;
-                document.getElementById('btn-modal-print').hidden = true;
-                document.getElementById('btn-modal-image').hidden = true;
-            } else if (type == 'preview') {
-                var cover_id = document.getElementById('cover_id').value;
-                if (cover_id > 0) {
-                    // div hidden
-                    document.getElementById('div-form-invoice').hidden = true;
-                    document.getElementById('div-preview-invoice').hidden = false;
-                    document.getElementById('div-form-invoice-edit').hidden = true;
-                    // button hidden
-                    document.getElementById('btn-modal-previous').hidden = true;
-                    document.getElementById('btn-modal-next').hidden = true;
-                    document.getElementById('btn-modal-submit').hidden = true;
-                    document.getElementById('btn-modal-preview').hidden = true;
-                    document.getElementById('btn-modal-preview-previous').hidden = false;
-                    document.getElementById('btn-modal-print').hidden = false;
-                    document.getElementById('btn-modal-image').hidden = false;
-                    document.getElementById('btn-modal-print').href = "./?pages=invoice/print&action=preview&cover_id=" + cover_id;
-
-                    var formData = new FormData();
-                    formData.append('action', 'preview');
-                    formData.append('cover_id', cover_id);
-                    $.ajax({
-                        url: "pages/invoice/print.php",
-                        type: "POST",
-                        processData: false,
-                        contentType: false,
-                        data: formData,
-                        success: function(response) {
-                            if (response != false) {
-                                $("#div-preview-invoice").html(response);
-                            }
-                        }
-                    });
+                if (cot > 0) {
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>Cash on tour</b></td>' +
+                        '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                        '</tr>'
                 }
-            } else if (type == 'receipt-preview') {
-                var rec_id = document.getElementById('rec_id').value;
-                document.getElementById('div-receipt-form').hidden = true;
-                document.getElementById('div-receipt-preview').hidden = false;
-                document.getElementById('btn-modal-receipt-preview').hidden = true;
-                document.getElementById('btn-modal-receipt-submit').hidden = true;
-                document.getElementById('btn-modal-receipt-previous').hidden = false;
-                document.getElementById('btn-modal-receipt-print').hidden = false;
-                document.getElementById('btn-modal-receipt-image').hidden = false;
-                document.getElementById('btn-modal-receipt-print').href = "./?pages=receipt/print&action=invoice&rec_id=" + rec_id;
 
-                var formData = new FormData();
-                formData.append('action', 'invoice');
-                formData.append('rec_id', rec_id);
-                $.ajax({
-                    url: "pages/receipt/print.php",
-                    type: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(response) {
-                        if (response != false) {
-                            $("#div-receipt-preview").html(response);
-                        }
-                    }
-                });
-            } else if (type == 'receipt-form') {
-                var rec_id = document.getElementById('rec_id').value;
-                document.getElementById('div-receipt-form').hidden = false;
-                document.getElementById('div-receipt-preview').hidden = true;
-                document.getElementById('btn-modal-receipt-previous').hidden = true;
-                document.getElementById('btn-modal-receipt-submit').hidden = false;
-                document.getElementById('btn-modal-receipt-print').hidden = true;
-                document.getElementById('btn-modal-receipt-image').hidden = true;
-                document.getElementById('btn-modal-receipt-preview').hidden = rec_id == 0 ? true : false;
+                text_html += '<tr id="tr-multi-vat" hidden>' +
+                    '<td colspan="10"></td>' +
+                    '<td class="text-center"><b id="vat-multi-text"></b><br><small>(Vat)</small></td>' +
+                    '<td class="text-center" id="price-multi-vat"></td>' +
+                    '</tr>';
+
+                text_html += '<tr id="tr-multi-withholding" hidden>' +
+                    '<td colspan="10"></td>' +
+                    '<td class="text-center"><b id="withholding-multi-text"></b><br><small>(Withholding Tax)</small></td>' +
+                    '<td class="text-center" id="price-multi-withholding"></td>' +
+                    '</tr>';
+
+                text_html += '<tr>' +
+                    '<td colspan="10"></td>' +
+                    '<td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
+                    '<td class="text-center" id="price-multi-amount"></td>' +
+                    '</tr>';
+
+                $('#tbody-multi-booking').html(text_html);
+
+                document.getElementById('discount').value = discount;
+                document.getElementById('cot').value = cot;
+                document.getElementById('price_total').value = amount;
             }
+
+            $('#inv_date').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: document.getElementById('agent_value').dataset.inv_date
+            });
+
+            $('#rec_date').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: document.getElementById('agent_value').dataset.rec_date
+            });
+
+            calculator_price();
+
+            $("#vat").val(document.getElementById('agent_value').dataset.vat).trigger("change");
+            $("#withholding").val(document.getElementById('agent_value').dataset.withholding).trigger("change");
+            $("#bank_account").val(document.getElementById('agent_value').dataset.bank_account).trigger("change");
+        }
+
+        function modal_show_invoice(cover_id) {
+            var formData = new FormData();
+            formData.append('action', 'preview');
+            formData.append('cover_id', cover_id);
+            $.ajax({
+                url: "pages/invoice/print.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != false) {
+                        $("#div-show-invoice").html(response);
+                    }
+                }
+            });
+        }
+
+        function check_diff_date(type) {
+            var today = document.getElementById('input_today').value;
+            var rec_date = document.getElementById(type).value;
+            const date1 = new Date(today);
+            const date2 = new Date(rec_date);
+            const diffTime = date2.getTime() - date1.getTime();
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            var days = diffDays <= 0 ? '' : "อีก " + diffDays + " วัน";
+            $('#diff_rec_date').html(days);
         }
 
         function calculator_price() {
+            var type = 'multi';
             var vat_total = 0;
             var vat_cut = 0;
             var withholding_total = 0;
             var total = 0;
-            var price_amount = document.getElementById('price-amount');
+            var price_amount = document.getElementById('price-' + type + '-amount');
             var vat = document.getElementById('vat');
             var withholding = document.getElementById('withholding');
-            var price_withholding = document.getElementById('price-withholding');
+            var price_withholding = document.getElementById('price-' + type + '-withholding');
             var price_total = document.getElementById('price_total');
-            var tr_vat = document.getElementById('tr-vat');
-            var vat_text = document.getElementById('vat-text');
-            var price_vat = document.getElementById('price-vat');
-            var price_total_1 = document.getElementById('price-total');
-            var tr_withholding = document.getElementById('tr-withholding');
-            var withholding_text = document.getElementById('withholding-text');
+            var tr_vat = document.getElementById('tr-' + type + '-vat');
+            var vat_text = document.getElementById('vat-' + type + '-text');
+            var price_vat = document.getElementById('price-' + type + '-vat');
+            var price_total_1 = document.getElementById('price-' + type + '-total');
+            var tr_withholding = document.getElementById('tr-' + type + '-withholding');
+            var withholding_text = document.getElementById('withholding-' + type + '-text');
             var discount = document.getElementById('discount');
             var cot = document.getElementById('cot');
             var amount = document.getElementById('amount');
@@ -798,8 +597,6 @@
             withholding_text.innerHTML = withholding.value > 0 ? 'หักภาษี ณ ที่จ่าย ' + withholding.value + ' %' : '';
             // --- sum price total --- //
             total = price_total.value;
-            total = discount.value > 0 ? Number(total - discount.value) : total;
-            total = cot.value > 0 ? Number(total - cot.value) : total;
             // --- vat and withholding --- //
             if (vat.value == 1) {
                 vat_total = Number(((total * 100) / 107));
@@ -822,139 +619,32 @@
                 maximumFractionDigits: 2
             });
 
+            price_total_1.innerHTML = Number(total).toLocaleString("en-US", {
+                maximumFractionDigits: 2
+            });
+
+            total = discount.value > 0 ? Number(total - discount.value) : total;
+            total = cot.value > 0 ? Number(total - cot.value) : total;
+
             price_amount.innerHTML = Number(total).toLocaleString("en-US", {
                 maximumFractionDigits: 2
             });
 
             amount.value = total;
-        }
 
-        function check_diff_date(type) {
-            var today = document.getElementById('input_today').value;
-            var rec_date = document.getElementById(type).value;
-            const date1 = new Date(today);
-            const date2 = new Date(rec_date);
-            const diffTime = date2.getTime() - date1.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            var days = diffDays <= 0 ? '' : "อีก " + diffDays + " วัน";
-            $('#diff_rec_date').html(days);
-        }
-
-        function custom_day() {
-            var search_period = document.getElementById('search_period').value;
-            var days = '';
-            switch (search_period) {
-                case 'today':
-                    days = ['<?php echo $today; ?>'];
-                    break;
-                case 'yesterday':
-                    days = ['<?php echo $yesterday; ?>'];
-                    break;
-                case 'last7days':
-                    days = [<?php echo "'$day7', '$yesterday'"; ?>];
-                    break;
-                case 'last15days':
-                    days = [<?php echo "'$day15', '$yesterday'"; ?>];
-                    break;
-                case 'last30days':
-                    days = [<?php echo "'$day30', '$yesterday'"; ?>];
-                    break;
-                case 'custom':
-                    document.getElementById('div_search_travel').hidden = false;
-                    break;
-                default:
-                    document.getElementById('div_search_travel').hidden = true;
-                    break;
-            }
-
-            $('#search_travel').flatpickr({
-                onReady: function(selectedDates, dateStr, instance) {
-                    if (instance.isMobile) {
-                        $(instance.mobileInput).attr('step', null);
-                    }
-                },
-                mode: 'range',
-                static: true,
-                altInput: true,
-                altFormat: 'j F Y',
-                dateFormat: 'Y-m-d',
-                defaultDate: days
-            });
-        }
-
-        // Script Function Receipt
-        // ------------------------------------------------------------------------------------
-        function modal_receipt(cover_id, agent_id) {
-            $('#modal-show').modal('toggle');
-            $('#modal-add-receipt').modal('show');
-            $("#modal-add-receipt").css({
-                "overflow-y": "auto"
-            });
-
-            $.blockUI({
-                message: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
-                css: {
-                    backgroundColor: 'transparent',
-                    border: '0'
-                },
-                overlayCSS: {
-                    opacity: 0.8
-                }
-            });
-
-            var formData = new FormData();
-            formData.append('action', 'modal');
-            formData.append('cover_id', cover_id);
-            formData.append('agent_id', agent_id);
-            $.ajax({
-                url: "pages/invoice/function/receipt.php",
-                type: "POST",
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(response) {
-                    if (response != 'false') {
-                        $('#div-receipt-form').html(response);
-
-                        $('#rec_date_2').flatpickr({
-                            static: true,
-                            altInput: true,
-                            altFormat: 'j F Y',
-                            dateFormat: 'Y-m-d'
-                        });
-
-                        $('#payments_type, #bank_account, #rec_bank').select2();
-
-                        check_payment();
-                        modal_page_invoice('receipt-form');
-                    }
-                },
-                complete: function() {
-                    $.unblockUI();
-                }
-            });
-        }
-
-        function check_payment() {
-            var payments_type = document.getElementById('payments_type').value;
-            document.getElementById('div-bank-account-2').hidden = payments_type == 4 ? false : true;
-            document.getElementById('div-bank').hidden = payments_type == 5 ? false : true;
-            document.getElementById('div-check-no').hidden = payments_type == 5 ? false : true;
-            document.getElementById('div-check-date').hidden = payments_type == 5 ? false : true;
-
-            if (payments_type == 5) {
-                $('#date_check').flatpickr({
-                    static: true,
-                    altInput: true,
-                    altFormat: 'j F Y',
-                    dateFormat: 'Y-m-d'
-                });
+            // change color
+            if (vat.value > 0) {
+                document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
+                document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
+            } else {
+                document.getElementById('tr-invoice').style.backgroundColor = '#333';
+                document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
             }
         }
 
-        function download_image(div) {
+        function download_image() {
             var img_name = document.getElementById('name_img').value;
-            var node = document.getElementById(div + '-preview-vertical');
+            var node = document.getElementById('invoice-preview-vertical');
             domtoimage.toJpeg(node, {
                     quality: 0.95
                 })
@@ -966,6 +656,7 @@
                 });
         }
     </script>
+    <!-- END: Page JS-->
 
     <script>
         $(window).on('load', function() {

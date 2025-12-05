@@ -114,8 +114,8 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                             </div>
                             <div class="col-md-2 col-12">
                                 <div class="form-group">
-                                    <label class="form-label" for="voucher_no">Voucher No #</label>
-                                    <input type="text" class="form-control" id="voucher_no" name="voucher_no" />
+                                    <label class="form-label" for="search_voucher_no">Voucher No #</label>
+                                    <input type="text" class="form-control" id="search_voucher_no" name="search_voucher_no" />
                                 </div>
                             </div>
                             <div class="col-md-2 col-12">
@@ -246,6 +246,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                             # --- get value booking extra chang --- #
                             if ((in_array($booking['bec_id'], $first_ext) == false) && !empty($booking['bec_id'])) {
                                 $first_ext[] = $booking['bec_id'];
+                                $bec_id[$booking['id']][] = $booking['bec_id'];
                                 $bec_name[$booking['id']][] = !empty($booking['bec_name']) ? $booking['bec_name'] : $booking['extra_name'];
                             }
                             # --- get value booking payment --- #
@@ -398,7 +399,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                     <input type="hidden" id="book_date" name="book_date" value="<?php echo $today; ?>" />
                                     <input type="hidden" id="book_time" name="book_time" value="<?php echo $times; ?>" />
                                     <div class="row">
-                                        <div class="form-group col-xl-3 col-md-4 col-12">
+                                        <div class="form-group col-xl-2 col-md-3 col-12">
                                             <label for="travel_date">Travel Date</label>
                                             <input type="text" class="form-control flatpickr-basic" id="travel_date" name="travel_date" value="<?php echo $tomorrow; ?>" />
                                         </div>
@@ -429,6 +430,7 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                         <div class="form-group col-xl-3 col-md-4 col-12">
                                             <label for="product_id">Programe (สินค้าหลัก)</label>
                                             <select class="form-control select2" id="product_id" name="product_id" onchange="search_program();">
+                                                <option value=""></option>
                                                 <?php
                                                 $prods = $bookObj->show_product();
                                                 foreach ($prods as $prod) {
@@ -437,10 +439,15 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="form-group col-xl-3 col-md-4 col-12">
+                                        <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label for="category_id">Categorys (สินค้ารอง)</label>
                                             <select class="form-control select2" id="category_id" name="category_id[]" onchange="check_category();" multiple>
                                             </select>
+                                        </div>
+                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                            <label class="form-label" for="voucher_no">Voucher</label>
+                                            <input type="text" id="voucher_no" name="voucher_no" class="form-control" onchange="check_no_agent(this);" /> <!------ onchange="check_no_agent(this);" ------>
+                                            <div class="invalid-feedback" id="invalid-voucher-no">หมายเลข Voucher ซ้ำ.</div>
                                         </div>
                                     </div>
                                     <!------ start div rates ---->
@@ -449,15 +456,6 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                     <input type="hidden" id="rate_total" name="rate_total" value="0">
                                     <!------ end div rates ------>
                                     <div class="row">
-                                        <div class="form-group col-xl-2 col-md-4 col-12">
-                                            <label class="form-label" for="voucher_no">Voucher</label>
-                                            <input type="text" id="voucher_no" name="voucher_no" class="form-control" onchange="check_no_agent(this);" />
-                                            <div class="invalid-feedback" id="invalid-voucher-no">หมายเลข Voucher ซ้ำ.</div>
-                                        </div>
-                                        <div class="form-group col-xl-2 col-md-4 col-12">
-                                            <label class="form-label" for="sender">Sender</label>
-                                            <input type="text" id="sender" name="sender" class="form-control" />
-                                        </div>
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label for="cus_name">Customer Name</label>
                                             <input type="text" class="form-control" id="cus_name" name="cus_name" value="" />
@@ -473,6 +471,10 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label for="cot">Cash on tour</label>
                                             <input type="text" class="form-control numeral-mask" id="cot" name="cot" value="" />
+                                        </div>
+                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                            <label class="form-label" for="sender">Sender</label>
+                                            <input type="text" id="sender" name="sender" class="form-control" />
                                         </div>
                                         <div class="form-group col-xl-6 col-md-4 col-12">
                                             <label class="form-label" for="bp_note">Remark</label>
@@ -801,15 +803,15 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                         <div class="form-group col-md-3 col-12">
                                             <label class="form-label">Transfer</label>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="pickup_type_1" name="pickup_type" class="custom-control-input" value="1" <?php echo $pickup_type == 1 || $pickup_type == 0 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <input type="radio" id="pickup_type_1" name="pickup_type" class="custom-control-input" value="1" <?php echo $pickup_type == 1 || $pickup_type == 0 ? 'checked' : ''; ?> onclick="check_transfer();" />
                                                 <label class="custom-control-label" for="pickup_type_1">เอารถรับส่ง</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="pickup_type_2" name="pickup_type" class="custom-control-input" value="2" <?php echo $pickup_type == 2 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <input type="radio" id="pickup_type_2" name="pickup_type" class="custom-control-input" value="2" <?php echo $pickup_type == 2 ? 'checked' : ''; ?> onclick="check_transfer();" />
                                                 <label class="custom-control-label" for="pickup_type_2">เดินทางมาเอง</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="pickup_type_3" name="pickup_type" class="custom-control-input" value="3" <?php echo $pickup_type == 3 ? 'checked' : ''; ?> onclick="check_transfer();"/>
+                                                <input type="radio" id="pickup_type_3" name="pickup_type" class="custom-control-input" value="3" <?php echo $pickup_type == 3 ? 'checked' : ''; ?> onclick="check_transfer();" />
                                                 <label class="custom-control-label" for="pickup_type_3">เอารถขากลับ</label>
                                             </div>
                                         </div>

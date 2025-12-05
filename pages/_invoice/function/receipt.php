@@ -210,7 +210,7 @@ if (isset($_POST['action']) && $_POST['action'] == "modal" && !empty($_POST['cov
 
         <table class="table table-bordered">
             <thead class="bg-darken-2 text-white">
-                <tr class="table-black">
+                <tr bgcolor="<?php echo ($all_invocies[0]['vat_id'] > 0) ? '#960007' : '#003285'; ?>">
                     <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
                     <td class="text-center"><b>วันที่เดินทาง</b></td>
                     <td class="text-center"><b>ชื่อลูกค้า</b></td>
@@ -223,7 +223,7 @@ if (isset($_POST['action']) && $_POST['action'] == "modal" && !empty($_POST['cov
                     <td class="text-center"><b>ส่วนลด</b></td>
                     <td class="text-center" rowspan="2" style="border-radius: 0px 15px 0px 0px;"><b>COT</b></td>
                 </tr>
-                <tr class="table-black-2">
+                <tr bgcolor="<?php echo ($all_invocies[0]['vat_id'] > 0) ? '#ff3f49' : '#0060ff'; ?>">
                     <td class="text-center p-50"><small>Items</small></td>
                     <td class="text-center p-50"><small>Date</small></td>
                     <td class="text-center p-50"><small>Customer's name</small></td>
@@ -330,8 +330,6 @@ if (isset($_POST['action']) && $_POST['action'] == "modal" && !empty($_POST['cov
 
                     <?php
                     $total_cal = $amount;
-                    $total_cal = !empty($discount) ? $total_cal - $discount : $total_cal;
-                    $total_cal = !empty($cot) ? $total_cal - $cot : $total_cal;
                     if ($all_invocies[0]['vat_id'] == 1) {
                         $vat_total = $total_cal * 100 / 107;
                         $vat_cut = $vat_total;
@@ -344,6 +342,8 @@ if (isset($_POST['action']) && $_POST['action'] == "modal" && !empty($_POST['cov
                         $withholding_total = $all_invocies[0]['withholding'] > 0 ? ($total_cal - $vat_total) * $all_invocies[0]['withholding'] / 100 : 0;
                         $total_cal = $total_cal - $withholding_total;
                     }
+                    $total_cal = !empty($discount) ? $total_cal - $discount : $total_cal;
+                    $total_cal = !empty($cot) ? $total_cal - $cot : $total_cal;
                     ?>
 
                     <tr>

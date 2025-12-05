@@ -18,7 +18,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
     $name = $_POST['name'] != "" ? $_POST['name'] : '';
     $hotel = '';
-    $manage_id = 0;
+    $manage = 0;
 
     $href = "./?pages=order-guide/print";
     $href .= "&date_travel_form=" . $get_date;
@@ -34,18 +34,68 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $href .= "&action=print";
 
     # --- get data --- #
-    $all_manages = $manageObj->fetch_all_manageboat($get_date, $search_boat, $search_guide, $manage_id);
-
+    $bomange_arr = array();
     $categorys_array = array();
-    $all_bookings = $manageObj->fetch_all_bookingboat('all', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, 0);
+    $cars_arr = array();
+    $extra_arr = array();
+    $bpr_arr = array();
+    $manages_arr = array();
+    $all_bookings = $manageObj->fetch_all_bookingboat('guide', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, $search_boat, $search_guide, $manage);
     foreach ($all_bookings as $categorys) {
-        $categorys_array[] = $categorys['id'];
-        $category_name[$categorys['id']][] = $categorys['category_name'];
-        $adult[$categorys['id']][] = $categorys['adult'];
-        $child[$categorys['id']][] = $categorys['child'];
-        $infant[$categorys['id']][] = $categorys['infant'];
-        $foc[$categorys['id']][] = $categorys['foc'];
-        $tourist_array[$categorys['id']][] = $categorys['adult'] + $categorys['child'] + $categorys['infant'] + $categorys['foc'];
+        if (in_array($categorys['manage_id'], $manages_arr) == false && !empty($categorys['manage_id'])) {
+            $manages_arr[] = $categorys['manage_id'];
+            $manage_id[] = $categorys['manage_id'];
+            $boat_name[] = $categorys['boat_name'];
+            $guide_name[] = $categorys['guide_name'];
+            $counter[] = $categorys['manage_counter'];
+            $color_hex[] = $categorys['color_hex'];
+            $text_color[] = $categorys['text_color'];
+            $color_name_th[] = $categorys['color_name_th'];
+        }
+
+        if (in_array($categorys['bpr_id'], $bpr_arr) == false) {
+            $bpr_arr[] = $categorys['bpr_id'];
+            $categorys_array[] = $categorys['id'];
+            $category_name[$categorys['id']][] = $categorys['category_name'];
+            $adult[$categorys['id']][] = $categorys['adult'];
+            $child[$categorys['id']][] = $categorys['child'];
+            $infant[$categorys['id']][] = $categorys['infant'];
+            $foc[$categorys['id']][] = $categorys['foc'];
+            $tourist_array[$categorys['id']][] = $categorys['adult'] + $categorys['child'] + $categorys['infant'] + $categorys['foc'];
+        }
+
+        if (in_array($categorys['bomange_id'], $bomange_arr) == false) {
+            $bomange_arr[] = $categorys['bomange_id'];
+            $bo_id[$categorys['manage_id']][] = $categorys['id'];
+            $hotelp_name[$categorys['id']] = $categorys['hotelp_name'];
+            $outside_pickup[$categorys['id']] = $categorys['outside_pickup'];
+            $zonep_name[$categorys['id']] = $categorys['zonep_name'];
+            $hoteld_name[$categorys['id']] = $categorys['hoteld_name'];
+            $zoned_name[$categorys['id']] = $categorys['zoned_name'];
+            $outside_dropoff[$categorys['id']] = $categorys['outside_dropoff'];
+            $start_pickup[$categorys['id']] = $categorys['start_pickup'];
+            $end_pickup[$categorys['id']] = $categorys['end_pickup'];
+            $product_name[$categorys['id']] = $categorys['product_name'];
+            $telephone[$categorys['id']] = $categorys['telephone'];
+            $cus_name[$categorys['id']] = $categorys['cus_name'];
+            $voucher_no_agent[$categorys['id']] = $categorys['voucher_no_agent'];
+            $book_full[$categorys['id']] = $categorys['book_full'];
+            $room_no[$categorys['id']] = $categorys['room_no'];
+            $bp_note[$categorys['id']] = $categorys['bp_note'];
+            $check_in[$categorys['id']] = $categorys['check_in'];
+            $agent_name[$categorys['id']] = $categorys['agent_name'];
+            $cot[$categorys['id']] = $categorys['cot'];
+        }
+
+        if (in_array($categorys['bot_id'], $cars_arr) == false) {
+            $cars_arr[] = $categorys['bot_id'];
+            $car_name[$categorys['id']][] = $categorys['car_name'];
+        }
+
+        if (in_array($categorys['bec_id'], $extra_arr) == false) {
+            $extra_arr[] = $categorys['bec_id'];
+            $extra_name[$categorys['id']][] = $categorys['extra_name'];
+        }
     }
 
     $name_img = 'ใบงาน [' . date('j F Y', strtotime($get_date)) . ']';
@@ -95,29 +145,29 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
         <!-- Body starts -->
         <div id="div-guide-list">
             <?php
-            if ($all_manages) {
-                foreach ($all_manages as $key => $manages) {
+            if (!empty($manage_id)) {
+                for ($m = 0; $m < count($manage_id); $m++) {
             ?>
                     <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75">
                         <div class="col-4 text-left text-bold h4"></div>
-                        <div class="col-4 text-center"><span class="h4 badge-light-purple"><?php echo $manages['boat_name']; ?></span></div>
+                        <div class="col-4 text-center"><span class="h4 badge-light-purple"><?php echo $boat_name[$m]; ?></span></div>
                         <div class="col-4 text-right mb-50"></div>
                     </div>
 
                     <table class="table table-striped text-uppercase table-vouchure-t2">
                         <thead class="bg-light">
                             <tr>
-                                <th colspan="5">ไกด์ : <?php echo $manages['guide_name']; ?></th>
-                                <th colspan="6">เคาน์เตอร์ : <?php echo $manages['counter']; ?></th>
-                                <th colspan="4" style="background-color: <?php echo $manages['color_hex']; ?>; <?php echo $manages['text_color'] != '' ? 'color: ' . $manages['text_color'] . ';' : ''; ?>">
-                                    สี : <?php echo $manages['color_name_th']; ?>
+                                <th colspan="5">ไกด์ : <?php echo $guide_name[$m]; ?></th>
+                                <th colspan="6">เคาน์เตอร์ : <?php echo $counter[$m]; ?></th>
+                                <th colspan="4" style="background-color: <?php echo $color_hex[$m]; ?>; <?php echo $text_color[$m] != '' ? 'color: ' . $text_color[$m] . ';' : ''; ?>">
+                                    สี : <?php echo $color_name_th[$m]; ?>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="text-center" width="1%">
                                     <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input dt-checkboxes" type="checkbox" id="checkall<?php echo $manages['id']; ?>" onclick="checkbox(<?php echo $manages['id']; ?>);" <?php echo !empty($checkall) ? $checkall : ''; ?> />
-                                        <label class="custom-control-label" for="checkall<?php echo $manages['id']; ?>"></label>
+                                        <input class="custom-control-input dt-checkboxes" type="checkbox" id="checkall<?php echo $manage_id[$m]; ?>" onclick="checkbox(<?php echo $manage_id[$m]; ?>);" <?php echo !empty($checkall) ? $checkall : ''; ?> />
+                                        <label class="custom-control-label" for="checkall<?php echo $manage_id[$m]; ?>"></label>
                                     </div>
                                 </th>
                                 <th width="5%">เวลารับ</th>
@@ -127,7 +177,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                 <th width="5%">V/C</th>
                                 <th width="20%">โรงแรม</th>
                                 <th width="9%">ห้อง</th>
-                                <th class="text-center" width="1%">รวม</th>
                                 <th class="text-center" width="1%">A</th>
                                 <th class="text-center" width="1%">C</th>
                                 <th class="text-center" width="1%">Inf</th>
@@ -144,83 +193,74 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                             $total_infant = 0;
                             $total_foc = 0;
                             $bomange_arr = array();
-                            $all_bookings = $manageObj->fetch_all_bookingboat('manage', $get_date, $search_status, $search_agent, $search_product, $search_voucher_no, $refcode, $name, $hotel, $manages['id']);
-                            foreach ($all_bookings as $bookings) {
-                                if (in_array($bookings['bomange_id'], $bomange_arr) == false) {
-                                    $bomange_arr[] = $bookings['bomange_id'];
-                                    $total_adult += !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0;
-                                    $total_child += !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0;
-                                    $total_infant += !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0;
-                                    $total_foc += !empty($foc[$bookings['id']]) ? array_sum($foc[$bookings['id']]) : 0;
-                                    $total_tourist += !empty($tourist_array[$bookings['id']]) ? array_sum($tourist_array[$bookings['id']]) : 0;
-                                    $tourist = !empty($tourist_array[$bookings['id']]) ? array_sum($tourist_array[$bookings['id']]) : 0;
-                                    $text_hotel = '';
-                                    $text_hotel = (!empty($bookings['hotelp_name'])) ? '<b>Pickup : </b>' . $bookings['hotelp_name'] : '<b>Pickup : </b>' . $bookings['outside_pickup'];
-                                    $text_hotel .= (!empty($bookings['zonep_name'])) ? ' (' . $bookings['zonep_name'] . ')</br>' : '</br>';
-                                    $text_hotel .= (!empty($bookings['hoteld_name'])) ? '<b>Dropoff : </b>' . $bookings['hoteld_name'] : '<b>Dropoff : </b>' . $bookings['outside_dropoff'];
-                                    $text_hotel .= (!empty($bookings['zoned_name'])) ? ' (' . $bookings['zoned_name'] . ')' : '';
+                            $booking_id_arr = array();
+                            if (!empty($bo_id[$manage_id[$m]])) {
+                                // for ($i = 0; $i < count($bo_id[$manage_id[$m]]); $i++) {
+                                //     $id = $bo_id[$manage_id[$m]][$i];
+                                for ($i = 0; $i < count($bo_id[$manage_id[$m]]); $i++) {
+                                    if (in_array($bo_id[$manage_id[$m]][$i], $booking_id_arr) == false) {
+                                        $booking_id_arr[] = $bo_id[$manage_id[$m]][$i];
+                                        $id = $bo_id[$manage_id[$m]][$i];
 
-                                    $cars = $manageObj->get_values(
-                                        'cars.name as name',
-                                        'booking_order_transfer 
-                                                            LEFT JOIN order_transfer ON order_transfer.id = booking_order_transfer.order_id 
-                                                            LEFT JOIN cars ON order_transfer.car_id = cars.id',
-                                        'booking_order_transfer.booking_transfer_id = ' . $bookings['bt_id'],
-                                        1
-                                    );
+                                        $total_adult += !empty($adult[$id]) ? array_sum($adult[$id]) : 0;
+                                        $total_child += !empty($child[$id]) ? array_sum($child[$id]) : 0;
+                                        $total_infant += !empty($infant[$id]) ? array_sum($infant[$id]) : 0;
+                                        $total_foc += !empty($foc[$id]) ? array_sum($foc[$id]) : 0;
+                                        $total_tourist += !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0;
+                                        $tourist = !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0;
 
-                                    $check_in = $manageObj->get_values('id', 'check_in', 'booking_id = ' . $bookings['id'] . ' AND type = 2', 0);
+                                        $text_hotel = '';
+                                        $text_hotel = (!empty($hotelp_name[$id])) ? '<b>Pickup : </b>' . $hotelp_name[$id] : '<b>Pickup : </b>' . $outside_pickup[$id];
+                                        $text_hotel .= (!empty($zonep_name[$id])) ? ' (' . $zonep_name[$id] . ')</br>' : '</br>';
+                                        $text_hotel .= (!empty($hoteld_name[$id])) ? '<b>Dropoff : </b>' . $hoteld_name[$id] : '<b>Dropoff : </b>' . $outside_dropoff[$id];
+                                        $text_hotel .= (!empty($zoned_name[$id])) ? ' (' . $zoned_name[$id] . ')' : '';
                             ?>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input dt-checkboxes checkbox-<?php echo $manages['id']; ?>" type="checkbox"
-                                                    data-check="<?php echo !empty($check_in['id']) ? $check_in['id'] : 0; ?>"
-                                                    data-mange="<?php echo $manages['id']; ?>"
-                                                    id="checkbox<?php echo $bookings['id']; ?>"
-                                                    value="<?php echo $bookings['id']; ?>"
-                                                    onclick="submit_check_in('only', this);"
-                                                    <?php echo (!empty($check_in['id']) && $check_in['id'] > 0) ? 'checked' : ''; ?> />
-                                                <label class="custom-control-label" for="checkbox<?php echo $bookings['id']; ?>"></label>
-                                            </div>
-                                        </td>
-                                        <td class="cell-fit"><?php echo date('H:i', strtotime($bookings['start_pickup'])) . ' - ' . date('H:i', strtotime($bookings['end_pickup'])); ?></td>
-                                        <td class="cell-fit">
-                                            <?php if (!empty($cars)) {
-                                                foreach ($cars as $key => $car) {
-                                                    echo $key > 0 ? '<br>' : '';
-                                                    echo '<div class="badge badge-light-success">' . $car['name'] . '</div>';
-                                                }
-                                            } ?>
-                                        </td>
-                                        <td><?php echo $bookings['agent_name']; ?></td>
-                                        <td><?php echo $bookings['cus_name']; ?></td>
-                                        <td><?php echo !empty($bookings['voucher_no_agent']) ? $bookings['voucher_no_agent'] : $bookings['book_full']; ?></td>
-                                        <td style="padding: 5px;"><?php echo $text_hotel; ?></td>
-                                        <td class="cell-fit"><?php echo $bookings['room_no']; ?></td>
-                                        <td class="cell-fit text-center"><?php echo $tourist; ?></td>
-                                        <td class="text-center"><?php echo !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0; ?></td>
-                                        <td class="text-center"><?php echo !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0; ?></td>
-                                        <td class="text-center"><?php echo !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0; ?></td>
-                                        <td class="text-center"><?php echo !empty($foc[$bookings['id']]) ? array_sum($foc[$bookings['id']]) : 0; ?></td>
-                                        <td class="cell-fit text-nowrap"><b class="text-warning"><?php echo number_format($bookings['cot']); ?></b></td>
-                                        <td class="cell-fit text-nowrap"><b class="text-warning"><?php echo number_format($bookings['cot']); ?></b></td>
-                                        <td>
-                                            <b class="text-info">
-                                                <?php
-                                                $e = 0;
-                                                $extra_charges = $manageObj->get_extra_charge($bookings['id']);
-                                                if (!empty($extra_charges)) {
-                                                    foreach ($extra_charges as $extra_charge) {
-                                                        echo $e == 0 ? $extra_charge['extra_name'] : ' : ' . $extra_charge['extra_name'];
-                                                        $e++;
+                                        <tr>
+                                            <td class="text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input dt-checkboxes checkbox-<?php echo $manage_id[$m]; ?>" type="checkbox"
+                                                        data-check="<?php echo !empty($check_in[$id]) ? $check_in[$id] : 0; ?>"
+                                                        data-mange="<?php echo $manage_id[$m]; ?>"
+                                                        id="checkbox<?php echo $id; ?>"
+                                                        value="<?php echo $id; ?>"
+                                                        onclick="submit_check_in('only', this);"
+                                                        <?php echo (!empty($check_in[$id]) && $check_in[$id] > 0) ? 'checked' : ''; ?> />
+                                                    <label class="custom-control-label" for="checkbox<?php echo $id; ?>"></label>
+                                                </div>
+                                            </td>
+                                            <td class="cell-fit"><?php echo date('H:i', strtotime($start_pickup[$id])) . ' - ' . date('H:i', strtotime($end_pickup[$id])); ?></td>
+                                            <td class="cell-fit">
+                                                <?php if (!empty($car_name[$id])) {
+                                                    for ($c = 0; $c < count($car_name[$id]); $c++) {
+                                                        echo $c > 0 ? '<br>' : '';
+                                                        echo '<div class="badge badge-light-success">' . $car_name[$id][$c] . '</div>';
                                                     }
-                                                }
-                                                echo $bookings['bp_note']; ?>
-                                            </b>
-                                        </td>
-                                    </tr>
+                                                } ?>
+                                            </td>
+                                            <td><?php echo $agent_name[$id]; ?></td>
+                                            <td><?php echo !empty($telephone[$id]) ? $cus_name[$id] . ' <br>(' . $telephone[$id] . ')' : $cus_name[$id]; ?></td>
+                                            <td><?php echo !empty($voucher_no_agent[$id]) ? $voucher_no_agent[$id] : $book_full[$id]; ?></td>
+                                            <td style="padding: 5px;"><?php echo $text_hotel; ?></td>
+                                            <td class="cell-fit"><?php echo $room_no[$id]; ?></td>
+                                            <td class="text-center"><?php echo !empty($adult[$id]) ? array_sum($adult[$id]) : 0; ?></td>
+                                            <td class="text-center"><?php echo !empty($child[$id]) ? array_sum($child[$id]) : 0; ?></td>
+                                            <td class="text-center"><?php echo !empty($infant[$id]) ? array_sum($infant[$id]) : 0; ?></td>
+                                            <td class="text-center"><?php echo !empty($foc[$id]) ? array_sum($foc[$id]) : 0; ?></td>
+                                            <td class="cell-fit text-nowrap"><b class="text-warning"><?php echo !empty($cot[$id]) ? number_format($cot[$id]) : ''; ?></b></td>
+                                            <td>
+                                                <b class="text-info">
+                                                    <?php
+                                                    if (!empty($extra_name[$id])) {
+                                                        for ($e = 0; $e < count($extra_name[$id]); $e++) {
+                                                            echo $e == 0 ? $extra_name[$id][$e] : ' : ' . $extra_name[$id][$e];
+                                                        }
+                                                    }
+                                                    echo $bp_note[$id]; ?>
+                                                </b>
+                                            </td>
+                                        </tr>
                             <?php }
+                                }
                             } ?>
                         </tbody>
                     </table>

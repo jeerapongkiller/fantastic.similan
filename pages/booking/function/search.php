@@ -11,7 +11,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
     $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
     $search_travel = $_POST['search_travel'] != "" ? $_POST['search_travel'] : '0000-00-00';
-    $search_voucher_no = $_POST['voucher_no'] != "" ? $_POST['voucher_no'] : '';
+    $search_voucher_no = $_POST['search_voucher_no'] != "" ? $_POST['search_voucher_no'] : '';
     $refcode = $_POST['refcode'] != "" ? $_POST['refcode'] : '';
     $name = $_POST['name'] != "" ? $_POST['name'] : '';
 
@@ -62,6 +62,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             # --- get value booking extra chang --- #
             if ((in_array($booking['bec_id'], $first_ext) == false) && !empty($booking['bec_id'])) {
                 $first_ext[] = $booking['bec_id'];
+                $bec_id[$booking['id']][] = $booking['bec_id'];
                 $bec_name[$booking['id']][] = !empty($booking['bec_name']) ? $booking['bec_name'] : $booking['extra_name'];
             }
             # --- get value booking payment --- #

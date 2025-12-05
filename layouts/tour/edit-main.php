@@ -1107,6 +1107,7 @@
             document.getElementById('category_name').value = typeof arr_value !== 'undefined' && arr_value['name'] !== '' ? arr_value['name'] : '';
             document.getElementById('category_is_approved').checked = typeof arr_value !== 'undefined' ? arr_value['is_approved'] == 1 ? true : false : true;
             document.getElementById('in_transfer').checked = typeof arr_value !== 'undefined' ? arr_value['transfer'] == 1 ? true : false : true;
+            document.getElementById('in_boat').checked = typeof arr_value !== 'undefined' ? arr_value['boat'] == 1 ? true : false : true;
             document.getElementById('cate_detail').value = typeof arr_value !== 'undefined' && arr_value['detail'] !== '' ? arr_value['detail'] : '';
             document.getElementById('delete-category').hidden = typeof arr_value !== 'undefined' && arr_value['id'] !== '' ? false : true;
         }

@@ -60,6 +60,7 @@ $quotObj = new Quotation();
                                                                 <select class="form-control select2-size-lg" id="title" name="title">
                                                                     <option value="1">ใบเสนอราคา</option>
                                                                     <option value="2">ใบแจ้งหนี้</option>
+                                                                    <option value="3">ใบเสร็จรับเงิน</option>
                                                                 </select>
                                                             </div>
                                                             <div class="d-flex align-items-center mb-1">

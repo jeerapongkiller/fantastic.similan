@@ -9,21 +9,29 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
     // get value from ajax
     $agent_id = $_POST['agent_id'] != "" ? $_POST['agent_id'] : 0;
     $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
+    $travel_text = (!empty($travel_date) && $travel_date != '') ? !empty(substr($travel_date, 14, 24)) ?
+        date('j F Y', strtotime(substr($travel_date, 0, 10)))  . " - " . date('j F Y', strtotime(substr($travel_date, 14, 24))) :
+        date('j F Y', strtotime($travel_date)) :
+        "";
 
+    $bpr_arr = array();
     $all_bookings = $orderObj->fetch_all_bookingagent($agent_id, $travel_date);
-
     foreach ($all_bookings as $categorys) {
         $categorys_array[] = $categorys['id'];
         $category_name[$categorys['id']][] = $categorys['category_name'];
-        $adult[$categorys['id']][] = $categorys['adult'];
-        $child[$categorys['id']][] = $categorys['child'];
-        $infant[$categorys['id']][] = $categorys['infant'];
-        $foc[$categorys['id']][] = $categorys['foc'];
-        $tourist_array[$categorys['id']][] = $categorys['adult'] + $categorys['child'] + $categorys['infant'] + $categorys['foc'];
+
+        if (in_array($categorys['bpr_id'], $bpr_arr) == false) {
+            $bpr_arr[] = $categorys['bpr_id'];
+            $adult[$categorys['id']][] = $categorys['adult'];
+            $child[$categorys['id']][] = $categorys['child'];
+            $infant[$categorys['id']][] = $categorys['infant'];
+            $foc[$categorys['id']][] = $categorys['foc'];
+            $tourist_array[$categorys['id']][] = $categorys['adult'] + $categorys['child'] + $categorys['infant'] + $categorys['foc'];
+        }
     }
 ?>
     <div class="modal-header">
-        <h4 class="modal-title"><span class="text-success"><?php echo $all_bookings[0]['agent_name']; ?></span> (<?php echo date('j F Y', strtotime($travel_date)); ?>)</h4>
+        <h4 class="modal-title"><span class="text-success"><?php echo $all_bookings[0]['agent_name']; ?></span> (<?php echo $travel_text; ?>)</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -42,7 +50,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             <h4 class="font-weight-bolder">Re Confirm Agent</h4>
             <h4>
                 <div class="badge badge-pill badge-light-warning">
-                    <b class="text-danger"><?php echo $all_bookings[0]['agent_name']; ?></b> <span class="text-danger">(<?php echo date('j F Y', strtotime($travel_date)); ?>)</span>
+                    <b class="text-danger"><?php echo $all_bookings[0]['agent_name']; ?></b> <span class="text-danger">(<?php echo $travel_text; ?>)</span>
                 </div>
             </h4>
         </div>
@@ -56,7 +64,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                     <th width="5%">V/C</th>
                     <th width="20%">Hotel</th>
                     <th width="5%">Room</th>
-                    <th class="text-center" width="1%">รวม</th>
+                    <!-- <th class="text-center" width="1%">รวม</th> -->
                     <th class="text-center" width="1%">A</th>
                     <th class="text-center" width="1%">C</th>
                     <th class="text-center" width="1%">Inf</th>
@@ -91,16 +99,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                         <tr>
                             <td class="text-center text-nowrap"><?php echo date('H:i', strtotime($bookings['start_pickup'])) . ' - ' . date('H:i', strtotime($bookings['end_pickup'])); ?></td>
                             <td><?php echo $bookings['product_name']; ?></td>
-                            <td><?php echo $bookings['cus_name']; ?></td>
+                            <td><?php echo !empty($bookings['telephone']) ? $bookings['cus_name'] . ' <br>(' . $bookings['telephone'] . ')' : $bookings['cus_name']; ?></td>
                             <td class="text-nowrap"><?php echo !empty($bookings['voucher_no_agent']) ? $bookings['voucher_no_agent'] : $bookings['book_full']; ?></td>
                             <td><?php echo $text_hotel; ?></td>
                             <td><?php echo $bookings['room_no']; ?></td>
-                            <td class="cell-fit text-center"><?php echo $tourist; ?></td>
+                            <!-- <td class="cell-fit text-center"><?php echo $tourist; ?></td> -->
                             <td class="text-center"><?php echo !empty($adult[$bookings['id']]) ? array_sum($adult[$bookings['id']]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($child[$bookings['id']]) ? array_sum($child[$bookings['id']]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($infant[$bookings['id']]) ? array_sum($infant[$bookings['id']]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($foc[$bookings['id']]) ? array_sum($foc[$bookings['id']]) : 0; ?></td>
-                            <td><b class="text-warning"><?php echo number_format($bookings['cot']); ?></b></td>
+                            <td><b class="text-danger"><?php echo !empty($bookings['cot']) ? number_format($bookings['cot']) : ''; ?></b></td>
                             <td>
                                 <b class="text-info">
                                     <?php

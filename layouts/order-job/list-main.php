@@ -309,7 +309,7 @@
                     data: formData,
                     success: function(response) {
                         // console.log(response);
-                        // search_start_date('custom', $('#date_travel_form').val());
+                        search_start_date('custom', $('#date_travel_form').val());
                         // console.log(response);
                         // input.dataset.check = response;
                         // location.reload();

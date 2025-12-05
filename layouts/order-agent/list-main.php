@@ -109,6 +109,7 @@
                 DatePicker = $('.date-picker'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
+                range = $('.flatpickr-range'),
                 select = $('.select2');
 
             // select2
@@ -157,6 +158,23 @@
                     altInput: true,
                     altFormat: 'j F Y',
                     dateFormat: 'Y-m-d'
+                });
+            }
+
+            // Range
+            if (range.length) {
+                range.flatpickr({
+                    onReady: function(selectedDates, dateStr, instance) {
+                        if (instance.isMobile) {
+                            $(instance.mobileInput).attr('step', null);
+                        }
+                    },
+                    mode: 'range',
+                    static: true,
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    dateFormat: 'Y-m-d',
+                    defaultDate: ["<?php echo $today; ?>", "<?php echo $tomorrow; ?>"]
                 });
             }
 
@@ -321,17 +339,17 @@
         }
 
         function checkbox(travel) {
-            var checkbox_all = document.getElementById('checkall' + travel).checked;
+            var checkbox_all = document.getElementById('checkall-' + travel).checked;
             var checkbox = document.getElementsByClassName('checkbox-' + travel);
 
-            if (checkbox_all == true && checkbox.length > 0) {
+            if (checkbox_all === true && checkbox.length > 0) {
                 for (let index = 0; index < checkbox.length; index++) {
                     if (checkbox[index].checked != true) {
                         checkbox[index].checked = true;
                         submit_check_in('check', checkbox[index]);
                     }
                 }
-            } else if (checkbox_all == false && checkbox.length > 0) {
+            } else if (checkbox_all === false && checkbox.length > 0) {
                 for (let index = 0; index < checkbox.length; index++) {
                     checkbox[index].checked = false;
                     submit_check_in('uncheck', checkbox[index]);

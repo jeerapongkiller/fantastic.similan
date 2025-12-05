@@ -74,6 +74,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                                 <select class="form-control select2-size-lg" id="title" name="title">
                                                                     <option value="1" <?php echo $quotation['title'] == 1 ? 'selected' : ''; ?>>ใบเสนอราคา</option>
                                                                     <option value="2" <?php echo $quotation['title'] == 2 ? 'selected' : ''; ?>>ใบแจ้งหนี้</option>
+                                                                    <option value="3" <?php echo $quotation['title'] == 3 ? 'selected' : ''; ?>>ใบเสร็จรับเงิน</option>
                                                                 </select>
                                                             </div>
                                                             <div class="d-flex align-items-center mb-1">

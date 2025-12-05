@@ -24,12 +24,12 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
         $bpr_values = implode(',', $sanitized_bpr);
         $before = (!empty($json_bpr)) ? $bookObj->get_values('*', 'booking_product_rates', 'id IN (' . $bpr_values . ')', 1) : [];
         foreach ($before as $bf) {
-            echo '<input type="hidden" id="before_bpr" name="before_bpr[]" value="'.$bf['id'].'">';
+            echo '<input type="hidden" id="before_bpr" name="before_bpr[]" value="' . $bf['id'] . '">';
         }
     }
 
     $rates = (!empty($category_id) && !empty($agent_id)) ? $bookObj->show_category_rate($agent_id, $travel_date, $category_id) : [];
-    
+
     if (!empty($rates)) {
         $transfer = $rates[0]['transfer'];
 ?>
@@ -49,7 +49,32 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($rates as $key => $value) { ?>
+                        <?php foreach ($rates as $key => $value) {
+                            switch ($product_id) {
+                                case 12:
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 14) ? 1700 : 2100;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 14) ? 1200 : 1500;
+                                    break;
+                                case 13:
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 16) ? 1600 : 2000;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 16) ? 1100 : 1400;
+                                    break;
+                                case 14:
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 18) ? 2500 : 3000;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 18) ? 1700 : 2700;
+                                    break;
+                                case 15:
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 20) ? 1500 : 1900;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 20) ? 1000 : 1300;
+                                    break;
+                            }
+
+                            $rates_adult = (!empty($before[$key]['rates_adult']) && $before[$key]['category_id'] == $value['id']) ? number_format($before[$key]['rates_adult']) : number_format($value['rate_adult']);
+                            $rates_adult = ($rates_adult > 0) ? $rates_adult : $rate_arr['rate_adult'];
+
+                            $rates_child = (!empty($before[$key]['rates_child']) && $before[$key]['category_id'] == $value['id']) ? number_format($before[$key]['rates_child']) : number_format($value['rate_child']);
+                            $rates_child = ($rates_child > 0) ? $rates_child : $rate_arr['rate_child'];
+                        ?>
                             <tr>
                                 <td>
                                     <input type="hidden" id="periodid" name="periodid[]" value="<?php echo $value['periodid']; ?>">
@@ -72,10 +97,10 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     </svg>
                                                 </td>
                                                 <td width="69%" class="p-0">
-                                                    <input type="text" id="rates_adult" name="rates_adult[]" class="form-control numeral-mask" value="<?php echo (!empty($before[$key]['rates_adult']) && $before[$key]['category_id'] == $value['id']) ? number_format($before[$key]['rates_adult']) : number_format($value['rate_adult']); ?>" oninput="check_rate();">
+                                                    <input type="text" id="rates_adult" name="rates_adult[]" class="form-control numeral-mask" value="<?php echo $rates_adult; ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="adult" name="adult[]" value="<?php echo !empty($before[$key]['adult']) ? $before[$key]['adult'] : 0; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="adult" name="adult[]" value="<?php echo !empty($before[$key]['adult']) ? $before[$key]['adult'] : 0; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>
@@ -94,10 +119,10 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     </svg>
                                                 </td>
                                                 <td width="69%" class="p-0">
-                                                    <input type="text" id="rates_child" name="rates_child[]" class="form-control numeral-mask" value="<?php echo (!empty($before[$key]['rates_child']) && $before[$key]['category_id'] == $value['id']) ? number_format($before[$key]['rates_child']) : number_format($value['rate_child']); ?>" oninput="check_rate();">
+                                                    <input type="text" id="rates_child" name="rates_child[]" class="form-control numeral-mask" value="<?php echo $rates_child; ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="child" name="child[]" value="<?php echo !empty($before[$key]['child']) ? $before[$key]['child'] : 0;; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="child" name="child[]" value="<?php echo !empty($before[$key]['child']) ? $before[$key]['child'] : 0;; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>
@@ -119,7 +144,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     <input type="text" id="rates_infant" name="rates_infant[]" class="form-control numeral-mask" value="<?php echo (!empty($before[$key]['rates_infant']) && $before[$key]['category_id'] == $value['id']) ? number_format($before[$key]['rates_infant']) : number_format($value['rate_infant']); ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="infant" name="infant[]" value="<?php echo !empty($before[$key]['infant']) ? $before[$key]['infant'] : 0;; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="infant" name="infant[]" value="<?php echo !empty($before[$key]['infant']) ? $before[$key]['infant'] : 0;; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>
@@ -155,7 +180,26 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($categorys as $key => $category) { ?>
+                        <?php foreach ($categorys as $key => $category) {
+                            switch ($product_id) {
+                                case 12:
+                                    $rate_arr['rate_adult'] = ($category['id'] == 14) ? 1700 : 2100;
+                                    $rate_arr['rate_child'] = ($category['id'] == 14) ? 1200 : 1500;
+                                    break;
+                                case 13:
+                                    $rate_arr['rate_adult'] = ($category['id'] == 16) ? 1600 : 2000;
+                                    $rate_arr['rate_child'] = ($category['id'] == 16) ? 1100 : 1400;
+                                    break;
+                                case 14:
+                                    $rate_arr['rate_adult'] = ($category['id'] == 18) ? 2500 : 3000;
+                                    $rate_arr['rate_child'] = ($category['id'] == 18) ? 1700 : 2700;
+                                    break;
+                                case 15:
+                                    $rate_arr['rate_adult'] = ($category['id'] == 20) ? 1500 : 1900;
+                                    $rate_arr['rate_child'] = ($category['id'] == 20) ? 1000 : 1300;
+                                    break;
+                            }
+                        ?>
                             <tr>
                                 <td>
                                     <input type="hidden" id="periodid" name="periodid[]" value="0">
@@ -178,10 +222,10 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     </svg>
                                                 </td>
                                                 <td width="69%" class="p-0">
-                                                    <input type="text" id="rates_adult" name="rates_adult[]" class="form-control numeral-mask" value="<?php echo !empty($before[$key]['rates_adult']) ? $before[$key]['rates_adult'] : 0; ?>" oninput="check_rate();">
+                                                    <input type="text" id="rates_adult" name="rates_adult[]" class="form-control numeral-mask" value="<?php echo !empty($before[$key]['rates_adult']) ? $before[$key]['rates_adult'] : $rate_arr['rate_adult']; ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="adult" name="adult[]" value="<?php echo !empty($before[$key]['adult']) ? $before[$key]['adult'] : 0; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="adult" name="adult[]" value="<?php echo !empty($before[$key]['adult']) ? $before[$key]['adult'] : 0; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>
@@ -200,10 +244,10 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     </svg>
                                                 </td>
                                                 <td width="69%" class="p-0">
-                                                    <input type="text" id="rates_child" name="rates_child[]" class="form-control numeral-mask" value="<?php echo !empty($before[$key]['rates_child']) ? $before[$key]['rates_child'] : 0; ?>" oninput="check_rate();">
+                                                    <input type="text" id="rates_child" name="rates_child[]" class="form-control numeral-mask" value="<?php echo !empty($before[$key]['rates_child']) ? $before[$key]['rates_child'] : $rate_arr['rate_child']; ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="child" name="child[]" value="<?php echo !empty($before[$key]['child']) ? $before[$key]['child'] : 0; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="child" name="child[]" value="<?php echo !empty($before[$key]['child']) ? $before[$key]['child'] : 0; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>
@@ -225,7 +269,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                                                     <input type="text" id="rates_infant" name="rates_infant[]" class="form-control numeral-mask" value="<?php echo !empty($before[$key]['rates_infant']) ? $before[$key]['rates_infant'] : 0; ?>" oninput="check_rate();">
                                                 </td>
                                             <?php } else if ($book_type == 2) { ?>
-                                                <input type="text" class="form-control numeral-mask" id="infant" name="infant[]" value="<?php echo !empty($before[$key]['infant']) ? $before[$key]['infant'] : 0; ?>" oninput="check_rate();"/>
+                                                <input type="text" class="form-control numeral-mask" id="infant" name="infant[]" value="<?php echo !empty($before[$key]['infant']) ? $before[$key]['infant'] : 0; ?>" oninput="check_rate();" />
                                             <?php } ?>
                                         </tr>
                                     </table>

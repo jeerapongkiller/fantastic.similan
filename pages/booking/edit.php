@@ -96,7 +96,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <h5>Booking Detail</h5>
                                         </div>
                                         <div class="card-body mt-2">
-                                            <input type="hidden" name="bo_id" value="<?php echo $bo_id; ?>">
+                                            <input type="hidden" id="bo_id" name="bo_id" value="<?php echo $bo_id; ?>">
                                             <input type="hidden" id="bp_id" name="bp_id" value="<?php echo $bp_id; ?>">
                                             <input type="hidden" id="bt_id" name="bt_id" value="<?php echo $bt_id; ?>">
                                             <input type="hidden" name="agent_id" value="<?php echo $agent_id; ?>">
@@ -179,8 +179,9 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                 <div class="form-group col-md-3">
                                                     <label class="form-label" for="voucher_no_agent">Voucher No. (Agent)</label>
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="voucher_no_agent" name="voucher_no_agent" value="<?php echo $voucher_no_agent; ?>">
+                                                        <input type="text" class="form-control" id="voucher_no_agent" name="voucher_no_agent" value="<?php echo $voucher_no_agent; ?>" onchange="check_no_agent(this);">
                                                     </div>
+                                                    <div class="invalid-feedback" id="invalid-voucher-no">หมายเลข Voucher ซ้ำ.</div>
                                                 </div>
                                                 <div class="form-group col-md-3">
                                                     <label class="form-label" for="sender">Sender</label>
@@ -347,7 +348,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                 </div>
                                                 <div class="form-group col-md-3 div-transfer-pickup">
                                                     <div class="form-group">
-                                                        <label class="form-label" for="hotel_pickup_outside">Pickup Outside (ระบุสถานที่นอก)<?php echo $hotel_pickup_outside; ?></label>
+                                                        <label class="form-label" for="hotel_pickup_outside">Pickup Outside (ระบุสถานที่นอก)</label>
                                                         <input type="text" id="hotel_pickup_outside" name="hotel_pickup_outside" class="form-control" value="<?php echo $hotel_pickup_outside; ?>" />
                                                     </div>
                                                 </div>

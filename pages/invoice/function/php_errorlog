@@ -1,0 +1,306 @@
+[23-Jan-2025 19:34:08 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-01-23', 0, '', 0, 10534, 0, 0, 4, 4721, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[23-Jan-2025 19:34:09 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-01-23', 0, '', 0, 10534, 0, 0, 4, 4722, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[23-Jan-2025 19:34:09 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-01-23', 0, '', 0, 10534, 0, 0, 4, 4723, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:39:49 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5658, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:39:51 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5659, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:42 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5660, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:43 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5661, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:46 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5662, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:46 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5663, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:46 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5664, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:47 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5665, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:47 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5666, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:47 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5667, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:47 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5668, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:51 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5669, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:52 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5670, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[10-Feb-2025 15:57:52 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-10', 0, '\xE0\xB8\x97\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x9A\xE0\xB8\xA3...', 0, 12676, 0, 0, 4, 5671, 2, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5838, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5839, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5840, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5841, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5842, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5843, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5844, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5845, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5846, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5847, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5848, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5849, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5850, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:54 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5851, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5852, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5853, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5854, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5855, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5856, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5857, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5858, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5859, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5860, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5861, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5862, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5863, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[13-Feb-2025 13:07:56 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantasticsimilan.shambhala.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-02-13', 0, '', 0, 12272, 0, 1, 4, 5864, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantasticsimilan.shambhala.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:55:24 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8239, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:55:27 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8240, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:55:36 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8241, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:55:43 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8242, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:55:44 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8243, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:57:26 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8244, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496
+[09-Apr-2025 13:57:26 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Column 'user_id' cannot be null in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php:496
+Stack trace:
+#0 /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php(496): mysqli_stmt->execute()
+#1 /home/customer/www/fantastic-tourmate.work/public_html/pages/invoice/function/create.php(46): Invoice->insert_data(1, '2025-04-09', 0, '', 0, 17878, 0, 1, 4, 8245, 4, 1)
+#2 {main}
+  thrown in /home/customer/www/fantastic-tourmate.work/public_html/controllers/Invoice.php on line 496

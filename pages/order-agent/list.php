@@ -45,7 +45,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                                 <div class="col-md-3 col-12">
                                                     <div class="form-group">
                                                         <label class="form-label" for="travel_date">วันที่เที่ยว (Travel Date)</label></br>
-                                                        <input type="text" class="form-control date-picker" id="travel_date" name="travel_date" value="<?php echo $today; ?>" />
+                                                        <input type="text" class="form-control flatpickr-range" id="travel_date" name="travel_date" value="" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 col-12">

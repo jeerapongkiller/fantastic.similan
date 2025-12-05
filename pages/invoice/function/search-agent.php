@@ -6,56 +6,163 @@ $invObj = new Invoice();
 $today = date("Y-m-d");
 $times = date("H:i:s");
 
-function diff_date($today, $diff_date)
-{
-    $diff_inv = array();
-    $date1 = date_create($today);
-    $date2 = date_create($diff_date);
-    $diff = date_diff($date1, $date2);
-    $diff_inv['day'] =  $diff->format("%R%a");
-    $diff_inv['num'] =  $diff->format("%a");
+if (isset($_POST['action']) && $_POST['action'] == "search-booking" && !empty($_POST['travel_date'])) {
+    // get value from ajax
+    $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
 
-    return $diff_inv;
-}
-
-if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['travel_date'])) {
-
-    $travel_date = !empty($_POST['travel_date']) ? $_POST['travel_date'] : $today;
-    $travel_date = !empty(substr($_POST['travel_date'], 14, 24)) ? "'" . substr($_POST['travel_date'], 0, 10) . "' AND '" . substr($_POST['travel_date'], 14, 24) . "'" : "'" . $travel_date . "'";
-    
-    $agents = $invObj->get_value(
-        'bookings.id as bo_id, companies.id as agent_id, companies.name as agent_name',
-        ' bookings LEFT JOIN companies ON companies.id = bookings.company_id LEFT JOIN booking_products ON bookings.id = booking_products.booking_id LEFT JOIN invoices ON bookings.id = invoices.booking_id',
-        !empty(substr($_POST['travel_date'], 14, 24)) ? ' booking_products.travel_date BETWEEN ' . $travel_date . ' AND invoices.id IS NULL AND companies.id != 1331' : ' booking_products.travel_date = ' . $travel_date . ' AND invoices.id IS NULL AND companies.id != 1331',
-        1
-    );
-
-    if (!empty($agents)) {
-        # --- 
-        $array_bo = array();
-        foreach ($agents as $agent) {
-            if (in_array($agent['bo_id'], $array_bo) == false) {
-                $array_bo[] = $agent['bo_id'];
-                $bo_id[$agent['agent_id']][] = $agent['bo_id'];
+    $first_booking = array();
+    $first_company = array();
+    $first_bpr = array();
+    $bookings = $invObj->showlist('bookings', $travel_date, 'all', 0);
+    if (!empty($bookings)) {
+        foreach ($bookings as $booking) {
+            # --- get value agent --- #
+            if (in_array($booking['comp_id'], $first_company) == false && !empty($booking['comp_id'])) {
+                $first_company[] = $booking['comp_id'];
+                $agent_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
+                $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
+            }
+            # --- get value booking --- #
+            if (in_array($booking['id'], $first_booking) == false) {
+                $first_booking[] = $booking['id'];
+                $bo_id[$booking['comp_id']][] = !empty($booking['id']) ? $booking['id'] : 0;
+                // $adult[$booking['comp_id']][] = !empty($booking['bp_adult']) ? $booking['bp_adult'] : 0;
+                // $child[$booking['comp_id']][] = !empty($booking['bp_child']) ? $booking['bp_child'] : 0;
+                // $infant[$booking['comp_id']][] = !empty($booking['bp_infant']) ? $booking['bp_infant'] : 0;
+                // $foc[$booking['comp_id']][] = !empty($booking['bp_foc']) ? $booking['bp_foc'] : 0;
+                // $tourrist[$booking['comp_id']][] = $booking['bp_adult'] + $booking['bp_child'] + $booking['bp_infant'] + $booking['bp_foc'];
+                $cot[$booking['comp_id']][] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
+            }
+            if (in_array($booking['bpr_id'], $first_bpr) == false) {
+                $first_bpr[] = $booking['bpr_id'];
+                $adult[$booking['comp_id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                $child[$booking['comp_id']][] = !empty($booking['child']) ? $booking['child'] : 0;
+                $infant[$booking['comp_id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                $foc[$booking['comp_id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                $tourrist[$booking['comp_id']][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
             }
         }
-
-        $array_agent = array();
-        foreach ($agents as $agent) {
-            if (in_array($agent['agent_id'], $array_agent) == false) {
-                $array_agent[] = $agent['agent_id'];
+    }
 ?>
-                <div class="col-2 p-50">
-                    <a href="javascript:void(0);" onclick="search_booking(<?php echo !empty($agent['agent_id']) ? $agent['agent_id'] : '\'IS-NULL\''; ?>);">
-                        <div class="border p-50 text-center">
-                            <h6><?php echo !empty($agent['agent_name']) ? $agent['agent_name'] : 'ไม่ได้ระบุ'; ?></h6>
-                            <h2 class="fw-bolder"><?php echo count($bo_id[$agent['agent_id']]); ?></h2>
-                        </div>
-                    </a>
-                </div>
-<?php }
+
+    <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
+        <div class="col-4 text-left text-bold h4"></div>
+        <div class="col-4 text-center text-bold h4"><?php echo !empty(substr($travel_date, 14, 24)) ? date('j F Y', strtotime(substr($travel_date, 0, 10))) . ' - ' . date('j F Y', strtotime(substr($travel_date, 14, 24))) : date('j F Y', strtotime($travel_date)); ?></div>
+        <div class="col-4 text-right mb-50"></div>
+    </div>
+
+    <?php if (!empty($agent_id)) { ?>
+        <table class="table table-striped text-uppercase table-vouchure-t2">
+            <thead class="bg-light">
+                <tr>
+                    <th>ชื่อเอเยนต์</th>
+                    <th class="text-center">Booking</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Audlt</th>
+                    <th class="text-center">Children</th>
+                    <th class="text-center">Infant</th>
+                    <th class="text-center">FOC</th>
+                    <th class="text-center">COT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
+                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
+                        <td><?php echo $agent_name[$i]; ?></td>
+                        <td class="text-center"><?php echo !empty($bo_id[$agent_id[$i]]) ? count($bo_id[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($tourrist[$agent_id[$i]]) ? array_sum($tourrist[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($infant[$agent_id[$i]]) ? array_sum($infant[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($foc[$agent_id[$i]]) ? array_sum($foc[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($cot[$agent_id[$i]]) ? number_format(array_sum($cot[$agent_id[$i]])) : 0; ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+
+<?php
+} elseif (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_POST['travel_date'])) {
+    // get value from ajax
+    $travel_date = $_POST['travel_date'] != "" ? $_POST['travel_date'] : '0000-00-00';
+
+    $first_cover = array();
+    $first_company = array();
+    $first_booking = array();
+    $first_bpr = array();
+    $invoices = $invObj->showlist('invoices', $travel_date, 'all', 0);
+    if (!empty($invoices)) {
+        foreach ($invoices as $booking) {
+            # --- get value booking --- #
+            if (in_array($booking['cover_id'], $first_cover) == false) {
+                $first_cover[] = $booking['cover_id'];
+                $cover_id[$booking['comp_id']][] = !empty($booking['cover_id']) ? $booking['cover_id'] : 0;
+            }
+            # --- get value agent --- #
+            if (in_array($booking['comp_id'], $first_company) == false && !empty($booking['comp_id'])) {
+                $first_company[] = $booking['comp_id'];
+                $agent_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
+                $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : '';
+            }
+            # --- get value booking --- #
+            if (in_array($booking['id'], $first_booking) == false) {
+                $first_booking[] = $booking['id'];
+                $bo_id[$booking['comp_id']][] = !empty($booking['id']) ? $booking['id'] : 0;
+                // $adult[$booking['comp_id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                // $child[$booking['comp_id']][] = !empty($booking['child']) ? $booking['child'] : 0;
+                // $infant[$booking['comp_id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                // $foc[$booking['comp_id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                $cot[$booking['comp_id']][] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
+            }
+            if (in_array($booking['bpr_id'], $first_bpr) == false) {
+                $first_bpr[] = $booking['bpr_id'];
+                $adult[$booking['comp_id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                $child[$booking['comp_id']][] = !empty($booking['child']) ? $booking['child'] : 0;
+                $infant[$booking['comp_id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                $foc[$booking['comp_id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                $tourrist[$booking['comp_id']][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
+            }
         }
     }
+?>
+    <div class="d-flex justify-content-between align-items-center header-actions mx-1 row mt-75 pt-1">
+        <div class="col-4 text-left text-bold h4"></div>
+        <div class="col-4 text-center text-bold h4"><?php echo !empty(substr($travel_date, 14, 24)) ? date('j F Y', strtotime(substr($travel_date, 0, 10))) . ' - ' . date('j F Y', strtotime(substr($travel_date, 14, 24))) : date('j F Y', strtotime($travel_date)); ?></div>
+        <div class="col-4 text-right mb-50"></div>
+    </div>
+
+    <?php if (!empty($agent_id)) { ?>
+        <table class="table table-striped text-uppercase table-vouchure-t2">
+            <thead class="bg-light">
+                <tr>
+                    <th>ชื่อเอเยนต์</th>
+                    <th class="text-center">Invoice</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Audlt</th>
+                    <th class="text-center">Children</th>
+                    <th class="text-center">Infant</th>
+                    <th class="text-center">FOC</th>
+                    <th class="text-center">COT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php for ($i = 0; $i < count($agent_id); $i++) { ?>
+                    <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
+                        <td><?php echo $agent_name[$i]; ?></td>
+                        <td class="text-center"><?php echo !empty($cover_id[$agent_id[$i]]) ? count($cover_id[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo array_sum($adult[$agent_id[$i]]) + array_sum($child[$agent_id[$i]]) + array_sum($infant[$agent_id[$i]]) + array_sum($foc[$agent_id[$i]]); ?></td>
+                        <td class="text-center"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($infant[$agent_id[$i]]) ? array_sum($infant[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($foc[$agent_id[$i]]) ? array_sum($foc[$agent_id[$i]]) : 0; ?></td>
+                        <td class="text-center"><?php echo !empty($cot[$agent_id[$i]]) ? number_format(array_sum($cot[$agent_id[$i]])) : 0; ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+<?php
 } else {
     echo false;
 }

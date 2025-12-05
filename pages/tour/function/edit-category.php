@@ -8,11 +8,12 @@ if (isset($_POST['category_action']) && $_POST['category_action'] == "edit" && !
     # --- product detail create form --- #
     $is_approved = !empty($_POST['category_is_approved']) ? $_POST['category_is_approved'] : 0;
     $transfer = !empty($_POST['in_transfer']) ? $_POST['in_transfer'] : 0;
+    $boat = !empty($_POST['in_boat']) ? $_POST['in_boat'] : 0;
     $id = !empty($_POST['category_id']) ? $_POST['category_id'] : 0;
     $name = !empty($_POST['category_name']) ? $_POST['category_name'] : '';
     $detail = !empty($_POST['cate_detail']) ? $_POST['cate_detail'] : '';
     
-    $response = $prodObj->update_category($is_approved, $transfer, $id, $name, $detail);
+    $response = $prodObj->update_category($is_approved, $transfer, $boat, $id, $name, $detail);
 
     echo $response;
 } else {

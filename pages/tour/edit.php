@@ -148,16 +148,22 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                                         <input type="hidden" id="product_id" name="product_id" value="<?php echo $prod['id']; ?>" />
                                                         <input type="hidden" id="category_id" name="category_id" value="" />
                                                         <input type="hidden" id="category_action" name="category_action" value="" />
-                                                        <div class="form-group col-md-6">
+                                                        <div class="form-group col-md-4">
                                                             <div class="custom-control custom-checkbox">
                                                                 <input type="checkbox" class="custom-control-input" id="category_is_approved" name="category_is_approved" value="1" />
                                                                 <label class="custom-control-label" for="category_is_approved">Active</label>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group col-md-6">
+                                                        <div class="form-group col-md-4">
                                                             <div class="custom-control custom-checkbox">
                                                                 <input type="checkbox" class="custom-control-input" id="in_transfer" name="in_transfer" value="1" />
                                                                 <label class="custom-control-label" for="in_transfer">Included Transfer</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="in_boat" name="in_boat" value="1" />
+                                                                <label class="custom-control-label" for="in_boat">Included Boat</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -246,6 +252,7 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                     $arr_category[$category['id']]['name'] = $category['name'];
                                     $arr_category[$category['id']]['is_approved'] = $category['is_approved'];
                                     $arr_category[$category['id']]['transfer'] = $category['transfer'];
+                                    $arr_category[$category['id']]['boat'] = $category['boat'];
                                     $arr_category[$category['id']]['detail'] = $category['detail'];
                             ?>
                                     <div class="card shadow-none bg-transparent border-secondary border-lighten-5">

@@ -125,8 +125,7 @@
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         $(document).ready(function() {
-            var jqSearch = $('#manages-search-form'),
-                picker = $('#dob'),
+            var picker = $('#dob'),
                 DatePicker = $('.date-picker'),
                 dtPicker = $('#dob-bootstrap-val'),
                 select = $('.select2'),
@@ -148,6 +147,9 @@
                     });
                 });
             }
+
+            // dragula([document.getElementById('basic-list-group')]);
+
 
             //Numeral
             $('.numeral-mask').toArray().forEach(function(field) {
@@ -211,8 +213,16 @@
                     });
 
                 $(horizontalWizard)
+                // .find('.btn-submit')
+                // .on('click', function () {
+                //     alert('Submitted..!!');
+                // });
 
                 horizontaStepper.to(<?php echo !empty($_GET['step']) ? $_GET['step'] : 1; ?>);
+                // console.log(horizontaStepper);
+                // horizontalWizard.addEventListener('shown.bs-stepper', function(event) {
+                //     console.log('Moved to step ' + event.detail.indexStep)
+                // })
             }
 
             // Picker
@@ -238,45 +248,6 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
-            jqSearch.on("submit", function(e) {
-                var serializedData = $(this).serialize();
-                $.ajax({
-                    url: "pages/order-driver/function/search-manage.php",
-                    type: "POST",
-                    data: serializedData + "&action=search",
-                    success: function(response) {
-                        if (response != false) {
-                            $('#div-manage-list').html(response);
-                        } else {
-                            Swal.fire({
-                                title: "Please try again.",
-                                icon: "error",
-                            });
-                        }
-
-                        var horizontalWizard = document.querySelector('.horizontal-wizard-example');
-                        if (typeof horizontalWizard !== undefined && horizontalWizard !== null) {
-                            var horizontaStepper = new Stepper(horizontalWizard, {
-                                linear: false
-                            });
-                            $(horizontalWizard)
-                                .find('.btn-next')
-                                .on('click', function() {
-                                    horizontaStepper.next();
-                                });
-                            $(horizontalWizard)
-                                .find('.btn-prev')
-                                .on('click', function() {
-                                    horizontaStepper.previous();
-                                });
-
-                            $(horizontalWizard)
-                        }
-                    }
-                });
-                e.preventDefault();
-            });
-
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
             search_start_date('custom', '<?php echo $get_date; ?>');

@@ -74,9 +74,20 @@ $quotations = $quotObj->showlist();
                                     <?php
                                     foreach ($quotations as $quotation) {
                                         $href = 'href="./?pages=quotation/edit&id=' . $quotation['id'] . '" style="color:#6E6B7B"';
+                                        switch ($quotation['title']) {
+                                            case '1':
+                                                $title_text = 'ใบเสนอราคา';
+                                                break;
+                                            case '2':
+                                                $title_text = 'ใบแจ้งหนี้';
+                                                break;
+                                            case '3':
+                                                $title_text = 'ใบเสร็จรับเงิน';
+                                                break;
+                                        }
                                     ?>
                                         <tr>
-                                            <td><a <?php echo $href; ?>><?php echo $quotation['title'] == 1 ? 'ใบเสนอราคา' : 'ใบแจ้งหนี้'; ?></a></td>
+                                            <td><a <?php echo $href; ?>><?php echo $title_text; ?></a></td>
                                             <td class="cell-fit"><a <?php echo $href; ?>><?php echo $quotation['quo_full'] ?></a></td>
                                             <td><a <?php echo $href; ?>><?php echo date('j F Y', strtotime($quotation['date_quo'])); ?></a></td>
                                             <td><a <?php echo $href; ?>><?php echo $quotation['seller']; ?></a></td>

@@ -354,6 +354,25 @@
 
                 jqFormBooking.validate({
                     rules: {
+                        // 'voucher_no_agent': {
+                        //     required: true,
+                        //     remote: {
+                        //         url: "pages/booking/function/check-voucher-no.php",
+                        //         type: "post",
+                        //         data: {
+                        //             action: "check",
+                        //             voucher_no: function() {
+                        //                 return $('[name="voucher_no_agent"]').val();
+                        //             },
+                        //             agent: function() {
+                        //                 return $('[name="agent"]').val();
+                        //             },
+                        //             bo_id: function() {
+                        //                 return $('[name="bo_id"]').val() || 0;
+                        //             }
+                        //         }
+                        //     }
+                        // },
                         'product_id': {
                             required: true
                         },
@@ -362,8 +381,8 @@
                         }
                     },
                     messages: {
-                        // 'pax_group': {
-                        //     regex: "This tat license is already taken! Try another."
+                        // 'voucher_no_agent': {
+                        //     remote: "This tat voucher no is already taken! Try another."
                         // }
                     },
                     submitHandler: function(form) {
@@ -592,22 +611,22 @@
         }
 
         function check_transfer() {
-            var pickup_type = document.getElementsByName('pickup_type');
-            if (pickup_type[0].checked == true) {
-                document.getElementById('div-transfer').hidden = false;
-                var pickup = document.getElementsByClassName('div-transfer-pickup');
-                for (let index = 0; index < pickup.length; index++) {
-                    pickup[index].hidden = false;
-                }
-            } else if (pickup_type[1].checked == true) {
-                document.getElementById('div-transfer').hidden = true;
-            } else if (pickup_type[2].checked == true) {
-                document.getElementById('div-transfer').hidden = false;
-                var pickup = document.getElementsByClassName('div-transfer-pickup');
-                for (let index = 0; index < pickup.length; index++) {
-                    pickup[index].hidden = true;
-                }
-            }
+            // var pickup_type = document.getElementsByName('pickup_type');
+            // if (pickup_type[0].checked == true) {
+            //     document.getElementById('div-transfer').hidden = false;
+            //     var pickup = document.getElementsByClassName('div-transfer-pickup');
+            //     for (let index = 0; index < pickup.length; index++) {
+            //         pickup[index].hidden = false;
+            //     }
+            // } else if (pickup_type[1].checked == true) {
+            //     document.getElementById('div-transfer').hidden = true;
+            // } else if (pickup_type[2].checked == true) {
+            //     document.getElementById('div-transfer').hidden = false;
+            //     var pickup = document.getElementsByClassName('div-transfer-pickup');
+            //     for (let index = 0; index < pickup.length; index++) {
+            //         pickup[index].hidden = true;
+            //     }
+            // }
         }
 
         function check_date_agent() {
@@ -703,6 +722,26 @@
             document.getElementById('end_pickup').value = typeof end_pickup !== 'undefined' ? end_pickup : '00:00';
         }
 
+        function check_no_agent(voucher_no) {
+            var agent = document.getElementById('agent');
+            var bo_id = document.getElementById('bo_id');
+
+            var formData = new FormData();
+            formData.append('action', 'check');
+            formData.append('agent', agent.value);
+            formData.append('voucher_no', voucher_no.value);
+            formData.append('bo_id', bo_id.value);
+            $.ajax({
+                url: "pages/booking/function/check-voucher-no.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    document.getElementById("invalid-voucher-no").style.display = (response == 'false') ? "block" : "none";
+                }
+            });
+        }
         // Script Function Extra Charge
         // ------------------------------------------------------------------------------------
         function check_start_extra() {

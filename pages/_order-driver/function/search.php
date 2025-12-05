@@ -113,7 +113,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['se
                                                 <td><?php echo $bookings['start_pickup'] != '00:00' ? date('H:i', strtotime($bookings['start_pickup'])) . ' - ' . date('H:i', strtotime($bookings['end_pickup'])) : ''; ?></td>
                                                 <td><?php echo $text_hotel; ?></td>
                                                 <td><?php echo $bookings['room_no']; ?></td>
-                                                <td><?php echo $bookings['cus_name']; ?></td>
+                                                <td><?php echo !empty($bookings['telephone']) ? $bookings['cus_name'] . ' <br>(' . $bookings['telephone'] . ')' : $bookings['cus_name']; ?></td>
                                                 <td class="text-center"><?php echo $bookings['tourist']; ?></td>
                                                 <td><?php echo !empty($bookings['agent_name']) ? $bookings['agent_name'] : '-'; ?></td>
                                                 <td><?php echo $bookings['sender']; ?></td>
@@ -239,7 +239,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['se
                                                     <td class="cell-fit"><?php echo $bookings['start_pickup'] != '00:00' ? date('H:i', strtotime($bookings['start_pickup'])) . ' - ' . date('H:i', strtotime($bookings['end_pickup'])) : ''; ?></td>
                                                     <td><?php echo $text_hotel; ?></td>
                                                     <td class="cell-fit"><?php echo $bookings['room_no']; ?></td>
-                                                    <td><?php echo $bookings['cus_name']; ?></td>
+                                                    <td><?php echo !empty($bookings['telephone']) ? $bookings['cus_name'] . ' <br>(' . $bookings['telephone'] . ')' : $bookings['cus_name']; ?></td>
                                                     <td class="text-center"><b class="text-warning"><?php echo ($tourist - array_sum($tourist_all)); ?></b></td>
                                                     <td class="text-center"><?php echo !empty($bookings['adult']) ? $bookings['adult'] : 0; ?></td>
                                                     <td class="text-center"><?php echo !empty($bookings['child']) ? $bookings['child'] : 0; ?></td>

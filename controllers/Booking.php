@@ -61,6 +61,11 @@ class Booking extends DB
 
     public function showlist(int $id, $search_status, string $payment, string $search_agent, string $search_product, string $search_travel, string $voucher_no, string $refcode, string $name)
     {
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+        $parts = explode(' ', $name);
+        $nameisThai = preg_match('/[\x{0E00}-\x{0E7F}]/u', $name);
+        $match_query = !empty($name) ? '+' . implode(' +', $parts) : '';
+
         $query = "SELECT BO.*,
                         BONO.bo_full as book_full,
                         BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
@@ -153,17 +158,9 @@ class Booking extends DB
             $query .= " AND BP.travel_date = '" . $search_travel . "'";
         }
 
-        if (!empty($voucher_no)) {
-            $query .= " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' ";
-        }
-
-        if (!empty($refcode)) {
-            $query .= " AND BONO.bo_full LIKE '%" . $refcode . "%' ";
-        }
-
-        if (!empty($name)) {
-            $query .= " AND CUS.name LIKE '%" . $name . "%' ";
-        }
+        $query .= (!empty($voucher_no)) ? " AND BO.voucher_no_agent = '" . $voucher_no . "' " : "";
+        $query .= (!empty($refcode)) ? " AND BONO.bo_full = '" . $refcode . "' " : "";
+        $query .= (!empty($match_query)) ? (!empty($nameisThai)) ? " AND CUS.name LIKE '%" . $name . "%' " : " AND MATCH(CUS.name) AGAINST('$match_query' IN BOOLEAN MODE)" : '';
 
         $query .= " ORDER BY BO.id DESC, BP.travel_date ASC, BOPA.id ASC";
         $statement = $this->connection->prepare($query);
@@ -643,7 +640,7 @@ class Booking extends DB
                 FROM $from
                 WHERE $where
         ";
-
+     
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $result = $statement->get_result();
@@ -694,19 +691,21 @@ class Booking extends DB
         return $data;
     }
 
-    public function check_doubly_agent(int $agent, string $voucher_no_agent)
+    public function check_doubly_agent(int $bo_id, int $agent, string $voucher_no_agent)
     {
-        $query = "SELECT id, company_id, voucher_no_agent
-                FROM bookings 
-                WHERE company_id = $agent
-                AND voucher_no_agent = $voucher_no_agent
-                AND booking_status_id != 3 
-        ";
+        $query = "SELECT id 
+              FROM bookings 
+              WHERE company_id = ?
+              AND voucher_no_agent = ?
+              AND booking_status_id != 3
+              AND id != ?";
+
         $statement = $this->connection->prepare($query);
+        $statement->bind_param("isi", $agent, $voucher_no_agent, $bo_id);
         $statement->execute();
         $result = $statement->get_result();
 
-        return $result->num_rows;
+        return $result->num_rows == 0 ? "true" : "false";
     }
 
     public function show_private_transfer(int $bp_id, int $period_id, int $pickup, int $cars_id)
@@ -1226,6 +1225,16 @@ class Booking extends DB
 
     public function insert_data(int $booking_status_id, int $booking_type_id, string $booking_date, string $booking_time, int $company_id, string $voucher_no_agent, string $sender, string $discount)
     {
+        // $query = "SELECT id FROM bookings WHERE company_id = ? AND voucher_no_agent = ?";
+        // $stmt = $this->connection->prepare($query);
+        // $stmt->bind_param("is", $company_id, $voucher_no_agent);
+        // $stmt->execute();
+        // $stmt->store_result();
+
+        // if ($stmt->num_rows > 0) {
+        //     return false;
+        // }
+
         $bind_types = "";
         $params = array();
 
@@ -1268,7 +1277,7 @@ class Booking extends DB
 
         $bind_types .= "s";
         array_push($params, date("Y-m-d H:i:s"));
-   
+
 
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
@@ -1282,6 +1291,16 @@ class Booking extends DB
 
     public function update_data(int $id, int  $book_status, string $voucher_no_agent, string $sender, int $company_id, int $booking_type_id, string $discount)
     {
+        // $query = "SELECT id FROM bookings WHERE company_id = ? AND voucher_no_agent = ? AND id != ?";
+        // $stmt = $this->connection->prepare($query);
+        // $stmt->bind_param("isi", $company_id, $voucher_no_agent, $id);
+        // $stmt->execute();
+        // $stmt->store_result();
+
+        // if ($stmt->num_rows > 0) {
+        //     return false;
+        // }
+
         $bind_types = "";
         $params = array();
 

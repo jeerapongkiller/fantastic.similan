@@ -1,14 +1,14 @@
 <?php
 class DB
 {
-    // private $host = 'ftp.fantastic-tourmate.work';
-    // private $username = 'uh30461kvktxj';
-    // private $password = '@h5?1c2jf^ki';
-    // private $database = 'dbxwoccqevnkts';
-    private $host = 'localhost';
-    private $username = 'root';
-    private $password = '';
-    private $database = 'fantastic_similan';
+    private $host = 'ftp.fantastic-tourmate.work';
+    private $username = 'uh30461kvktxj';
+    private $password = '@h5?1c2jf^ki';
+    private $database = 'dbxwoccqevnkts';
+    // private $host = 'localhost';
+    // private $username = 'root';
+    // private $password = '';
+    // private $database = 'fantastic_similan';
     protected $connection;
 
     public function __construct()

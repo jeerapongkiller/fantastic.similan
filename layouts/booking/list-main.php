@@ -424,6 +424,22 @@
 
                 jqFormBooking.validate({
                     rules: {
+                        // 'voucher_no': {
+                        //     required: true,
+                        //     remote: {
+                        //         url: "pages/booking/function/check-voucher-no.php",
+                        //         type: "post",
+                        //         data: {
+                        //             action: "check",
+                        //             voucher_no: function() {
+                        //                 return $('[name="voucher_no"]').val();
+                        //             },
+                        //             agent: function() {
+                        //                 return $('[name="agent"]').val();
+                        //             },
+                        //         }
+                        //     }
+                        // },
                         'product_id': {
                             required: true
                         },
@@ -432,7 +448,9 @@
                         }
                     },
                     messages: {
-
+                        // 'voucher_no': {
+                        //     remote: "This tat voucher no is already taken! Try another."
+                        // }
                     },
                     submitHandler: function(form) {
 
@@ -610,22 +628,22 @@
         }
 
         function check_transfer() {
-            var pickup_type = document.getElementsByName('pickup_type');
-            if (pickup_type[0].checked == true) {
-                document.getElementById('div-transfer').hidden = false;
-                var pickup = document.getElementsByClassName('div-transfer-pickup');
-                for (let index = 0; index < pickup.length; index++) {
-                    pickup[index].hidden = false;
-                }
-            } else if (pickup_type[1].checked == true) {
-                document.getElementById('div-transfer').hidden = true;
-            } else if (pickup_type[2].checked == true) {
-                document.getElementById('div-transfer').hidden = false;
-                var pickup = document.getElementsByClassName('div-transfer-pickup');
-                for (let index = 0; index < pickup.length; index++) {
-                    pickup[index].hidden = true;
-                }
-            }
+            // var pickup_type = document.getElementsByName('pickup_type');
+            // if (pickup_type[0].checked == true) {
+            //     document.getElementById('div-transfer').hidden = false;
+            //     var pickup = document.getElementsByClassName('div-transfer-pickup');
+            //     for (let index = 0; index < pickup.length; index++) {
+            //         pickup[index].hidden = false;
+            //     }
+            // } else if (pickup_type[1].checked == true) {
+            //     document.getElementById('div-transfer').hidden = true;
+            // } else if (pickup_type[2].checked == true) {
+            //     document.getElementById('div-transfer').hidden = false;
+            //     var pickup = document.getElementsByClassName('div-transfer-pickup');
+            //     for (let index = 0; index < pickup.length; index++) {
+            //         pickup[index].hidden = true;
+            //     }
+            // }
         }
 
         function check_rate() {
@@ -727,7 +745,7 @@
                 contentType: false,
                 data: formData,
                 success: function(response) {
-                    document.getElementById("invalid-voucher-no").style.display = (response > 0) ? "block" : "none";
+                    document.getElementById("invalid-voucher-no").style.display = (response == 'false') ? "block" : "none";
                 }
             });
         }

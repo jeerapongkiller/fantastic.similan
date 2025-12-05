@@ -17,5 +17,5 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['pr
 
     echo !empty($cate_arr) ? json_encode($cate_arr) : false;
 } else {
-    echo $response;
+    echo false;
 }

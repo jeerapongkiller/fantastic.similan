@@ -29,20 +29,8 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && (isset($_POST['rec_
     $amount = !empty($_POST['amount']) ? $_POST['amount'] : 0;
     $note = $_POST['note'] != "" ? $_POST['note'] : '';
 
-    // get details of the uploaded file
-    $countfiles = count($_FILES['file']['name']);
-    $fileArray = array();
-
-    for ($i = 0; $i < $countfiles; $i++) {
-        $fileArray['fileTmpPath'][$i] = $_FILES['file']['tmp_name'][$i];
-        $fileArray['fileName'][$i] = $_FILES['file']['name'][$i];
-        $fileArray['fileSize'][$i] = $_FILES['file']['size'][$i];
-        $fileArray['fileBefore'][$i] = '';
-        $fileArray['fileDelete'][$i] = 0;
-    }
-
-    $response = $recObj->update_data($rec_date, $cheque_no, $cheque_date, $bank_account_id, $bank_cheque_id, $payment_id, $is_approved, $note, $fileArray, $rec_id);
-
+    $response = $recObj->update_data($rec_date, $cheque_no, $cheque_date, $bank_account_id, $bank_cheque_id, $payment_id, $is_approved, $note, [], $rec_id);
+    
     echo $response != false && $response > 0 ? $response : false;
 } else {
     echo $response = false;

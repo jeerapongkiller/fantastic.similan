@@ -13,6 +13,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
     $first_booking = array();
     $first_cover = array();
     $first_company = array();
+    $first_bpr = array();
     $invoices = $recObj->showlist('invoices', $travel_date, 'all', 0);
     if (!empty($invoices)) {
         foreach ($invoices as $invoice) {
@@ -31,12 +32,20 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
             if (in_array($invoice['id'], $first_booking) == false) {
                 $first_booking[] = $invoice['id'];
                 $bo_id[$invoice['comp_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
-                $adult[$invoice['comp_id']][] = !empty($invoice['bp_adult']) ? $invoice['bp_adult'] : 0;
-                $child[$invoice['comp_id']][] = !empty($invoice['bp_child']) ? $invoice['bp_child'] : 0;
-                $infant[$invoice['comp_id']][] = !empty($invoice['bp_infant']) ? $invoice['bp_infant'] : 0;
-                $foc[$invoice['comp_id']][] = !empty($invoice['bp_foc']) ? $invoice['bp_foc'] : 0;
-                $tourrist[$invoice['comp_id']][] = $invoice['bp_adult'] + $invoice['bp_child'] + $invoice['bp_infant'] + $invoice['bp_foc'];
+                // $adult[$invoice['comp_id']][] = !empty($invoice['bp_adult']) ? $invoice['bp_adult'] : 0;
+                // $child[$invoice['comp_id']][] = !empty($invoice['bp_child']) ? $invoice['bp_child'] : 0;
+                // $infant[$invoice['comp_id']][] = !empty($invoice['bp_infant']) ? $invoice['bp_infant'] : 0;
+                // $foc[$invoice['comp_id']][] = !empty($invoice['bp_foc']) ? $invoice['bp_foc'] : 0;
+                // $tourrist[$invoice['comp_id']][] = $invoice['bp_adult'] + $invoice['bp_child'] + $invoice['bp_infant'] + $invoice['bp_foc'];
                 $cot[$invoice['comp_id']][] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : 0;
+            }
+            if (in_array($invoice['bpr_id'], $first_bpr) == false) {
+                $first_bpr[] = $invoice['bpr_id'];
+                $adult[$invoice['comp_id']][] = !empty($invoice['adult']) ? $invoice['adult'] : 0;
+                $child[$invoice['comp_id']][] = !empty($invoice['child']) ? $invoice['child'] : 0;
+                $infant[$invoice['comp_id']][] = !empty($invoice['infant']) ? $invoice['infant'] : 0;
+                $foc[$invoice['comp_id']][] = !empty($invoice['foc']) ? $invoice['foc'] : 0;
+                $tourrist[$invoice['comp_id']][] = $invoice['adult'] + $invoice['child'] + $invoice['infant'] + $invoice['foc'];
             }
         }
     }
@@ -88,6 +97,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
     $first_cover = array();
     $first_company = array();
     $first_booking = array();
+    $first_bpr = array();
     $invoices = $recObj->showlist('receipts', $travel_date, 'all', 0);
     if (!empty($invoices)) {
         foreach ($invoices as $invoice) {
@@ -111,11 +121,19 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
             if (in_array($invoice['id'], $first_booking) == false) {
                 $first_booking[] = $invoice['id'];
                 $bo_id[$invoice['comp_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
-                $adult[$invoice['comp_id']][] = !empty($invoice['bp_adult']) ? $invoice['bp_adult'] : 0;
-                $child[$invoice['comp_id']][] = !empty($invoice['bp_child']) ? $invoice['bp_child'] : 0;
-                $infant[$invoice['comp_id']][] = !empty($invoice['bp_infant']) ? $invoice['bp_infant'] : 0;
-                $foc[$invoice['comp_id']][] = !empty($invoice['bp_foc']) ? $invoice['bp_foc'] : 0;
+                // $adult[$invoice['comp_id']][] = !empty($invoice['bp_adult']) ? $invoice['bp_adult'] : 0;
+                // $child[$invoice['comp_id']][] = !empty($invoice['bp_child']) ? $invoice['bp_child'] : 0;
+                // $infant[$invoice['comp_id']][] = !empty($invoice['bp_infant']) ? $invoice['bp_infant'] : 0;
+                // $foc[$invoice['comp_id']][] = !empty($invoice['bp_foc']) ? $invoice['bp_foc'] : 0;
                 $cot[$invoice['comp_id']][] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : 0;
+            }
+            if (in_array($invoice['bpr_id'], $first_bpr) == false) {
+                $first_bpr[] = $invoice['bpr_id'];
+                $adult[$invoice['comp_id']][] = !empty($invoice['adult']) ? $invoice['adult'] : 0;
+                $child[$invoice['comp_id']][] = !empty($invoice['child']) ? $invoice['child'] : 0;
+                $infant[$invoice['comp_id']][] = !empty($invoice['infant']) ? $invoice['infant'] : 0;
+                $foc[$invoice['comp_id']][] = !empty($invoice['foc']) ? $invoice['foc'] : 0;
+                $tourrist[$invoice['comp_id']][] = $invoice['adult'] + $invoice['child'] + $invoice['infant'] + $invoice['foc'];
             }
         }
     }
@@ -145,7 +163,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search-invoice" && !empty($_
                     <tr onclick="modal_detail(<?php echo $agent_id[$i]; ?>, '<?php echo addslashes($agent_name[$i]); ?>', '<?php echo $travel_date; ?>');" data-toggle="modal" data-target="#modal-detail">
                         <td><?php echo $agent_name[$i]; ?></td>
                         <td class="text-center"><?php echo !empty($rec_id[$agent_id[$i]]) ? count($rec_id[$agent_id[$i]]) : 0; ?></td>
-                        <td class="text-center"><?php echo array_sum($adult[$agent_id[$i]]) + array_sum($child[$agent_id[$i]]) + array_sum($infant[$agent_id[$i]]) + array_sum($foc[$agent_id[$i]]); ?></td>
+                        <td class="text-center"><?php echo !empty($tourrist[$agent_id[$i]]) ? array_sum($tourrist[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo !empty($adult[$agent_id[$i]]) ? array_sum($adult[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo !empty($child[$agent_id[$i]]) ? array_sum($child[$agent_id[$i]]) : 0; ?></td>
                         <td class="text-center"><?php echo !empty($infant[$agent_id[$i]]) ? array_sum($infant[$agent_id[$i]]) : 0; ?></td>

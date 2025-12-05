@@ -371,13 +371,13 @@ class Product extends DB
         return $this->response;
     }
 
-    public function insert_category(int $is_approved, int $transfer, int $product_id, string $name, string $detail)
+    public function insert_category(int $is_approved, int $transfer, int $boat, int $product_id, string $name, string $detail)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "INSERT INTO product_category (name, slug, detail, transfer, product_id, is_approved, is_deleted, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, 0, NOW(),NOW())";
+        $query = "INSERT INTO product_category (name, slug, detail, transfer, boat, product_id, is_approved, is_deleted, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0, NOW(),NOW())";
 
         $bind_types .= "s";
         array_push($params, $name);
@@ -390,6 +390,9 @@ class Product extends DB
 
         $bind_types .= "i";
         array_push($params, $transfer);
+
+        $bind_types .= "i";
+        array_push($params, $boat);
 
         $bind_types .= "i";
         array_push($params, $product_id);
@@ -406,7 +409,7 @@ class Product extends DB
         return $this->response;
     }
 
-    public function update_category(int $is_approved, int $transfer, int $id, string $name, string $detail)
+    public function update_category(int $is_approved, int $transfer, int $boat, int $id, string $name, string $detail)
     {
         $bind_types = "";
         $params = array();
@@ -424,6 +427,10 @@ class Product extends DB
         $query .= " transfer = ? ,";
         $bind_types .= "i";
         array_push($params, $transfer);
+
+        $query .= " boat = ? ,";
+        $bind_types .= "i";
+        array_push($params, $boat);
 
         $query .= " is_approved = ? ,";
         $bind_types .= "i";

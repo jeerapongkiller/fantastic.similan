@@ -130,7 +130,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <?php
                     $vats = $invObj->showvat();
                     foreach ($vats as $vat) {
-                        $select = $vat['id'] == $all_invocies[0]['vat_id'] ? 'selected' : '';
+                        $select = (!empty($all_invocies[0]['vat_id']) && $vat['id'] == $all_invocies[0]['vat_id']) ? 'selected' : '';
                     ?>
                         <option value="<?php echo $vat['id']; ?>" data-name="<?php echo $vat['name']; ?>" <?php echo $select; ?>><?php echo $vat['name']; ?></option>
                     <?php } ?>
@@ -181,7 +181,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <option value="">Please choose bank account ... </option>
                     <?php
                     foreach ($banks_acc as $bank_acc) {
-                        $select = $bank_acc['id'] == $all_invocies[0]['bank_account_id'] ? 'selected' : '';
+                        $select = (!empty($all_invocies[0]['bank_account_id']) && $bank_acc['id'] == $all_invocies[0]['bank_account_id']) ? 'selected' : '';
                     ?>
                         <option value="<?php echo $bank_acc['id']; ?>" data-name="<?php echo $bank_acc['account_name']; ?>" <?php echo $select; ?>><?php echo $bank_acc['banName'] . ' ' . $bank_acc['account_no'] . ' (' . $bank_acc['account_name'] . ')'; ?></option>
                     <?php } ?>
@@ -192,7 +192,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
     <div class="row">
         <table class="table table-bordered">
             <thead class="bg-darken-2 text-white">
-                <tr class="table-black">
+                <tr class="table-black" id="tr-invoice">
                     <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
                     <td class="text-center"><b>วันที่เดินทาง</b></td>
                     <td class="text-center"><b>ชื่อลูกค้า</b></td>
@@ -205,7 +205,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                     <td class="text-center"><b>ส่วนลด</b></td>
                     <td class="text-center" rowspan="2" style="border-radius: 0px 15px 0px 0px;"><b>COT</b></td>
                 </tr>
-                <tr class="table-black-2">
+                <tr class="table-black-2" id="tr-invoice-2">
                     <td class="text-center p-50"><small>Items</small></td>
                     <td class="text-center p-50"><small>Date</small></td>
                     <td class="text-center p-50"><small>Customer's name</small></td>
@@ -259,7 +259,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                                         <td class="text-center cell-fit"><?php echo $bookings['adult']; ?></td>
                                         <td class="text-center cell-fit"><?php echo $bookings['child']; ?></td>
                                         <td class="text-center cell-fit"><?php echo number_format($bookings['rates_adult'], 2); ?></td>
-                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_child'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo ($bookings['child'] > 0) ? number_format($bookings['rates_child'], 2) : ''; ?></td>
                                         <td class="text-center cell-fit"><?php echo number_format($rates_adult, 2); ?></td>
 
                                         <td class="text-center cell-fit" rowspan="<?php echo count($check_bpr); ?>"><?php echo !empty($bookings['discount']) ? number_format($bookings['discount'], 2) : '-'; ?></td>
@@ -271,7 +271,7 @@ if (isset($_POST['action']) && $_POST['action'] == "div") {
                                         <td class="text-center cell-fit"><?php echo $bookings['adult']; ?></td>
                                         <td class="text-center cell-fit"><?php echo $bookings['child']; ?></td>
                                         <td class="text-center cell-fit"><?php echo number_format($bookings['rates_adult'], 2); ?></td>
-                                        <td class="text-center cell-fit"><?php echo number_format($bookings['rates_child'], 2); ?></td>
+                                        <td class="text-center cell-fit"><?php echo ($bookings['child'] > 0) ? number_format($bookings['rates_child'], 2) : ''; ?></td>
                                         <td class="text-center cell-fit"><?php echo number_format($rates_adult, 2); ?></td>
                                     </tr>
                         <?php }

@@ -115,6 +115,17 @@
 
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
+        // onHidden event
+        $('#hidden-tooltip')
+            .tooltip({
+                title: 'Tooltip Hidden Event',
+                trigger: 'click',
+                placement: 'left'
+            })
+            .on('hidden.bs.tooltip', function() {
+                alert('Hidden event fired.');
+            });
+
         /**
          * App Calendar Events
          */
@@ -130,15 +141,15 @@
                 for ($i = 0; $i < count($travel_date); $i++) {
                     for ($a = 0; $a < count($product_id[$travel_date[$i]]); $a++) {
                         $name = $bookObj->get_values('name', 'products', 'id = ' . $product_id[$travel_date[$i]][$a], 0)['name'];
-                        $pax = $bookObj->get_values('pax', 'products', 'id = ' . $product_id[$travel_date[$i]][$a], 0)['pax']; ?> {
+            ?> {
                             url: '',
-                            title: '<?php echo $name; ?> - <?php echo array_sum($tourist[$travel_date[$i]]) . '/' . $pax; ?>',
+                            title: '<?php echo array_sum($tourist[$travel_date[$i]][$product_id[$travel_date[$i]][$a]]); ?>',
                             start: '<?php echo $travel_date[$i]; ?>',
                             end: '<?php echo $travel_date[$i]; ?>',
                             allDay: true,
                             extendedProps: {
                                 calendar: '<?php echo $product_id[$travel_date[$i]][$a]; ?>',
-                                htmlContent: '<span><?php echo $name; ?> - <?php echo array_sum($tourist[$travel_date[$i]]) . '/' . $pax; ?></span>'
+                                htmlContent: '<span><?php echo array_sum($tourist[$travel_date[$i]][$product_id[$travel_date[$i]][$a]]); ?></span>'
                             }
                         },
             <?php }

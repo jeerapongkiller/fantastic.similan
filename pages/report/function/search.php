@@ -83,6 +83,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $infant[$booking['id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
             $foc[$booking['id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
             $tourist_max[$booking['id']][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
+            $tourist_all[] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
 
             $total = $booking['booking_type_id'] == 1 ? ($booking['adult'] * $booking['rates_adult']) + ($booking['child'] * $booking['rates_child']) : $booking['rates_private'];
 
@@ -270,6 +271,22 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                     <div class="media-body my-auto">
                                         <h4 class="font-weight-bolder mb-0"><?php echo !empty($bo_id) ? count($bo_id) : 0; ?></h4>
                                         <p class="card-text font-small-3 mb-0">Booking ทั้งหมด</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <div class="media">
+                                    <div class="avatar bg-light-info mr-2">
+                                        <div class="avatar-content m-50">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="media-body my-auto">
+                                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($tourist_all) ? array_sum($tourist_all) : 0; ?></h4>
+                                        <p class="card-text font-small-3 mb-0">จำนวนคนทั้งหมด</p>
                                     </div>
                                 </div>
                             </div>

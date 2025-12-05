@@ -302,7 +302,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
 
                                     <table class="table table-bordered">
                                         <thead class="bg-darken-2 text-white">
-                                            <tr class="table-black">
+                                            <tr class="table-black" id="tr-invoice">
                                                 <td class="text-center" style="border-radius: 15px 0px 0px 0px; padding: 5px 0;" width="3%"><b>เลขที่</b></td>
                                                 <td class="text-center"><b>วันที่เดินทาง</b></td>
                                                 <td class="text-center"><b>ชื่อลูกค้า</b></td>
@@ -314,7 +314,7 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                                                 <td class="text-center"><b>จำนวนเงิน</b></td>
                                                 <td class="text-center" style="border-radius: 0px 15px 0px 0px;"><b>Cash on tour</b></td>
                                             </tr>
-                                            <tr class="table-black-2">
+                                            <tr class="table-black-2" id="tr-invoice-2">
                                                 <td class="text-center p-50"><small>Items</small></td>
                                                 <td class="text-center p-50"><small>Date</small></td>
                                                 <td class="text-center p-50"><small>Customer's name</small></td>

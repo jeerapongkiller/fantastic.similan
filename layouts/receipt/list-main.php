@@ -397,10 +397,12 @@
 
             var array_booking = document.getElementById('array_booking').value;
             var array_extar = document.getElementById('array_extar').value;
+            var array_rates = document.getElementById('array_rates').value;
             var array_invoice = document.getElementById('array_invoice').value;
             if (array_booking !== '') {
                 var res = $.parseJSON(array_booking);
                 var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : '';
+                var res_rates = array_rates !== '' ? $.parseJSON(array_rates) : '';
                 var res_invoice = array_invoice !== '' ? $.parseJSON(array_invoice) : '';
 
                 document.getElementById('rec_id').value = rec_id;
@@ -431,25 +433,60 @@
                 var discount = 0;
                 var no = 1;
                 for (let index = 0; index < res.id.length; index++) {
+                    var rowspan = 0;
+                    text_rates = '';
                     var id = res.id[index];
+
+                    // change color
+                    if (res_invoice[rec_id].vat > 0) {
+                        document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
+                        document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
+                    } else {
+                        document.getElementById('tr-invoice').style.backgroundColor = '#333';
+                        document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
+                    }
+
                     discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
                     cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
-                    amount = res[id].total !== '-' ? Number(amount + res[id].total) : Number(amount);
 
-                    text_html += '<tr>' +
-                        '<td class="text-center">' + Number(no++) + '<input type="hidden" name="bo_id[]" value="' + id + '"></td>' +
-                        '<td class="text-center"> ' + res[id].text_date + ' </td>' +
-                        '<td> ' + res[id].cus_name + ' </td>' +
-                        '<td> ' + res[id].product_name + ' </td>' +
-                        '<td class="text-center"> ' + res[id].voucher_no + ' </td>' +
-                        '<td class="text-center"> ' + res[id].adult + ' </td>' +
-                        '<td class="text-center"> ' + res[id].child + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_adult) + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(res[id].rate_child) + ' </td>' +
-                        '<td class="text-center"> ' + res[id].discount + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(res[id].total) + ' </td>' +
-                        '<td class="text-center"> ' + numberWithCommas(res[id].cot) + ' </td>' +
-                        '</tr>';
+                    if (res_rates !== undefined && (res_rates[id] !== undefined)) {
+                        rowspan = res_rates[id].id.length;
+                        for (let y = 0; y < res_rates[id].id.length; y++) {
+                            if (y == 0) {
+
+                                var customer = res[id].status == 3 || res[id].status == 5 ? ' (' + res_rates[id].category_name[y] + ') ' + res[id].status_name : ' (' + res_rates[id].category_name[y] + ')';
+                                text_html += '<tr>' +
+                                    '<td class="text-center">' + Number(no++) + '</td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].text_date + ' </td>' +
+                                    '<td rowspan="' + rowspan + '"> ' + res[id].cus_name + ' </td>' +
+                                    '<td> ' + res[id].product_name + customer + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].voucher_no + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].discount + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                    '<td class="text-center" rowspan="' + rowspan + '"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+                                    '</tr>';
+
+                                amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                            } else if (y > 0) {
+                                var customer = res_rates[id].customer[y] == 1 ? ' (Thai)' : ' (Foreign)';
+                                text_html += '<tr>' +
+                                    '<td class="text-center">' + Number(no++) + '</td>' +
+                                    '<td> ' + res[id].product_name + customer + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                    '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                    '</tr>';
+
+                                amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                            }
+                        }
+                    }
 
                     if (res_extar !== undefined && (res_extar[id] !== undefined)) {
                         for (let index = 0; index < res_extar[id].id.length; index++) {
@@ -475,7 +512,7 @@
                     '</tr>'
 
                 if (discount > 0) {
-                    amount = amount - discount;
+                    // amount = amount - discount;
                     text_html += '<tr>' +
                         '<td colspan="9"></td>' +
                         '<td colspan="2" class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
@@ -484,7 +521,7 @@
                 }
 
                 if (cot > 0) {
-                    amount = amount - cot;
+                    // amount = amount - cot;
                     text_html += '<tr>' +
                         '<td colspan="9"></td>' +
                         '<td colspan="2" class="text-center"><b>Cash on tour</b></td>' +
@@ -510,6 +547,9 @@
                         maximumFractionDigits: 2
                     });
                 }
+
+                amount = (discount > 0) ? amount - discount : amount;
+                amount = (cot > 0) ? amount - cot : amount;
 
                 if (res_invoice[rec_id].vat > 0) {
                     text_vat = res_invoice[rec_id].vat == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%';

@@ -7,66 +7,94 @@ $times = date("H:i:s");
 
 if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['type']) && !empty($_POST['date'])) {
 
-    $all_manages = $manageObj->fetch_all_manageboat($_POST['date'], 'all', 'all', 0);
+    $first_bpr = array();
+    $first_boat = array();
+    $first_book = array();
+    $bookings = $manageObj->showlistboats('list', 0, $_POST['date'], 'all', 'all', 'all', 'all', 'all', '', '', '', '');
+    if (!empty($bookings)) {
+        foreach ($bookings as $booking) {
+            # --- get value booking --- #
+            if (in_array($booking['mange_id'], $first_boat) == false && !empty($booking['boat_id'])) {
+                $first_boat[] = $booking['mange_id'];
+                $mange_boat['id'][] = !empty($booking['mange_id']) ? $booking['mange_id'] : 0;
+                $mange_boat['boat'][] = !empty($booking['boat_id']) ? $booking['boat_id'] : 0;
+                $mange_boat['name'][] = !empty($booking['boat_name']) ? $booking['boat_name'] : '';
+                $mange_boat['guide'][] = !empty($booking['guide_name']) ? $booking['guide_name'] : '';
+                $mange_boat['color_hex'][] = !empty($booking['color_hex']) ? $booking['color_hex'] : '';
+            }
+            # --- get value booking --- #
+            if (in_array($booking['id'], $first_book) == false) {
+                $first_book[] = $booking['id'];
+                $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
+                // $adult[] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                // $child[] = !empty($booking['child']) ? $booking['child'] : 0;
+                // $infant[] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                // $foc[] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                // $total[] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
+
+                $mange_boat[$booking['mange_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
+                
+                $mange_product[$booking['product_id']]['bo_id'][] = !empty($booking['id']) ? $booking['id'] : 0;
+            }
+
+            if (in_array($booking['bpr_id'], $first_bpr) == false) {
+                $first_bpr[] = $booking['bpr_id'];
+                $category_name[$booking['id']][] = !empty($booking['category_name']) ? $booking['category_name'] : '';
+                $adult[$booking['id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                $child[$booking['id']][] = !empty($booking['child']) ? $booking['child'] : 0;
+                $infant[$booking['id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                $foc[$booking['id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                $rate_adult[$booking['id']][] = !empty($booking['rate_adult']) ? $booking['rate_adult'] : 0;
+                $rate_child[$booking['id']][] = !empty($booking['rate_child']) ? $booking['rate_child'] : 0;
+                $cate_transfer[$booking['id']][] = !empty($booking['category_transfer']) ? $booking['category_transfer'] : 0;
+                $total[$booking['id']][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
+
+                $mange_boat[$booking['mange_id']]['adult'][] = !empty($booking['adult']) ? $booking['adult'] : 0;
+                $mange_boat[$booking['mange_id']]['child'][] = !empty($booking['child']) ? $booking['child'] : 0;
+                $mange_boat[$booking['mange_id']]['infant'][] = !empty($booking['infant']) ? $booking['infant'] : 0;
+                $mange_boat[$booking['mange_id']]['foc'][] = !empty($booking['foc']) ? $booking['foc'] : 0;
+                $mange_boat[$booking['mange_id']]['total'][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
+            }
+        }
+    }
 ?>
     <div class="text-center">
         <h5 class="card-title text-danger"><?php echo date('j F Y', strtotime($_POST['date'])); ?></h5>
     </div>
     <div class="card-body p-0">
-        <?php if (!empty($all_manages)) {
-            foreach ($all_manages as $key => $manages) {
-                $all_bookings = $manageObj->fetch_all_bookingboat('manage', $_POST['date'], 'all', 'all', 'all', '', '', '', '', $manages['id']);
-                if (!empty($all_bookings)) {
-                    $tourist = 0;
-                    $adult = 0;
-                    $child = 0;
-                    $infant = 0;
-                    $foc = 0;
-                    $book_array = array();
-                    $book_array = array();
-                    foreach ($all_bookings as $bookings) {
-                        if (in_array($bookings['id'], $book_array) == false) {
-                            $book_array[] = $bookings['id'];
-                            $count_bo[$key][] = 1;
-                        }
-                        $adult += !empty($bookings['adult']) ? $bookings['adult'] : 0;
-                        $child += !empty($bookings['child']) ? $bookings['child'] : 0;
-                        $infant += !empty($bookings['infant']) ? $bookings['infant'] : 0;
-                        $foc += !empty($bookings['foc']) ? $bookings['foc'] : 0;
-                        $tourist += $bookings['adult'] + $bookings['child'] + $bookings['infant'] + $bookings['foc'];
-                    }
-                }
-        ?>
+        <?php if (!empty($mange_boat['id'])) {
+            for ($i = 0; $i < count($mange_boat['id']); $i++) {
+                $id = $mange_boat['id'][$i]; ?>
                 <div class="row text-center mx-0">
                     <div class="col-4 border-top border-right text-left py-50 pb-1">
-                        <h5 class="card-text text-warning mb-0"><?php echo $manages['guide_name']; ?></h5>
-                        <h4 class="font-weight-bolder mb-0" style="color: <?php echo $manages['color_hex']; ?>;">
-                            <?php echo $manages['boat_name']; ?>
+                        <h5 class="card-text text-warning mb-0"><?php echo $mange_boat['guide'][$i]; ?></h5>
+                        <h4 class="font-weight-bolder mb-0" style="color: <?php echo $mange_boat['color_hex'][$i]; ?>;">
+                            <?php echo $mange_boat['name'][$i]; ?>
                         </h4>
                     </div>
                     <div class="col-2 border-top border-right py-50 pb-1">
                         <small class="card-text text-muted mb-0">Booking</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($count_bo[$key]) ? count($count_bo[$key]) : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['bo_id']) ? count($mange_boat[$id]['bo_id']) : 0; ?></h4>
                     </div>
                     <div class="col-2 border-top border-right py-50 pb-1">
                         <small class="card-text text-muted mb-0">Total</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($tourist) ? $tourist : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['total']) ? array_sum($mange_boat[$id]['total']) : 0; ?></h4>
                     </div>
                     <div class="col-1 border-top border-right py-50 pb-1">
                         <small class="card-text text-muted mb-0">AD</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($adult) ? $adult : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['adult']) ? array_sum($mange_boat[$id]['adult']) : 0; ?></h4>
                     </div>
                     <div class="col-1 border-top border-right py-50 pb-1">
                         <small class="card-text text-muted mb-0">CHD</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($child) ? $child : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['child']) ? array_sum($mange_boat[$id]['child']) : 0; ?></h4>
                     </div>
                     <div class="col-1 border-top border-right py-50 pb-1">
                         <small class="card-text text-muted mb-0">INF</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($infant) ? $infant : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['infant']) ? array_sum($mange_boat[$id]['infant']) : 0; ?></h4>
                     </div>
                     <div class="col-1 border-top py-50 pb-1">
                         <small class="card-text text-muted mb-0">FOC</small>
-                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($foc) ? $foc : 0; ?></h4>
+                        <h4 class="font-weight-bolder mb-0"><?php echo !empty($mange_boat[$id]['foc']) ? array_sum($mange_boat[$id]['foc']) : 0; ?></h4>
                     </div>
                 </div>
         <?php }

@@ -19,7 +19,7 @@ function setNumberLength($num, $length)
 if (isset($_POST['action']) && $_POST['action'] == "create" && isset($_POST['bo_id'])) {
     // get value from ajax
     # --- booking create form --- #
-    $bo_id = !empty($_POST['bo_id']) ? $_POST['bo_id'] : 0;
+    $bo_id = !empty($_POST['bo_id']) ? json_decode($_POST['bo_id']) : 0;
     $is_approved = !empty($_POST['is_approved']) ? $_POST['is_approved'] : 0;
     $inv_date = $_POST['inv_date'] != "" ? $_POST['inv_date'] : '';
     $rec_date = $_POST['rec_date'] != "" ? $_POST['rec_date'] : '';
