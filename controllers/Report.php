@@ -106,43 +106,39 @@ class Report extends DB
     // }
 
 
-    public function showlist($status, $date_form, $date_to, $agent, $product, $payment)
+    public function showlist($status, $date_form, $date_to, $agent, $product, $payment, $type)
     {
         $bind_types = "";
         $params = array();
 
-        $query = "SELECT BO.*,
+        // Select only the columns used by the report pages (list, search, print, excel)
+        // to keep memory low on large date ranges. Joins are unchanged so row counts stay the same.
+        $query = "SELECT BO.id, BO.voucher_no_agent, BO.discount, BO.sender, BO.booking_type_id,
                     BONO.bo_full as book_full,
-                    BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
-                    BTYE.id as booktye_id, BTYE.name as booktye_name,
-                    BOPA.id as bopa_id, BOPA.total_paid as total_paid, BOPA.updated_at as bopa_updated,
-                    BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class, BOPAY.created_at as bopay_created,
+                    BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class,
+                    BOPA.id as bopa_id, BOPA.total_paid as total_paid,
+                    BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class,
                     COMP.id as comp_id, COMP.name as comp_name, COMP.logo as comp_logo,
-                    BP.id as bp_id, BP.travel_date as travel_date, BP.note as bp_note, 
-                    BPR.id as bpr_id, BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
-                    BPR.rates_adult as rates_adult, BPR.rates_child as rates_child, BPR.rates_infant as rates_infant, BPR.rates_private as rates_private, 
+                    BP.travel_date as travel_date,
+                    BPR.id as bpr_id, BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc,
+                    BPR.rates_adult as rates_adult, BPR.rates_child as rates_child, BPR.rates_infant as rates_infant, BPR.rates_private as rates_private,
                     PROD.id as product_id, PROD.name as product_name,
-                    PRODC.id as category_id, PRODC.name as category_name,
-                    PARK.id as park_id, PARK.name as park_name, PARK.rate_adult_eng as adult_eng, PARK.rate_child_eng as child_eng, PARK.rate_adult_th as adult_th, PARK.rate_child_th as child_th,
-                    CUS.id as cus_id, CUS.name as cus_name, CUS.age as cus_age, CUS.head as cus_head, 
-                    BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup, BT.room_no as room_no, BT.note as bt_note, BT.transfer_type as transfer_type,
-                    BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff, BT.pickup_type as pickup_type,
-                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
-                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-                    EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
-                    BOT.id as bot_id, BOT.arrange as arrange, BOT.tourist as tourist,
-                    ORTRAN.id as ortran_id, ORTRAN.license as license, ORTRAN.telephone as ortran_telephone, ORTRAN.travel_date as ortran_travel,
-                    CAR.id as car_id, CAR.name as car_name,
-                    HOTPIK.id as hotel_pickup_id, HOTPIK.name as hotel_pickup_name,
-                    HOTDRO.id as hotel_dropoff_id, HOTDRO.name as hotel_dropoff_name,
-                    INV.id as inv_id, INV.rec_date as rec_date, INV.withholding as withholding,
-                    INVCO.id as cover_id, INVCO.inv_date as inv_date, INVCO.inv_full as inv_full,
-                    VAT.id as vat_id, VAT.name as vat_name,
+                    PRODC.name as category_name,
+                    CUS.name as cus_name, CUS.head as cus_head,
+                    BT.hotel_pickup as hotel_pickup, BT.hotel_dropoff as hotel_dropoff,
+                    BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.privates as bec_privates, BEC.type as bec_type,
+                    BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_private as bec_rate_private,
+                    EXTRA.id as extra_id,
+                    BOT.id as bot_id, BOT.tourist as tourist,
+                    ORTRAN.id as ortran_id, ORTRAN.license as license, ORTRAN.travel_date as ortran_travel,
+                    CAR.name as car_name,
+                    HOTPIK.name as hotel_pickup_name,
+                    HOTDRO.name as hotel_dropoff_name,
+                    INVCO.inv_full as inv_full,
                     REC.id as rec_id,
                     BOBOAT.id as boboat_id,
-                    ORBOAT.id as orboat_id, ORBOAT.travel_date as orboat_travel, ORBOAT.note as orboat_note,
-                    COLOR.id as color_id, COLOR.name as color_name, COLOR.name_th as color_name_th, COLOR.hex_code as color_hex, 
-                    BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
+                    ORBOAT.id as orboat_id, ORBOAT.travel_date as orboat_travel,
+                    BOAT.id as boat_id, BOAT.name as boat_name
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -228,6 +224,12 @@ class Report extends DB
             } 
         }
 
+        if (isset($type) && $type != "all") {
+            $query .= " AND BO.booking_type_id = ?";
+            $bind_types .= "i";
+            array_push($params, $type);
+        }
+
         if (isset($agent) && $agent != "all") {
             $query .= " AND COMP.id = ?";
             $bind_types .= "i";
@@ -241,14 +243,35 @@ class Report extends DB
         }
 
         $query .= " ORDER BY BO.id DESC, BP.travel_date DESC, BOPA.id ASC";
- 
+
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
         $statement->execute();
-        $result = $statement->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
 
-        return $data;
+        // Stream rows (unbuffered) one by one instead of fetch_all() so large date ranges
+        // do not load every row into memory. Callers only iterate with foreach.
+        // Note: do not run other queries on this connection inside the foreach loop.
+        $row = array();
+        $bind_row = array();
+        $fields = $statement->result_metadata()->fetch_fields();
+        foreach ($fields as $field) {
+            $bind_row[] = &$row[$field->name];
+        }
+        $statement->bind_result(...$bind_row);
+
+        try {
+            while ($statement->fetch()) {
+                // Copy values so each yielded row is independent of the bound references
+                $data = array();
+                foreach ($row as $key => $value) {
+                    $data[$key] = $value;
+                }
+                yield $data;
+            }
+        } finally {
+            $statement->free_result();
+            $statement->close();
+        }
     }
 
     public function showbookingstatus()

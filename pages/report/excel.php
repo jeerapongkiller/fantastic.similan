@@ -19,6 +19,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
     $search_agent = $_GET['search_agent'] != "" ? $_GET['search_agent'] : 'all';
     $search_product = $_GET['search_product'] != "" ? $_GET['search_product'] : 'all';
+    $search_type = $_GET['search_type'] != "" ? $_GET['search_type'] : 'all';
 
     $text_detail = '';
     $text_detail .= $date_form != '0000-00-00' ? $date_to != '0000-00-00' ? 'วันที่ ' . date('j F Y', strtotime($date_form)) . ' ถึง ' . date('j F Y', strtotime($date_to)) : 'วันที่ ' . date('j F Y', strtotime($date_form)) : '';
@@ -39,11 +40,11 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
     $first_boboat = array();
     $first_pay = array();
     $first_extar = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment);
+    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment, $search_type);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
-        if (in_array($booking['id'], $first_book) == false) {
-            $first_book[] = $booking['id'];
+        if (!isset($first_book[$booking['id']])) {
+            $first_book[$booking['id']] = true;
             # --- get value booking --- #
             $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
             $status[] = $booking['booksta_name'];
@@ -81,8 +82,8 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             }
         }
         # --- get value booking product rates --- #
-        if (in_array($booking['bpr_id'], $first_bpr) == false) {
-            $first_bpr[] = $booking['bpr_id'];
+        if (!isset($first_bpr[$booking['bpr_id']])) {
+            $first_bpr[$booking['bpr_id']] = true;
             $adult[$booking['id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
             $child[$booking['id']][] = !empty($booking['child']) ? $booking['child'] : 0;
             $infant[$booking['id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
@@ -108,15 +109,15 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             $product_foc[$booking['product_id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
         }
         # --- get value agent company --- #
-        if (in_array($booking['comp_id'], $first_agent) == false) {
-            $first_agent[] = $booking['comp_id'];
+        if (!isset($first_agent[$booking['comp_id']])) {
+            $first_agent[$booking['comp_id']] = true;
             $agent_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
             $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : 'ไม่ได้ระบุ';
             $agent_logo[] = !empty($booking['comp_logo']) ? $booking['comp_logo'] : '';
         }
         # --- get value booking order transfer --- #
-        if (in_array($booking['ortran_id'], $first_ortran) == false && !empty($booking['ortran_id'])) {
-            $first_ortran[] = $booking['ortran_id'];
+        if (!isset($first_ortran[$booking['ortran_id']]) && !empty($booking['ortran_id'])) {
+            $first_ortran[$booking['ortran_id']] = true;
             $ortran_id[] = !empty($booking['ortran_id']) ? $booking['ortran_id'] : 0;
             $car_name[] = !empty($booking['car_name']) ? $booking['car_name'] : '';
             $car_registration[] = !empty($booking['license']) ? $booking['license'] : '';
@@ -125,22 +126,22 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
 
             $count_bot++;
         }
-        if (in_array($booking['bot_id'], $first_bot) == false && !empty($booking['bot_id'])) {
-            $first_bot[] = $booking['bot_id'];
+        if (!isset($first_bot[$booking['bot_id']]) && !empty($booking['bot_id'])) {
+            $first_bot[$booking['bot_id']] = true;
             $bot_id[$booking['ortran_id']][] = !empty($booking['bot_id']) ? $booking['bot_id'] : 0;
             $tourist[$booking['ortran_id']][] = !empty($booking['tourist']) ? $booking['tourist'] : 0;
             $bot_bo[$booking['ortran_id']][] = $booking['id'];
         }
         # --- get value booking order boat --- #
-        if (in_array($booking['boboat_id'], $first_boboat) == false && !empty($booking['orboat_id']) && !empty($booking['boboat_id'])) {
-            $first_boboat[] = $booking['boboat_id'];
+        if (!isset($first_boboat[$booking['boboat_id']]) && !empty($booking['orboat_id']) && !empty($booking['boboat_id'])) {
+            $first_boboat[$booking['boboat_id']] = true;
             $boboat_id[$booking['orboat_id']][] = $booking['boboat_id'];
             $count_boboat++;
         }
         # --- get value booking payment --- #
-        if ((in_array($booking['bopa_id'], $first_pay) == false) && !empty($booking['bopa_id'])) {
+        if ((!isset($first_pay[$booking['bopa_id']])) && !empty($booking['bopa_id'])) {
             # --- in array get value booking payment --- #
-            $first_pay[] = $booking['bopa_id'];
+            $first_pay[$booking['bopa_id']] = true;
             $bopay_id[$booking['id']] = !empty($booking['bopay_id']) ? $booking['bopay_id'] : 0;
             $bopay_name_class[$booking['id']] = !empty($booking['bopay_name_class']) ? $booking['bopay_name_class'] : '';
             $bopay_paid_name[$booking['id']] = $booking['bopay_id'] == 4 || $booking['bopay_id'] == 5 ? $booking['bopay_name'] . '</br>(' . number_format($booking['total_paid']) . ')' : $booking['bopay_name'];
@@ -150,8 +151,8 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
             $cot[$booking['id']][] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
         }
         # --- get value booking --- #
-        if (in_array($booking['bec_id'], $first_extar) == false && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
-            $first_extar[] = $booking['bec_id'];
+        if (!isset($first_extar[$booking['bec_id']]) && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
+            $first_extar[$booking['bec_id']] = true;
             $ext_total = $booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) : ($booking['bec_privates'] * $booking['bec_rate_private']);
             $extar_total[$booking['id']][] = $ext_total;
             $extar_total_agent[$booking['comp_id']][] = $ext_total;
@@ -205,7 +206,13 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
         if (!empty($agent_id)) {
             $amount_comp = 0;
             $revenue_comp = 0;
-            for ($i = 0; $i < count($agent_id); $i++) {
+            // Sort agents by booking count (descending)
+            $agent_booking_count = !empty($comp_id) ? array_count_values($comp_id) : array();
+            $agent_order = !empty($agent_id) ? array_keys($agent_id) : array();
+            usort($agent_order, function ($a, $b) use ($agent_id, $agent_booking_count) {
+                return ($agent_booking_count[$agent_id[$b]] ?? 0) <=> ($agent_booking_count[$agent_id[$a]] ?? 0);
+            });
+            foreach ($agent_order as $i) {
                 $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) : 0;
                 $amount_comp -= !empty($comp_discount[$agent_id[$i]]) ? array_sum($comp_discount[$agent_id[$i]]) : 0;
                 $amount_comp += !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($extar_total_agent[$agent_id[$i]]) : 0;
@@ -216,7 +223,7 @@ if (isset($_GET['action']) && $_GET['action'] == "print" && isset($_GET['type'])
 
                 $columnName[] = [
                     $agent_name[$i],
-                    array_count_values($comp_id)[$agent_id[$i]],
+                    $agent_booking_count[$agent_id[$i]],
                     !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0,
                     !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0,
                     !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0,

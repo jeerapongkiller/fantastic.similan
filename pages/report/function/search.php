@@ -14,6 +14,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $date_to = substr($search_travel, 14, 10) != '' ? substr($search_travel, 14, 10) : $date_form;
     $search_agent = $_POST['search_agent'] != "" ? $_POST['search_agent'] : 'all';
     $search_product = $_POST['search_product'] != "" ? $_POST['search_product'] : 'all';
+    $search_type = $_POST['search_type'] != "" ? $_POST['search_type'] : 'all';
     $text_travel = ($date_form != '0000-00-00') ? ($date_to != '0000-00-00' && $date_form != $date_to) ? 'วันที่ ' . date('j F Y', strtotime($date_form)) . ' ถึง ' . date('j F Y', strtotime($date_to)) : 'วันที่ ' . date('j F Y', strtotime($date_form)) : '';
 
     $text_detail = '';
@@ -34,11 +35,11 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $first_boboat = array();
     $first_pay = array();
     $first_extar = array();
-    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment);
+    $bookings = $repObj->showlist($search_status, $date_form, $date_to, $search_agent, $search_product, $search_payment, $search_type);
     foreach ($bookings as $booking) {
         # --- get value booking --- #
-        if (in_array($booking['id'], $first_book) == false) {
-            $first_book[] = $booking['id'];
+        if (!isset($first_book[$booking['id']])) {
+            $first_book[$booking['id']] = true;
             # --- get value booking --- #
             $bo_id[] = !empty($booking['id']) ? $booking['id'] : 0;
             $status[] = '<span class="badge badge-pill ' . $booking['booksta_class'] . ' text-capitalized"> ' . $booking['booksta_name'] . ' </span>';
@@ -76,8 +77,8 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             }
         }
         # --- get value booking product rates --- #
-        if (in_array($booking['bpr_id'], $first_bpr) == false) {
-            $first_bpr[] = $booking['bpr_id'];
+        if (!isset($first_bpr[$booking['bpr_id']])) {
+            $first_bpr[$booking['bpr_id']] = true;
             $adult[$booking['id']][] = !empty($booking['adult']) ? $booking['adult'] : 0;
             $child[$booking['id']][] = !empty($booking['child']) ? $booking['child'] : 0;
             $infant[$booking['id']][] = !empty($booking['infant']) ? $booking['infant'] : 0;
@@ -85,7 +86,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $tourist_max[$booking['id']][] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
             $tourist_all[] = $booking['adult'] + $booking['child'] + $booking['infant'] + $booking['foc'];
 
-            $total = $booking['booking_type_id'] == 1 ? ($booking['adult'] * $booking['rates_adult']) + ($booking['child'] * $booking['rates_child']) : $booking['rates_private'];
+            $total = $booking['booking_type_id'] == 1 ? ($booking['adult'] * $booking['rates_adult']) + ($booking['child'] * $booking['rates_child']) + ($booking['infant'] * $booking['rates_infant']) : $booking['rates_private'];
 
             $array_total[] = $total;
             $array_amount[$booking['id']][] = $total;
@@ -104,15 +105,15 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             $product_foc[$booking['product_id']][] = !empty($booking['foc']) ? $booking['foc'] : 0;
         }
         # --- get value agent company --- #
-        if (in_array($booking['comp_id'], $first_agent) == false) {
-            $first_agent[] = $booking['comp_id'];
+        if (!isset($first_agent[$booking['comp_id']])) {
+            $first_agent[$booking['comp_id']] = true;
             $agent_id[] = !empty($booking['comp_id']) ? $booking['comp_id'] : 0;
             $agent_name[] = !empty($booking['comp_name']) ? $booking['comp_name'] : 'ไม่ได้ระบุ';
             $agent_logo[] = !empty($booking['comp_logo']) ? $booking['comp_logo'] : '';
         }
         # --- get value booking order transfer --- #
-        if (in_array($booking['ortran_id'], $first_ortran) == false && !empty($booking['ortran_id'])) {
-            $first_ortran[] = $booking['ortran_id'];
+        if (!isset($first_ortran[$booking['ortran_id']]) && !empty($booking['ortran_id'])) {
+            $first_ortran[$booking['ortran_id']] = true;
             $ortran_id[] = !empty($booking['ortran_id']) ? $booking['ortran_id'] : 0;
             $car_name[] = !empty($booking['car_name']) ? $booking['car_name'] : '';
             $car_registration[] = !empty($booking['license']) ? $booking['license'] : '';
@@ -121,36 +122,38 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
 
             $count_bot++;
         }
-        if (in_array($booking['bot_id'], $first_bot) == false && !empty($booking['bot_id'])) {
-            $first_bot[] = $booking['bot_id'];
+        if (!isset($first_bot[$booking['bot_id']]) && !empty($booking['bot_id'])) {
+            $first_bot[$booking['bot_id']] = true;
             $bot_id[$booking['ortran_id']][] = !empty($booking['bot_id']) ? $booking['bot_id'] : 0;
             $tourist[$booking['ortran_id']][] = !empty($booking['tourist']) ? $booking['tourist'] : 0;
             $bot_bo[$booking['ortran_id']][] = $booking['id'];
         }
         # --- get value booking order boat --- #
-        if (in_array($booking['boboat_id'], $first_boboat) == false && !empty($booking['orboat_id']) && !empty($booking['boboat_id'])) {
-            $first_boboat[] = $booking['boboat_id'];
+        if (!isset($first_boboat[$booking['boboat_id']]) && !empty($booking['orboat_id']) && !empty($booking['boboat_id'])) {
+            $first_boboat[$booking['boboat_id']] = true;
             $boboat_id[$booking['orboat_id']][] = $booking['boboat_id'];
             $count_boboat++;
         }
         # --- get value booking payment --- #
-        if ((in_array($booking['bopa_id'], $first_pay) == false) && !empty($booking['bopa_id'])) {
+        if ((!isset($first_pay[$booking['bopa_id']])) && !empty($booking['bopa_id'])) {
             # --- in array get value booking payment --- #
-            $first_pay[] = $booking['bopa_id'];
+            $first_pay[$booking['bopa_id']] = true;
             $bopay_id[$booking['id']] = !empty($booking['bopay_id']) ? $booking['bopay_id'] : 0;
             $bopay_name_class[$booking['id']] = !empty($booking['bopay_name_class']) ? $booking['bopay_name_class'] : '';
             $bopay_paid_name[$booking['id']] = $booking['bopay_id'] == 4 || $booking['bopay_id'] == 5 ? $booking['bopay_name'] . '</br>(' . number_format($booking['total_paid']) . ')' : $booking['bopay_name'];
 
             $pay_id[$booking['id']][] = !empty($booking['bopay_id']) ? $booking['bopay_id'] : 0;
             $pay_name[$booking['id']][] = !empty($booking['bopay_name']) ? $booking['bopay_name'] : 0;
-            $cot[$booking['id']][] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
+            $bo_cot[$booking['id']][] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
+            $cot[] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
         }
         # --- get value booking --- #
-        if (in_array($booking['bec_id'], $first_extar) == false && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
-            $first_extar[] = $booking['bec_id'];
+        if (!isset($first_extar[$booking['bec_id']]) && (!empty($booking['extra_id']) || !empty($booking['bec_name']))) {
+            $first_extar[$booking['bec_id']] = true;
             $ext_total = $booking['bec_type'] == 1 ? ($booking['bec_adult'] * $booking['bec_rate_adult']) + ($booking['bec_child'] * $booking['bec_rate_child']) : ($booking['bec_privates'] * $booking['bec_rate_private']);
             $extar_total[$booking['id']][] = $ext_total;
             $extar_total_agent[$booking['comp_id']][] = $ext_total;
+            $extar_arr_total[] = $ext_total;
         }
     }
     # ------ calculate booking paid ------ #
@@ -159,11 +162,18 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
             # --- calculator booking --- #
             $total = !empty($array_amount[$x]) ? array_sum($array_amount[$x]) : 0; // booking
             $total -= !empty($discount[$x]) ? $discount[$x] : 0; // - discount
+            $total -= !empty($bo_cot[$x]) ? array_sum($bo_cot[$x]) : 0; // - cot
             $total += !empty($extar_total[$x]) ? array_sum($extar_total[$x]) : 0; // + extar
 
             $not_issued += (!empty($pay_id[$x]) && (in_array(6, $pay_id[$x]) == false) && (in_array(3, $pay_id[$x]) == false)) ?  $total : 0;
             $issued_inv += (!empty($pay_id[$x]) && (in_array(6, $pay_id[$x]) == true) && (in_array(3, $pay_id[$x]) == false)) ?  $total : 0;
             $paid += (!empty($pay_id[$x]) && (in_array(3, $pay_id[$x]) == true)) ? $total : 0;
+
+            // if (!empty($pay_id[$x]) && (in_array(6, $pay_id[$x]) == true) && (in_array(3, $pay_id[$x]) == false)) {
+            //     print_r($x);
+            //     echo ', ' . $total;
+            //     echo '<br>';
+            // }
         }
     }
 
@@ -171,6 +181,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
     $href = '';
     $href .= '&search_agent=' . $search_agent;
     $href .= '&search_product=' . $search_product;
+    $href .= '&search_type=' . $search_type;
     $href .= '&search_travel=' . $search_travel;
     if (!empty($search_status) && $search_status != 'all') {
         for ($i = 0; $i < count($search_status); $i++) {
@@ -338,7 +349,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0; ?> THB</h4>
+                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($cot) ? number_format(array_sum($cot)) : 0; ?> THB</h4>
                                         <p class="card-text font-small-3 mb-0">แบ่งเป็น Cash On Tour</p>
                                     </div>
                                 </div>
@@ -570,7 +581,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                         </div>
                                     </div>
                                     <div class="media-body my-auto">
-                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($bo_cot) ? number_format(array_sum($bo_cot)) : 0; ?> THB</h4>
+                                        <h4 class="font-weight-bolder mb-0 text-warning"><?php echo !empty($cot) ? number_format(array_sum($cot)) : 0; ?> THB</h4>
                                         <p class="card-text font-small-3 mb-0">แบ่งเป็น Cash On Tour</p>
                                     </div>
                                 </div>
@@ -626,7 +637,13 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                         <?php if (!empty($agent_id)) { ?>
                             <tbody>
                                 <?php
-                                for ($i = 0; $i < count($agent_id); $i++) {
+                                // Sort agents by booking count (descending)
+                                $agent_booking_count = !empty($comp_id) ? array_count_values($comp_id) : array();
+                                $agent_order = !empty($agent_id) ? array_keys($agent_id) : array();
+                                usort($agent_order, function ($a, $b) use ($agent_id, $agent_booking_count) {
+                                    return ($agent_booking_count[$agent_id[$b]] ?? 0) <=> ($agent_booking_count[$agent_id[$a]] ?? 0);
+                                });
+                                foreach ($agent_order as $i) {
                                     $amount_comp = !empty($comp_amount[$agent_id[$i]]) ? array_sum($comp_amount[$agent_id[$i]]) : 0;
                                     $amount_comp -= !empty($comp_discount[$agent_id[$i]]) ? array_sum($comp_discount[$agent_id[$i]]) : 0;
                                     $amount_comp += !empty($extar_total_agent[$agent_id[$i]]) ? array_sum($extar_total_agent[$agent_id[$i]]) : 0;
@@ -640,7 +657,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                                             <img src="storage/uploads/no-image.jpg" class="mr-75" height="40" width="40" alt="Angular">
                                             <span class="font-weight-bolder text-primary"><?php echo $agent_name[$i]; ?></span>
                                         </td>
-                                        <td class="text-center font-weight-bolder"><?php echo !empty($comp_id) ? array_count_values($comp_id)[$agent_id[$i]] : 0; ?></td>
+                                        <td class="text-center font-weight-bolder"><?php echo !empty($comp_id) ? $agent_booking_count[$agent_id[$i]] : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_adult[$agent_id[$i]]) ? array_sum($comp_adult[$agent_id[$i]]) : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_child[$agent_id[$i]]) ? array_sum($comp_child[$agent_id[$i]]) : 0; ?></td>
                                         <td class="text-center font-weight-bolder"><?php echo !empty($comp_infant[$agent_id[$i]]) ? array_sum($comp_infant[$agent_id[$i]]) : 0; ?></td>
