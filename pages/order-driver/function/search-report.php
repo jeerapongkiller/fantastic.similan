@@ -127,7 +127,6 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
                             <tr>
                                 <td>
                                     <?php
-                                    echo $first_driver[$i];
                                     echo !empty($car[$i]) ? '<span class="font-weight-bolder text-primary">' . $car[$i] . ',</span> ' : ' ';
                                     echo !empty($driver[$i]) ? '<span class="font-weight-bolder text-info">' . $driver[$i] . '</span>' : ' ';
                                     echo !empty($telephone[$i]) ? '<span class="font-weight-bolder text-info">, ' . $telephone[$i] . '</span>' : ' ';

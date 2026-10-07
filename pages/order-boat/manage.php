@@ -142,7 +142,8 @@ if (!empty($bookings)) {
 
         if (in_array($booking['bomanage_id'], $first_bomanage) == false) {
             $first_managet[] = $booking['bomanage_id'];
-            $retrun_t = !empty($booking['pickup']) ? 1 : 2;
+            // $retrun_t = !empty($booking['pickup']) ? 1 : 2;
+            $retrun_t = 1;
             $managet['bomanage_id'][$booking['id']][$retrun_t] = !empty($booking['bomanage_id']) ? $booking['bomanage_id'] : 0;
             $managet['id'][$booking['id']][$retrun_t] = !empty($booking['manget_id']) ? $booking['manget_id'] : 0;
             $managet['car'][$booking['id']][$retrun_t] = !empty($booking['car_name']) ? $booking['car_name'] : '';
@@ -384,9 +385,9 @@ if (!empty($programed)) {
                                         </thead>
                                         <?php
                                         $total_adult = 0;
-                                        $total_childt = 0;
-                                        $total_infantt = 0;
-                                        $total_foct = 0;
+                                        $total_child = 0;
+                                        $total_infan = 0;
+                                        $total_foc = 0;
                                         $total_tourist = 0;
                                         if (!empty($book['id'][$mange['id'][$i]])) { ?>
                                             <tbody>

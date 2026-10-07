@@ -13,12 +13,11 @@ date_default_timezone_set("Asia/Bangkok");
 // set value
 $main_description = "tours management system by shambhala.travel";
 $main_keywords = "tours management system";
-$main_author = "Shambhala TMS";
-$main_title = "Shambhala TMS";
+$main_author = "Fantastic Similan Travel";
+$main_title = "Fantastic Similan Travel";
 $hostPageUrl = $_SERVER["HTTP_HOST"] == 'localhost' ? 'storage' : 'http://' . $_SERVER["HTTP_HOST"] . "/storage";
-$main_document = "บริษัท SHAMBHALA TRAVEL จํากัด <br>
-156/72 หมู่ที 5 ตําบลรัษฎา อําเภอเมือง จังหวัดภูเก็ต 83000 <br>
-เลขทีผู้เสียภาษี 0-8355-64008-01-7 | (สํานักงานใหญ่) <br>
-โทร: 081-691-6501 | info@shambhala.com <br>
-www.shambhala.travel <br>";
+$main_document = "Fantastic Similan Travel <br>
+26/74 M.7 T.KHUK-KHAK A.TAKUAPA PHANG-NGA 82220 THAILAN <br>
+TEL: 062 332 2800 | 084 744 3000 | 083 175 7444 <br>
+Email: Fantasticsimilantravel11@gmail.com <br>";
 $open_rates = 1;

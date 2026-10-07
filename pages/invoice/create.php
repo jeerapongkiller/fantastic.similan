@@ -5,6 +5,8 @@ $invObj = new Invoice();
 $times = date("H:i:s");
 $today = date("Y-m-d");
 $tomorrow = date("Y-m-d", strtotime(" +1 day"));
+$get_date = !empty($_GET['travel_date']) ? $_GET['travel_date'] : '';
+$tabs = !empty($_GET['tabs']) ? $_GET['tabs'] : 'today';
 // $today = '2024-09-29';
 // $tomorrow = '2024-09-30';
 ?>
@@ -25,34 +27,36 @@ $tomorrow = date("Y-m-d", strtotime(" +1 day"));
                             <div class="card-body">
                                 <ul class="nav nav-tabs" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
+                                        <a class="nav-link <?php echo ($tabs == 'today') ? 'active' : ''; ?>" id="today-tab" data-toggle="tab" href="#today" aria-controls="today" role="tab" aria-selected="true">Today</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
+                                        <a class="nav-link <?php echo ($tabs == 'tomorrow') ? 'active' : ''; ?>" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" aria-controls="tomorrow" role="tab" aria-selected="false">Tomorrow</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="custom-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="false">Custom</a>
+                                        <a class="nav-link <?php echo ($tabs == 'custom') ? 'active' : ''; ?>" id="custom-tab" data-toggle="tab" href="#custom" aria-controls="custom" role="tab" aria-selected="false">Custom</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane active" id="today" aria-labelledby="today-tab" role="tabpanel">
+                                    <div class="tab-pane <?php echo ($tabs == 'today') ? 'active' : ''; ?>" id="today" aria-labelledby="today-tab" role="tabpanel">
                                     </div>
-                                    <div class="tab-pane" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
+                                    <div class="tab-pane <?php echo ($tabs == 'tomorrow') ? 'active' : ''; ?>" id="tomorrow" aria-labelledby="tomorrow-tab" role="tabpanel">
                                     </div>
-                                    <div class="tab-pane" id="custom" aria-labelledby="custom-tab" role="tabpanel">
+                                    <div class="tab-pane <?php echo ($tabs == 'custom') ? 'active' : ''; ?>" id="custom" aria-labelledby="custom-tab" role="tabpanel">
 
                                         <form id="invoice-search-form" name="invoice-search-form" method="get" enctype="multipart/form-data">
+                                            <input type="hidden" name="pages" value="<?php echo $_GET['pages']; ?>">
                                             <div class="d-flex align-items-center mx-50 row pt-0 pb-0">
                                                 <div class="col-md-3 col-12">
                                                     <div class="form-group">
                                                         <label class="form-label" for="travel_date">วันที่เดินทาง (Travel Date)</label></br>
-                                                        <input type="text" class="form-control flatpickr-range" id="travel_date" name="travel_date" value="<?php echo $today; ?>" />
+                                                        <input type="text" class="form-control flatpickr-range" id="travel_date" name="travel_date" value="<?php echo !empty($get_date) ? $get_date : $today; ?>" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 col-12">
                                                     <button type="submit" class="btn btn-primary">Search</button>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="tabs" value="custom">
                                         </form>
 
                                         <div id="div-invoice-custom">

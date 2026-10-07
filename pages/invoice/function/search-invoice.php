@@ -35,6 +35,8 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             # --- get value booking --- #
             if (in_array($invoice['cover_id'], $first_cover) == false) {
                 $first_cover[] = $invoice['cover_id'];
+                $rec_id[] = !empty($invoice['rec_id']) ? $invoice['rec_id'] : 0;
+
                 $cover_id[] = !empty($invoice['cover_id']) ? $invoice['cover_id'] : 0;
                 $inv_full[] = !empty($invoice['inv_full']) ? $invoice['inv_full'] : '';
                 $inv_date[] = !empty($invoice['inv_date']) ? $invoice['inv_date'] : '0000-00-00';
@@ -42,11 +44,30 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                 $vat[] = !empty($invoice['vat']) ? $invoice['vat'] : '-';
                 $withholding[] = !empty($invoice['withholding']) ? $invoice['withholding'] : '-';
                 $due_date[] = (diff_date($today, $invoice['rec_date'])['day'] > 0) ? '<span class="badge badge-pill badge-light-success text-capitalized">วันที่ครบกำหนดชำระ : ' . date("j F Y", strtotime($invoice['rec_date'])) . ' (ครบกำหนดชำระในอีก ' . diff_date($today, $invoice['rec_date'])['num'] . ' วัน)</span>' : '<span class="badge badge-pill badge-light-danger text-capitalized">วันที่ครบกำหนดชำระ : ' . date("j F Y", strtotime($invoice['rec_date'])) . ' (เกินกำหนดชำระมาแล้ว ' . diff_date($today, $invoice['rec_date'])['num'] . ' วัน)</span>';
+            
+                $arr_inv[$invoice['cover_id']]['cover_id'] = !empty($invoice['cover_id']) ? $invoice['cover_id'] : 0;
+                $arr_inv[$invoice['cover_id']]['inv_full'] = !empty($invoice['inv_full']) ? $invoice['inv_full'] : '';
+                $arr_inv[$invoice['cover_id']]['inv_date'] = !empty($invoice['inv_date']) ? date('j F Y', strtotime($invoice['inv_date'])) : '0000-00-00';
+                $arr_inv[$invoice['cover_id']]['rec_date'] = !empty($invoice['rec_date']) ? date('j F Y', strtotime($invoice['rec_date'])) : '0000-00-00';
+                $arr_inv[$invoice['cover_id']]['vat'] = !empty($invoice['vat']) ? $invoice['vat'] : 0;
+                $arr_inv[$invoice['cover_id']]['withholding'] = !empty($invoice['withholding']) ? $invoice['withholding'] : 0;
+                $arr_inv[$invoice['cover_id']]['brch_name'] = !empty($invoice['brch_name']) ? $invoice['brch_name'] : '';
+                $arr_inv[$invoice['cover_id']]['due_date'] = (diff_date($today, $invoice['rec_date'])['day'] > 0) ? '<span class="badge badge-pill badge-light-success text-capitalized">ครบกำหนดชำระในอีก ' . diff_date($today, $invoice['rec_date'])['num'] . ' วัน</span>' : '<span class="badge badge-pill badge-light-danger text-capitalized">เกินกำหนดชำระมาแล้ว ' . diff_date($today, $invoice['rec_date'])['num'] . ' วัน</span>';
+
+                $arr_inv[$invoice['cover_id']]['rec_full'] = !empty($invoice['rec_full']) ? $invoice['rec_full'] : '';
+                $arr_inv[$invoice['cover_id']]['rec_date_2'] = !empty($invoice['date_rec']) ? $invoice['date_rec'] : '0000-00-00';
+                $arr_inv[$invoice['cover_id']]['payt_id'] = !empty($invoice['payt_id']) ? $invoice['payt_id'] : 0;
+                $arr_inv[$invoice['cover_id']]['banacc_id'] = !empty($invoice['rec_banacc_id']) ? $invoice['rec_banacc_id'] : 0;
+                $arr_inv[$invoice['cover_id']]['bank_id'] = !empty($invoice['rec_cheque']) ? $invoice['rec_cheque'] : 0;
+                $arr_inv[$invoice['cover_id']]['check_no'] = !empty($invoice['cheque_no']) ? $invoice['cheque_no'] : '';
+                $arr_inv[$invoice['cover_id']]['cheque_date'] = !empty($invoice['cheque_date']) ? $invoice['cheque_date'] : '0000-00-00';
+                $arr_inv[$invoice['cover_id']]['note'] = !empty($invoice['rec_note']) ? $invoice['rec_note'] : '';
             }
             # --- get value booking --- #
             if (in_array($invoice['id'], $first_booking) == false) {
                 $first_booking[] = $invoice['id'];
                 $inv_id[] = !empty($invoice['inv_id']) ? $invoice['inv_id'] : 0;
+                $bo_test[] = !empty($invoice['id']) ? $invoice['id'] : 0;
                 $bo_id[$invoice['cover_id']][] = !empty($invoice['id']) ? $invoice['id'] : 0;
                 $comp_id[] = !empty($invoice['comp_id']) ? $invoice['comp_id'] : 0;
                 $agent_name[] = !empty($invoice['comp_name']) ? $invoice['comp_name'] : '';
@@ -72,20 +93,14 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                 $bp_note[] = !empty($invoice['bp_note']) ? $invoice['bp_note'] : '';
                 $product_name[] = !empty($invoice['product_name']) ? $invoice['product_name'] : '';
 
-                $arr_bo[$invoice['id']]['id'] = !empty($invoice['id']) ? $invoice['id'] : 0;
+                $arr_bo[$invoice['cover_id']]['id'][] = !empty($invoice['id']) ? $invoice['id'] : 0;
                 $arr_bo[$invoice['id']]['travel_date'] = !empty($invoice['travel_date']) ? $invoice['travel_date'] : '';
                 $arr_bo[$invoice['id']]['text_date'] = !empty($invoice['travel_date']) ? date("d/m/Y", strtotime($invoice['travel_date'])) : '';
                 $arr_bo[$invoice['id']]['cus_name'] = !empty($invoice['cus_name']) ? $invoice['cus_name'] : '';
                 $arr_bo[$invoice['id']]['product_name'] = !empty($invoice['product_name']) ? $invoice['product_name'] : '';
                 $arr_bo[$invoice['id']]['voucher_no'] = !empty($invoice['voucher_no']) ? $invoice['voucher_no'] : $invoice['book_full'];
-                $arr_bo[$invoice['id']]['adult'] = !empty($invoice['adult']) ? $invoice['adult'] : '-';
-                $arr_bo[$invoice['id']]['child'] = !empty($invoice['child']) ? $invoice['child'] : '-';
-                $arr_bo[$invoice['id']]['rate_adult'] = !empty($invoice['rates_adult']) && $invoice['adult'] > 0 ? $invoice['rates_adult'] : '-';
-                $arr_bo[$invoice['id']]['rate_child'] = !empty($invoice['rates_child']) && $invoice['child'] > 0 ? $invoice['rates_child'] : '-';
-                $arr_bo[$invoice['id']]['foc'] = !empty($invoice['bp_foc']) ? $invoice['bp_foc'] : '-';
                 $arr_bo[$invoice['id']]['discount'] = !empty($invoice['discount']) ? $invoice['discount'] : '-';
                 $arr_bo[$invoice['id']]['cot'] = !empty($invoice['total_paid']) ? $invoice['total_paid'] : '-';
-                $arr_bo[$invoice['id']]['total'] = $invoice['booktye_id'] == 1 ? ($invoice['adult'] * $invoice['rates_adult']) + ($invoice['child'] * $invoice['rates_child']) : $invoice['rates_private'];
             }
 
             # --- get value rates --- #
@@ -103,6 +118,17 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                 $rate_adult[$invoice['cover_id']][] = !empty($invoice['rates_adult']) && $invoice['adult'] > 0 ? $invoice['rates_adult'] : '-';
                 $rate_child[$invoice['cover_id']][] = !empty($invoice['rates_child']) && $invoice['child'] > 0 ? $invoice['rates_child'] : '-';
                 $rate_total[$invoice['cover_id']][] = $invoice['booktye_id'] == 1 ? ($invoice['booksta_id'] != 2 && $invoice['booksta_id'] != 4) ? ($invoice['adult'] * $invoice['rates_adult']) + ($invoice['child'] * $invoice['rates_child']) : $invoice['rates_private'] : $invoice['rates_private'];
+
+                $arr_rates[$invoice['id']]['id'][] = !empty($invoice['bpr_id']) ? $invoice['bpr_id'] : 0;
+                $arr_rates[$invoice['id']]['customer'][] = !empty($invoice['category_cus']) ? $invoice['category_cus'] : 0;
+                $arr_rates[$invoice['id']]['category_name'][] = !empty($invoice['category_name']) ? $invoice['category_name'] : 0;
+                $arr_rates[$invoice['id']]['adult'][] = !empty($invoice['adult']) ? $invoice['adult'] : 0;
+                $arr_rates[$invoice['id']]['child'][] = !empty($invoice['child']) ? $invoice['child'] : 0;
+                $arr_rates[$invoice['id']]['infant'][] = !empty($invoice['infant']) ? $invoice['infant'] : 0;
+                $arr_rates[$invoice['id']]['foc'][] = !empty($invoice['foc']) ? $invoice['foc'] : 0;
+                $arr_rates[$invoice['id']]['rate_adult'][] = !empty($invoice['rates_adult']) && $invoice['adult'] > 0 ? $invoice['rates_adult'] : '-';
+                $arr_rates[$invoice['id']]['rate_child'][] = !empty($invoice['rates_child']) && $invoice['child'] > 0 ? $invoice['rates_child'] : '-';
+                $arr_rates[$invoice['id']]['total'][] = ($invoice['booktye_id'] == 1) ? ($invoice['adult'] * $invoice['rates_adult']) + ($invoice['child'] * $invoice['rates_child']) : $invoice['rates_private'];
             }
 
             # --- get value booking --- #
@@ -120,6 +146,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
             }
         }
     }
+    print_r($bo_test);
 ?>
     <div class="modal-header">
         <h4 class="modal-title"><span class="text-success"><?php echo $agent_name[0]; ?></span> (<?php echo !empty(substr($travel_date, 14, 24)) ? date('j F Y', strtotime(substr($travel_date, 0, 10))) . ' - ' . date('j F Y', strtotime(substr($travel_date, 14, 24))) : date('j F Y', strtotime($travel_date)); ?>)</h4>
@@ -128,6 +155,16 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
         </button>
     </div>
     <div class="modal-body" id="order-agent-image-table" style="background-color: #fff;">
+
+        <input type="hidden" id="agent_value" name="agent_value" value="<?php echo $comp_id[0]; ?>"
+            data-name="<?php echo $agent_name[0]; ?>"
+            data-license="<?php echo $agent_license[0]; ?>"
+            data-telephone="<?php echo $agent_telephone[0]; ?>"
+            data-address="<?php echo $agent_address[0]; ?>" />
+        <textarea id="array_invoice" hidden><?php echo !empty($arr_inv) ? json_encode($arr_inv, true) : ''; ?></textarea>
+        <textarea id="array_booking" hidden><?php echo !empty($arr_bo) ? json_encode($arr_bo, true) : ''; ?></textarea>
+        <textarea id="array_rates" hidden><?php echo !empty($arr_rates) ? json_encode($arr_rates, true) : ''; ?></textarea>
+        <textarea id="array_extar" hidden><?php echo !empty($arr_extar) ? json_encode($arr_extar, true) : ''; ?></textarea>
 
         <div class="text-center mt-1 mb-1">
             <h4>
@@ -147,21 +184,26 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ag
                     <th class="text-center" width="8%">ภาษีมูลค่าเพิ่ม</th>
                     <th class="text-center" width="8%">หัก ณ ที่จ่าย (%)</th>
                     <th class="text-center" width="8%">AMOUNT</th>
+                    <th class="cell-fit">รับชำระ</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 if (!empty($cover_id)) {
                     for ($i = 0; $i < count($cover_id); $i++) {
+                        $href = ' href="javascript:void(0);" data-dismiss="modal" data-toggle="modal" data-target="#modal-show" onclick="modal_show_invoice(' . $cover_id[$i] . ');" style="color:#6E6B7B" ';
                 ?>
-                        <tr data-dismiss="modal" data-toggle="modal" data-target="#modal-show" onclick="modal_show_invoice(<?php echo $cover_id[$i]; ?>);">
-                            <td><?php echo date('j F Y', strtotime($inv_date[$i])); ?></td>
-                            <td><?php echo $inv_full[$i]; ?></td>
-                            <td><?php echo $due_date[$i]; ?></td>
-                            <td class="text-center"><?php echo !empty($bo_id[$cover_id[$i]]) ? count($bo_id[$cover_id[$i]]) : '-'; ?></td>
-                            <td class="text-center"><?php echo $vat[$i] != '-' ? $vat[$i] == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%' : '-'; ?></td>
-                            <td class="text-center"><?php echo $withholding[$i] != '-' ? $withholding[$i] . '%' : '-'; ?></td>
-                            <td class="text-center"></td>
+                        <tr>
+                            <td><a <?php echo $href; ?>><?php echo date('j F Y', strtotime($inv_date[$i])); ?></a></td>
+                            <td><a <?php echo $href; ?>><?php echo $inv_full[$i]; ?></a></td>
+                            <td><a <?php echo $href; ?>><?php echo $due_date[$i]; ?></a></td>
+                            <td class="text-center"><a <?php echo $href; ?>><?php echo !empty($bo_id[$cover_id[$i]]) ? count($bo_id[$cover_id[$i]]) : '-'; ?></a></td>
+                            <td class="text-center"><a <?php echo $href; ?>><?php echo $vat[$i] != '-' ? $vat[$i] == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%' : '-'; ?></a></td>
+                            <td class="text-center"><a <?php echo $href; ?>><?php echo $withholding[$i] != '-' ? $withholding[$i] . '%' : '-'; ?></a></td>
+                            <td class="text-center"><a <?php echo $href; ?>><?php echo !empty($rate_total) ? !empty($extar_total[$cover_id[$i]]) ? number_format(array_sum($rate_total[$cover_id[$i]]) + array_sum($extar_total[$cover_id[$i]])) : number_format(array_sum($rate_total[$cover_id[$i]])) : ''; ?></a></td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-gradient-info" data-toggle="modal" data-target="#modal-receipt" onclick="modal_receipt(<?php echo $cover_id[$i]; ?>, <?php echo $rec_id[$i]; ?>)">ชำระ</button>
+                            </td>
                         </tr>
                 <?php }
                 } ?>

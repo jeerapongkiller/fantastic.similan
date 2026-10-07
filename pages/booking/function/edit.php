@@ -167,9 +167,12 @@ if (isset($_POST['action']) && $_POST['action'] == "edit" && isset($_POST['bo_id
         }
     }
 
+    // if ($_SESSION["supplier"]["id"] == 1) {
+    //     echo $travel_date . ', ' . $before_travel;
+    // }
     if ($travel_date != $before_travel) {
-        $response = $bookObj->delete_booking_manage_transfer($mange_transfer, $bt_id, $mange_transfer_id);
-        $response = $bookObj->delete_booking_manage_boat($mange_boat, $bo_id, $mange_boat_id);
+        $response = $bookObj->delete_booking_manage_transfer($mange_transfer_id);
+        $response = $bookObj->delete_booking_manage_boat($mange_boat_id);
     }
 
     $response = ($confirm_id > 0) ? $bookObj->delete_confirm($confirm_id) : $response;

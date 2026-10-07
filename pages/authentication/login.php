@@ -44,7 +44,7 @@ require_once 'controllers/Auth.php';
                             <div class="card-body">
                                 <a href="javascript:void(0);" class="brand-logo">
                                     <img src="app-assets/images/logo/logo.svg" width="50">
-                                    <h4 class="brand-text text-primary ml-1">SHAMBHALA<small class="d-block">TRAVEL</small></h4>
+                                    <h4 class="brand-text text-primary ml-1">FANTASTIC <small class="d-block">SIMILAN TRAVEL</small></h4>
                                 </a>
 
                                 <form class="auth-login-form mt-2" id="frmlogin" name="frmlogin" action="" method="POST" novalidate>
@@ -107,7 +107,7 @@ require_once 'controllers/Auth.php';
             if (in_array(1, $_SESSION["supplier"]["permission"]) == true) {
                 $redirect_page = 'booking/list';
             } elseif (in_array(2, $_SESSION["supplier"]["permission"]) == true) {
-                $redirect_page = 'order-driver/list';
+                $redirect_page = 'order-driver/manage';
             } elseif (in_array(3, $_SESSION["supplier"]["permission"]) == true) {
                 $redirect_page = 'order-guide/list';
             } elseif (in_array(4, $_SESSION["supplier"]["permission"]) == true) {
@@ -116,6 +116,12 @@ require_once 'controllers/Auth.php';
                 $redirect_page = 'report/list';
             } elseif (in_array(6, $_SESSION["supplier"]["permission"]) == true) {
                 $redirect_page = 'tour/list';
+            } elseif (in_array(7, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'order-boat/manage';
+            } elseif (in_array(8, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'order-driver/list';
+            } elseif (in_array(9, $_SESSION["supplier"]["permission"]) == true) {
+                $redirect_page = 'order-boat/list';
             }
             header('location:./?pages=' . $redirect_page);
         } else {

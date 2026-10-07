@@ -465,12 +465,12 @@ $day7 = date("Y-m-d", strtotime(" +6 day"));
                                             <input type="text" class="form-control" id="telephone" name="telephone" value="" />
                                         </div>
                                         <div class="form-group col-xl-2 col-md-4 col-12">
-                                            <label for="discount">Discount</label>
-                                            <input type="text" class="form-control numeral-mask" id="discount" name="discount" value="" />
-                                        </div>
-                                        <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label for="cot">Cash on tour</label>
                                             <input type="text" class="form-control numeral-mask" id="cot" name="cot" value="" />
+                                        </div>
+                                        <div class="form-group col-xl-2 col-md-4 col-12">
+                                            <label for="discount">Discount</label>
+                                            <input type="text" class="form-control numeral-mask" id="discount" name="discount" value="" />
                                         </div>
                                         <div class="form-group col-xl-2 col-md-4 col-12">
                                             <label class="form-label" for="sender">Sender</label>

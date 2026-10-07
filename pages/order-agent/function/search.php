@@ -84,6 +84,38 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['tr
                     if (in_array($agents['agent_id'], $agent_arr) == false && $agents['agent_id'] > 0) {
                         $agent_arr[] = $agents['agent_id'];
                         $tr = 'onclick="modal_detail(' . $agents['agent_id'] . ', \'' . addslashes($agents['agent_name']) . '\', \'' . $travel_date . '\');" data-toggle="modal" data-target="#modal-detail"';
+
+                        // $confirm_agent = (!empty($travel_date) && $travel_date != '') ? !empty(substr($travel_date, 14, 24)) ? " AND confirm_agent.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 14, 24) . "'" : " AND confirm_agent.travel_date = '" . $travel_date . "'" : "";
+                        // $travel_agent = (!empty($travel_date) && $travel_date != '') ? !empty(substr($travel_date, 14, 24)) ? " AND BP.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 14, 24) . "'" : " AND BP.travel_date = '" . $travel_date . "'" : "";
+
+                        // $bookings = $orderObj->get_values(
+                        //     'bookings.id, BPRS.adult, BPRS.child, BPRS.infant, BPRS.foc, BPRS.max_tourist, BOPA.total_paid as cot, confirm_agent.id as confirm',
+                        //     'bookings
+                        //     LEFT JOIN companies
+                        //         ON bookings.company_id = companies.id
+                        //     LEFT JOIN booking_products BP
+                        //         ON bookings.id = BP.booking_id
+                        //     LEFT JOIN (
+                        //         SELECT BP.booking_id,
+                        //             SUM(BPR.adult) AS adult,
+                        //             SUM(BPR.child) AS child,
+                        //             SUM(BPR.infant) AS infant,
+                        //             SUM(BPR.foc) AS foc,
+                        //             SUM(BPR.adult) + SUM(BPR.child) + SUM(BPR.infant) + SUM(BPR.foc) AS max_tourist
+                        //         FROM booking_products BP
+                        //         JOIN booking_product_rates BPR 
+                        //             ON BP.id = BPR.booking_products_id
+                        //         GROUP BY BP.booking_id, BPR.category_id
+                        //     ) BPRS 
+                        //         ON BPRS.booking_id = bookings.id
+                        //     LEFT JOIN booking_paid BOPA
+                        //         ON bookings.id = BOPA.booking_id
+                        //         AND BOPA.booking_payment_id = 4
+                        //     LEFT JOIN confirm_agent
+                        //         ON confirm_agent.agent_id = ' . $agents['agent_id'] . $confirm_agent,
+                        //     'companies.id = ' . $agents['agent_id'] . $travel_agent . ' AND bookings.booking_status_id != 3 AND bookings.booking_status_id != 4',
+                        //     1
+                        // );
             ?>
                         <tr <?php echo !empty($confirm[$agents['agent_id']]) ? 'class="table-success"' : ''; ?>>
                             <td class="text-center">

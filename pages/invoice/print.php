@@ -184,18 +184,18 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
 
         #invoice-preview-vertical .table-black td {
             color: #FFFFFF;
-            background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>;
+            background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>;
             padding: 0.7rem;
         }
 
         #invoice-preview-vertical .table-black-2 td {
             color: #FFFFFF;
-            background-color: <?php echo ($vat[0] > 0) ? '#ff3f49' : '#4f4e4e'; ?>;
+            background-color: <?php echo ($vat[0] > 0) ? '#ff3f49' : '#0060ff'; ?>;
             padding: 0.5rem;
         }
 
         #invoice-preview-vertical .table-content td {
-            border: 1px solid #333;
+            border: 1px solid #003285;
             font-size: 14px;
             color: #000;
             padding: 0.72rem 2rem
@@ -231,7 +231,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                 </span>
                 <table width="100%" class="mt-50">
                     <tr class="table-content">
-                        <th rowspan="2" class="text-center" style="background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>; color: #fff; border-radius: 15px 0px 0px 0px;">
+                        <th rowspan="2" class="text-center" style="background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>; color: #fff; border-radius: 15px 0px 0px 0px;">
                             ใบแจ้งหนี้ / INVOICE
                         </th>
                         <td class="text-center">
@@ -428,7 +428,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                             <?php echo $inv_note[0]; ?>
                         </p>
                     </td>
-                    <?php if (!empty($discount)) { ?>
+                    <?php if (!empty($discount) && (array_sum($discount) > 0)) { ?>
                         <td class="table-content text-center" colspan="3">
                             <dl class="row" style="margin-bottom: 0;">
                                 <dt class="col-sm-8 text-right">
@@ -441,7 +441,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
                     <?php } ?>
                 </tr>
 
-                <?php if (!empty($cot)) { ?>
+                <?php if (!empty($cot) && (array_sum($cot) > 0)) { ?>
                     <tr class="table-content">
                         <td class="text-center" colspan="3">
                             <dl class="row" style="margin-bottom: 0;">
@@ -484,7 +484,7 @@ if (isset($action) && $action == "preview" && !empty($get_cover)) {
 
                 <tr class="table-content">
                     <!-- <td colspan="9"></td> -->
-                    <td class="text-center" style="color: #fff; background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>;" colspan="3">
+                    <td class="text-center" style="color: #fff; background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>;" colspan="3">
                         <dl class="row" style="margin-bottom: 0;">
                             <dt class="col-sm-8 text-right">
                                 <b>ยอดชำระ : </b>

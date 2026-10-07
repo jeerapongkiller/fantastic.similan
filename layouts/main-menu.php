@@ -3,7 +3,7 @@
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="javascript:void(0);"><span class="brand-logo">
                         <img src="app-assets/images/logo/logo.png" height="24"></span>
-                    <h5 class="brand-text text-center">SHAMBHALA<small class="d-block">TRAVEL</small></h5></span>
+                    <h5 class="brand-text text-center">FANTASTIC<small class="d-block" style="letter-spacing: 0px !important;">SIMILAN TRAVEL</small></h5></span>
                 </a></li>
             <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4 text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
         </ul>
@@ -22,28 +22,41 @@
                 </li>
             <?php } ?>
 
-            <!-- Check Permission Management -->
-            <?php if (in_array(2, $_SESSION["supplier"]["permission"]) == true) { ?>
+            <?php if (in_array(2, $_SESSION["supplier"]["permission"]) == true || in_array(8, $_SESSION["supplier"]["permission"]) == true || in_array(7, $_SESSION["supplier"]["permission"]) == true || in_array(9, $_SESSION["supplier"]["permission"]) == true) { ?>
                 <li class="navigation-header"><span data-i18n="mangement">การจัดการ</span><i data-feather="more-horizontal"></i></li>
+            <?php } ?>
+            <!-- Check Permission Management -->
+            <?php if (in_array(2, $_SESSION["supplier"]["permission"]) == true || in_array(8, $_SESSION["supplier"]["permission"]) == true) { ?>
                 <li class="nav-item"><a class="d-flex align-items-center" href="#"><i data-feather='briefcase'></i><span class="menu-title text-truncate" data-i18n="order-driver">จัดรถ</span></a>
                     <ul class="menu-content">
-                        <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-driver/manage"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-driver/manage"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">เปิดรถ</span></a>
-                        </li>
-                        <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-driver/list"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-driver/list"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">ใบงานรถ</span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item"><a class="d-flex align-items-center" href="#"><i data-feather='briefcase'></i><span class="menu-title text-truncate" data-i18n="order-boat">จัดเรือ</span></a>
-                    <ul class="menu-content">
-                        <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/manage"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-boat/manage"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">เปิดเรือ</span></a>
-                        </li>
-                        <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/list"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-boat/list"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">ใบงานเรือ</span></a>
-                        </li>
-                        <li class="nav-item" hidden><a class="d-flex align-items-center" href="./?pages=order-boat/check-in"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">Check IN</span></a>
-                        </li>
+                        <?php if (in_array(2, $_SESSION["supplier"]["permission"]) == true) { ?>
+                            <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-driver/manage"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-driver/manage"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">เปิดรถ</span></a>
+                            </li>
+                        <?php }
+                        if (in_array(8, $_SESSION["supplier"]["permission"]) == true) { ?>
+                            <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-driver/list"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-driver/list"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">ใบงานรถ</span></a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
             <?php } ?>
+
+            <!-- Check Permission Management -->
+            <?php if (in_array(7, $_SESSION["supplier"]["permission"]) == true || in_array(9, $_SESSION["supplier"]["permission"]) == true) { ?>
+                <li class="nav-item"><a class="d-flex align-items-center" href="#"><i data-feather='briefcase'></i><span class="menu-title text-truncate" data-i18n="order-boat">จัดเรือ</span></a>
+                    <ul class="menu-content">
+                        <?php if (in_array(7, $_SESSION["supplier"]["permission"]) == true) { ?>
+                            <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/manage"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-boat/manage"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">เปิดเรือ</span></a>
+                            </li>
+                        <?php }
+                        if (in_array(9, $_SESSION["supplier"]["permission"]) == true) { ?>
+                            <li class="nav-item <?php echo ((strstr($_GET['pages'], "order-boat/list"))) ? 'active' : ''; ?>"><a class="d-flex align-items-center" href="./?pages=order-boat/list"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="order-driver">ใบงานเรือ</span></a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </li>
+            <?php } ?>
+
 
             <!-- Check Permission Work Sheet -->
             <?php if (in_array(3, $_SESSION["supplier"]["permission"]) == true) { ?>

@@ -50,12 +50,12 @@
     <style>
         .table-black {
             color: #FFFFFF;
-            background-color: #333;
+            background-color: #003285;
         }
 
         .table-black-2 {
             color: #FFFFFF;
-            background-color: #4f4e4e;
+            background-color: #0060ff;
         }
     </style>
 </head>
@@ -192,8 +192,9 @@
         }
 
         $(document).ready(function() {
-            var jqForm = $('#invoice-search-form'),
+            var //  = $('#invoice-search-form'),
                 jqFormInv = $('#invoice-form'),
+                jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
                 range = $('.flatpickr-range'),
@@ -260,20 +261,20 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
-            jqForm.on("submit", function(e) {
-                var serializedData = $(this).serialize();
-                $.ajax({
-                    url: "pages/invoice/function/search-agent.php",
-                    type: "POST",
-                    data: serializedData + "&action=search-invoice",
-                    success: function(response) {
-                        if (response != false) {
-                            $("#div-invoice-custom").html(response);
-                        }
-                    }
-                });
-                e.preventDefault();
-            });
+            // jqForm.on("submit", function(e) {
+            //     var serializedData = $(this).serialize();
+            //     $.ajax({
+            //         url: "pages/invoice/function/search-agent.php",
+            //         type: "POST",
+            //         data: serializedData + "&action=search-invoice",
+            //         success: function(response) {
+            //             if (response != false) {
+            //                 $("#div-invoice-custom").html(response);
+            //             }
+            //         }
+            //     });
+            //     e.preventDefault();
+            // });
 
             // jQuery Validation
             // --------------------------------------------------------------------
@@ -323,10 +324,58 @@
                 });
             }
 
+            if (jqFormRec.length) {
+                $.validator.addMethod("regex", function(value, element, regexp) {
+                    return this.optional(element) || regexp.test(value);
+                }, "Please check your input.");
+
+                jqFormRec.validate({
+                    rules: {
+
+                    },
+                    messages: {
+
+                    },
+                    submitHandler: function(form) {
+                        // update ajax request data
+                        var formData = new FormData(form);
+                        formData.append('action', 'create');
+                        $.ajax({
+                            url: "pages/receipt/function/create.php",
+                            type: "POST",
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function(response) {
+                                // console.log(response);
+                                if (response != false && response > 0) {
+                                    Swal.fire({
+                                        title: "The information has been added successfully.",
+                                        icon: "success",
+                                    }).then(function(isConfirm) {
+                                        if (isConfirm) {
+                                            location.reload(); // refresh page
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: "Please try again.",
+                                        icon: "error",
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
 
+        // Star Function Invoice
+        // ------------------------------------------------------------------
         function search_start_date(tabs, travel_date) {
             var formData = new FormData();
             formData.append('action', 'search-invoice');
@@ -339,7 +388,11 @@
                 data: formData,
                 success: function(response) {
                     if (response != 'false') {
-                        $('#' + tabs).html(response);
+                        if (tabs !== 'custom') {
+                            $('#' + tabs).html(response);
+                        } else {
+                            $('#div-invoice-custom').html(response);
+                        }
                     }
                 }
             });
@@ -383,7 +436,7 @@
                 document.getElementById('inv_date').value = document.getElementById('agent_value').dataset.inv_date;
                 document.getElementById('rec_date').value = document.getElementById('agent_value').dataset.rec_date;
                 document.getElementById('vat').value = document.getElementById('agent_value').dataset.vat;
-                document.getElementById('withholding').value = (document.getElementById('agent_value').dataset.withholding !== '-') ? document.getElementById('agent_value').dataset.withholding: 0;
+                document.getElementById('withholding').value = (document.getElementById('agent_value').dataset.withholding !== '-') ? document.getElementById('agent_value').dataset.withholding : 0;
                 document.getElementById('bank_account').value = document.getElementById('agent_value').dataset.bank_account;
                 document.getElementById('note').value = document.getElementById('agent_value').dataset.note;
 
@@ -405,6 +458,8 @@
                     var id = res.id[index];
                     discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
                     cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+
+                    text_html += '<input type="hidden" name="bo_id[]" value="' + id + '">';
 
                     if (res_rates !== undefined && (res_rates[id] !== undefined)) {
                         rowspan = res_rates[id].id.length;
@@ -637,10 +692,500 @@
                 document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
                 document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
             } else {
-                document.getElementById('tr-invoice').style.backgroundColor = '#333';
-                document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
+                document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+                document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
             }
         }
+        // ------------------------------------------------------------------
+        // End Function Invoice
+
+        // Star Function Receipt
+        // ------------------------------------------------------------------
+        function modal_receipt(cover_id, rec_id) {
+            var array_booking = document.getElementById('array_booking').value;
+            var array_extar = document.getElementById('array_extar').value;
+            var array_rates = document.getElementById('array_rates').value;
+            var array_invoice = document.getElementById('array_invoice').value;
+            if (cover_id > 0 && array_booking !== '') {
+                var res = $.parseJSON(array_booking);
+                var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : '';
+                var res_rates = array_rates !== '' ? $.parseJSON(array_rates) : '';
+                var res_invoice = array_invoice !== '' ? $.parseJSON(array_invoice) : '';
+
+                document.getElementById('rec_cover_id').value = cover_id;
+
+                document.getElementById('agent_name_text_rec').innerHTML = document.getElementById('agent_value').dataset.name;
+                document.getElementById('agent_tax_text_rec').innerHTML = document.getElementById('agent_value').dataset.license;
+                document.getElementById('agent_tel_text_rec').innerHTML = document.getElementById('agent_value').dataset.telephone;
+                document.getElementById('agent_address_text_rec').innerHTML = document.getElementById('agent_value').dataset.address;
+
+                if (rec_id > 0) {
+                    document.getElementById('rec_id').value = rec_id;
+                    document.getElementById('rec_date_2').value = res_invoice[cover_id].rec_date_2;
+                    document.getElementById('payments_type').value = res_invoice[cover_id].payt_id;
+                    document.getElementById('bank_account_2').value = res_invoice[cover_id].banacc_id;
+                    document.getElementById('rec_bank').value = res_invoice[cover_id].bank_id;
+                    document.getElementById('check_no').value = typeof res_invoice[cover_id].check_no !== 'undefined' ? res_invoice[cover_id].check_no : '';
+                    document.getElementById('date_check').value = res_invoice[cover_id].cheque_date;
+                    document.getElementById('note').value = res_invoice[cover_id].note;
+
+                    document.getElementById('rec_full_text').innerHTML = res_invoice[cover_id].rec_full;
+                    document.getElementById('inv_full_text').innerHTML = res_invoice[cover_id].inv_full;
+                    document.getElementById('branch_text').innerHTML = res_invoice[cover_id].brch_name;
+                    document.getElementById('inv_date_text').innerHTML = res_invoice[cover_id].inv_date;
+                    document.getElementById('rec_date_text').innerHTML = res_invoice[cover_id].rec_date;
+                    document.getElementById('due_date_text').innerHTML = res_invoice[cover_id].due_date;
+
+                    $("#payments_type").val(res_invoice[cover_id].payt_id).trigger("change");
+                    $("#bank_account_2").val(res_invoice[cover_id].banacc_id).trigger("change");
+                    $("#rec_bank").val(res_invoice[cover_id].bank_id).trigger("change");
+                }
+
+                var text_html = '';
+                var total = 0;
+                var amount = 0;
+                var cot = 0;
+                var discount = 0;
+                var no = 1;
+                if (res !== undefined && (res[cover_id] !== undefined)) {
+                    for (let index = 0; index < res[cover_id].id.length; index++) {
+                        var rowspan = 0;
+                        text_rates = '';
+                        var id = res[cover_id].id[index];
+
+                        // change color
+                        if (res_invoice[cover_id].vat > 0) {
+                            document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
+                            document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
+                        } else {
+                            document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+                            document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
+                        }
+
+                        discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+                        cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+
+                        text_html += '<input type="hidden" name="bo_id[]" value="' + id + '">';
+
+                        if (res_rates !== undefined && (res_rates[id] !== undefined)) {
+                            rowspan = res_rates[id].id.length;
+                            for (let y = 0; y < res_rates[id].id.length; y++) {
+                                if (y == 0) {
+                                    // var customer = res_rates[id].customer[y] == 1 ? ' (Thai)' : ' (Foreign)';
+                                    var customer = res[id].status == 2 || res[id].status == 4 ? ' (' + res_rates[id].category_name[y] + ') ' + res[id].status_name : ' (' + res_rates[id].category_name[y] + ')';
+                                    text_html += '<tr>' +
+                                        '<td class="text-center">' + Number(no++) + '</td>' +
+                                        '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].text_date + ' </td>' +
+                                        '<td rowspan="' + rowspan + '"> ' + res[id].cus_name + ' </td>' +
+                                        '<td> ' + res[id].product_name + customer + ' </td>' +
+                                        '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].voucher_no + ' </td>' +
+                                        '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                        '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                        '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].discount + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                        '<td class="text-center" rowspan="' + rowspan + '"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+                                        '</tr>';
+
+                                    amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                                } else if (y > 0) {
+                                    // var customer = res_rates[id].customer[y] == 1 ? ' (Thai)' : ' (Foreign)';
+                                    var customer = ' (' + res_rates[id].category_name[y] + ') ';
+                                    text_html += '<tr>' +
+                                        '<td class="text-center">' + Number(no++) + '</td>' +
+                                        '<td> ' + res[id].product_name + customer + ' </td>' +
+                                        '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+                                        '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+                                        '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+                                        '</tr>';
+
+                                    amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+                                }
+                            }
+                        }
+                        '</tr>';
+
+                        if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+                            for (let index = 0; index < res_extar[id].id.length; index++) {
+                                amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
+                                text_html += '<tr>' +
+                                    '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
+                                    '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+                                    '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+                                    '<td class="text-center">-</td>' +
+                                    '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+                                    '<td class="text-center">-</td>' +
+                                    '</tr>';
+                            }
+                        }
+                    }
+
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+                        '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+                        '</tr>'
+
+                    if (discount > 0) {
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+                            '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+                            '</tr>'
+                    }
+
+                    if (cot > 0) {
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b>Cash on tour</b></td>' +
+                            '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+                            '</tr>'
+                    }
+
+                    if (res_invoice[cover_id].vat == 1) {
+                        vat_total = Number(((amount * 100) / 107));
+                        vat_cut = vat_total;
+                        vat_total = Number(amount - vat_total);
+                        withholding_total = res_invoice[cover_id].withholding > 0 ? Number((vat_cut * res_invoice[cover_id].withholding) / 100) : 0;
+                        amount = Number(amount - withholding_total);
+                        withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        });
+                    } else if (res_invoice[cover_id].vat == 2) {
+                        vat_total = Number(((amount * 7) / 100));
+                        amount = Number(amount) + Number(vat_total);
+                        withholding_total = res_invoice[cover_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[cover_id].withholding) / 100) : 0;
+                        amount = Number(amount - withholding_total);
+                        withholding_total = Number(withholding_total).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        });
+                    }
+
+                    amount = (discount > 0) ? amount - discount : amount;
+                    amount = (cot > 0) ? amount - cot : amount;
+
+                    if (res_invoice[cover_id].vat > 0) {
+                        text_vat = res_invoice[cover_id].vat == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%';
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b id="vat-multi-text">' + text_vat + '</b><br><small>(Vat)</small></td>' +
+                            '<td class="text-center">' + Number(vat_total).toLocaleString("en-US", {
+                                maximumFractionDigits: 2
+                            }) + '</td>' +
+                            '</tr>';
+                    }
+
+                    if (res_invoice[cover_id].withholding > 0) {
+                        text_html += '<tr>' +
+                            '<td colspan="10"></td>' +
+                            '<td class="text-center"><b id="withholding-multi-text">หัก ณ ที่จ่าย (' + res_invoice[cover_id].withholding + '%)</b><br><small>(Withholding Tax)</small></td>' +
+                            '<td class="text-center">' + numberWithCommas(withholding_total) + '</td>' +
+                            '</tr>';
+                    }
+
+                    text_html += '<tr>' +
+                        '<td colspan="10"></td>' +
+                        '<td class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
+                        '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
+                            maximumFractionDigits: 2
+                        }) + '</td>' +
+                        '</tr>';
+
+                }
+                $('#tbody-multi-invoice').html(text_html);
+
+                document.getElementById('rec_amount').value = amount;
+            }
+
+            $('#rec_date_2').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: (rec_id > 0) ? res_invoice[cover_id].rec_date_2 : 'today'
+            });
+
+            $('#date_check').flatpickr({
+                onReady: function(selectedDates, dateStr, instance) {
+                    if (instance.isMobile) {
+                        $(instance.mobileInput).attr('step', null);
+                    }
+                },
+                static: true,
+                altInput: true,
+                altFormat: 'j F Y',
+                dateFormat: 'Y-m-d',
+                defaultDate: 'today'
+            });
+
+            // calculator_price();
+        }
+
+        // function modal_receipt(rec_id) {
+        //     $('#modal-show').modal('toggle');
+        //     $('#modal-add-receipt').modal('show');
+        //     $("#modal-add-receipt").css({
+        //         "overflow-y": "auto"
+        //     });
+
+        //     var array_booking = document.getElementById('array_booking').value;
+        //     var array_extar = document.getElementById('array_extar').value;
+        //     var array_rates = document.getElementById('array_rates').value;
+        //     var array_invoice = document.getElementById('array_invoice').value;
+        //     if (array_booking !== '') {
+        //         var res = $.parseJSON(array_booking);
+        //         var res_extar = array_extar !== '' ? $.parseJSON(array_extar) : '';
+        //         var res_rates = array_rates !== '' ? $.parseJSON(array_rates) : '';
+        //         var res_invoice = array_invoice !== '' ? $.parseJSON(array_invoice) : '';
+
+        //         document.getElementById('rec_id').value = rec_id;
+        //         document.getElementById('rec_date').value = document.getElementById('agent_value').dataset.rec_date;
+        //         document.getElementById('payments_type').value = document.getElementById('agent_value').dataset.payt_id;
+        //         document.getElementById('bank_account').value = document.getElementById('agent_value').dataset.banacc_id;
+        //         document.getElementById('rec_bank').value = document.getElementById('agent_value').dataset.bank_id;
+        //         document.getElementById('check_no').value = typeof document.getElementById('agent_value').dataset.check_no !== 'undefined' ? document.getElementById('agent_value').dataset.check_no : '';
+        //         document.getElementById('date_check').value = document.getElementById('agent_value').dataset.cheque_date;
+        //         document.getElementById('note').value = document.getElementById('agent_value').dataset.note;
+
+        //         document.getElementById('agent_name_text').innerHTML = document.getElementById('agent_value').dataset.name;
+        //         document.getElementById('agent_tax_text').innerHTML = document.getElementById('agent_value').dataset.license;
+        //         document.getElementById('agent_tel_text').innerHTML = document.getElementById('agent_value').dataset.telephone;
+        //         document.getElementById('agent_address_text').innerHTML = document.getElementById('agent_value').dataset.address;
+
+        //         document.getElementById('rec_full_text').innerHTML = document.getElementById('agent_value').dataset.rec_full;
+        //         document.getElementById('inv_full_text').innerHTML = res_invoice[rec_id].inv_full;
+        //         document.getElementById('branch_text').innerHTML = res_invoice[rec_id].brch_name;
+        //         document.getElementById('inv_date_text').innerHTML = res_invoice[rec_id].inv_date;
+        //         document.getElementById('rec_date_text').innerHTML = res_invoice[rec_id].rec_date;
+        //         document.getElementById('due_date_text').innerHTML = res_invoice[rec_id].due_date;
+
+        //         var text_html = '';
+        //         var total = 0;
+        //         var amount = 0;
+        //         var cot = 0;
+        //         var discount = 0;
+        //         var no = 1;
+        //         for (let index = 0; index < res.id.length; index++) {
+        //             var rowspan = 0;
+        //             text_rates = '';
+        //             var id = res.id[index];
+
+        //             // change color
+        //             if (res_invoice[rec_id].vat > 0) {
+        //                 document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
+        //                 document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
+        //             } else {
+        //                 document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+        //                 document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
+        //             }
+
+        //             discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
+        //             cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
+
+        //             if (res_rates !== undefined && (res_rates[id] !== undefined)) {
+        //                 rowspan = res_rates[id].id.length;
+        //                 for (let y = 0; y < res_rates[id].id.length; y++) {
+        //                     if (y == 0) {
+
+        //                         var customer = res[id].status == 3 || res[id].status == 5 ? ' (' + res_rates[id].category_name[y] + ') ' + res[id].status_name : ' (' + res_rates[id].category_name[y] + ')';
+        //                         text_html += '<tr>' +
+        //                             '<td class="text-center">' + Number(no++) + '</td>' +
+        //                             '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].text_date + ' </td>' +
+        //                             '<td rowspan="' + rowspan + '"> ' + res[id].cus_name + ' </td>' +
+        //                             '<td> ' + res[id].product_name + customer + ' </td>' +
+        //                             '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].voucher_no + ' </td>' +
+        //                             '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+        //                             '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+        //                             '<td class="text-center" rowspan="' + rowspan + '"> ' + res[id].discount + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+        //                             '<td class="text-center" rowspan="' + rowspan + '"> ' + numberWithCommas(res[id].cot) + ' </td>' +
+        //                             '</tr>';
+
+        //                         amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+        //                     } else if (y > 0) {
+        //                         var customer = res_rates[id].customer[y] == 1 ? ' (Thai)' : ' (Foreign)';
+        //                         text_html += '<tr>' +
+        //                             '<td class="text-center">' + Number(no++) + '</td>' +
+        //                             '<td> ' + res[id].product_name + customer + ' </td>' +
+        //                             '<td class="text-center"> ' + res_rates[id].adult[y] + ' </td>' +
+        //                             '<td class="text-center"> ' + res_rates[id].child[y] + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_adult[y]) + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].rate_child[y]) + ' </td>' +
+        //                             '<td class="text-center"> ' + numberWithCommas(res_rates[id].total[y]) + ' </td>' +
+        //                             '</tr>';
+
+        //                         amount = res_rates[id].total[y] !== '-' ? Number(amount + res_rates[id].total[y]) : Number(amount);
+        //                     }
+        //                 }
+        //             }
+
+        //             if (res_extar !== undefined && (res_extar[id] !== undefined)) {
+        //                 for (let index = 0; index < res_extar[id].id.length; index++) {
+        //                     amount = res_extar[id].total !== '-' ? Number(amount + res_extar[id].total[index]) : Number(amount);
+        //                     text_html += '<tr>' +
+        //                         '<td class="text-left" colspan="5"> ' + res_extar[id].name[index] + ' </td>' +
+        //                         '<td class="text-center"> ' + res_extar[id].adult[index] + ' </td>' +
+        //                         '<td class="text-center"> ' + res_extar[id].child[index] + ' </td>' +
+        //                         '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_adult[index]) + ' </td>' +
+        //                         '<td class="text-center"> ' + numberWithCommas(res_extar[id].rate_child[index]) + ' </td>' +
+        //                         '<td class="text-center">-</td>' +
+        //                         '<td class="text-center"> ' + numberWithCommas(res_extar[id].total[index]) + ' </td>' +
+        //                         '<td class="text-center">-</td>' +
+        //                         '</tr>';
+        //                 }
+        //             }
+        //         }
+
+        //         text_html += '<tr>' +
+        //             '<td colspan="9"></td>' +
+        //             '<td colspan="2" class="text-center"><b>รวมเป็นเงิน</b><br><small>(Total)</small></td>' +
+        //             '<td class="text-center">' + numberWithCommas(amount) + '</td>' +
+        //             '</tr>'
+
+        //         if (discount > 0) {
+        //             // amount = amount - discount;
+        //             text_html += '<tr>' +
+        //                 '<td colspan="9"></td>' +
+        //                 '<td colspan="2" class="text-center"><b>ส่วนลด</b><br><small>(Discount)</small></td>' +
+        //                 '<td class="text-center">' + numberWithCommas(discount) + '</td>' +
+        //                 '</tr>'
+        //         }
+
+        //         if (cot > 0) {
+        //             // amount = amount - cot;
+        //             text_html += '<tr>' +
+        //                 '<td colspan="9"></td>' +
+        //                 '<td colspan="2" class="text-center"><b>Cash on tour</b></td>' +
+        //                 '<td class="text-center">' + numberWithCommas(cot) + '</td>' +
+        //                 '</tr>'
+        //         }
+
+        //         if (res_invoice[rec_id].vat == 1) {
+        //             vat_total = Number(((amount * 100) / 107));
+        //             vat_cut = vat_total;
+        //             vat_total = Number(amount - vat_total);
+        //             withholding_total = res_invoice[rec_id].withholding > 0 ? Number((vat_cut * res_invoice[rec_id].withholding) / 100) : 0;
+        //             amount = Number(amount - withholding_total);
+        //             withholding_total = Number(withholding_total).toLocaleString("en-US", {
+        //                 maximumFractionDigits: 2
+        //             });
+        //         } else if (res_invoice[rec_id].vat == 2) {
+        //             vat_total = Number(((amount * 7) / 100));
+        //             amount = Number(amount) + Number(vat_total);
+        //             withholding_total = res_invoice[rec_id].withholding > 0 ? Number(((amount - vat_total) * res_invoice[rec_id].withholding) / 100) : 0;
+        //             amount = Number(amount - withholding_total);
+        //             withholding_total = Number(withholding_total).toLocaleString("en-US", {
+        //                 maximumFractionDigits: 2
+        //             });
+        //         }
+
+        //         amount = (discount > 0) ? amount - discount : amount;
+        //         amount = (cot > 0) ? amount - cot : amount;
+
+        //         if (res_invoice[rec_id].vat > 0) {
+        //             text_vat = res_invoice[rec_id].vat == 1 ? 'รวมภาษี 7%' : 'แยกภาษี 7%';
+        //             text_html += '<tr>' +
+        //                 '<td colspan="9"></td>' +
+        //                 '<td colspan="2" class="text-center"><b id="vat-multi-text">' + text_vat + '</b><br><small>(Vat)</small></td>' +
+        //                 '<td class="text-center">' + Number(vat_total).toLocaleString("en-US", {
+        //                     maximumFractionDigits: 2
+        //                 }) + '</td>' +
+        //                 '</tr>';
+        //         }
+
+        //         if (res_invoice[rec_id].withholding > 0) {
+        //             text_html += '<tr>' +
+        //                 '<td colspan="9"></td>' +
+        //                 '<td colspan="2" class="text-center"><b id="withholding-multi-text">หัก ณ ที่จ่าย (' + res_invoice[rec_id].withholding + '%)</b><br><small>(Withholding Tax)</small></td>' +
+        //                 '<td class="text-center">' + numberWithCommas(withholding_total) + '</td>' +
+        //                 '</tr>';
+        //         }
+
+        //         text_html += '<tr>' +
+        //             '<td colspan="9"></td>' +
+        //             '<td colspan="2" class="text-center"><b>ยอดชำระ</b><br><small>(Payment Amount)</small></td>' +
+        //             '<td class="text-center">' + Number(amount).toLocaleString("en-US", {
+        //                 maximumFractionDigits: 2
+        //             }) + '</td>' +
+        //             '</tr>';
+
+        //         $('#tbody-multi-booking').html(text_html);
+
+        //         document.getElementById('amount').value = amount;
+        //     }
+
+        //     $('#rec_date').flatpickr({
+        //         onReady: function(selectedDates, dateStr, instance) {
+        //             if (instance.isMobile) {
+        //                 $(instance.mobileInput).attr('step', null);
+        //             }
+        //         },
+        //         static: true,
+        //         altInput: true,
+        //         altFormat: 'j F Y',
+        //         dateFormat: 'Y-m-d',
+        //         defaultDate: document.getElementById('agent_value').dataset.rec_date
+        //     });
+
+        //     $('#date_check').flatpickr({
+        //         onReady: function(selectedDates, dateStr, instance) {
+        //             if (instance.isMobile) {
+        //                 $(instance.mobileInput).attr('step', null);
+        //             }
+        //         },
+        //         static: true,
+        //         altInput: true,
+        //         altFormat: 'j F Y',
+        //         dateFormat: 'Y-m-d',
+        //         defaultDate: document.getElementById('agent_value').dataset.cheque_date
+        //     });
+
+        //     // calculator_price();
+
+        //     $("#payments_type").val(document.getElementById('agent_value').dataset.payt_id).trigger("change");
+        //     $("#bank_account").val(document.getElementById('agent_value').dataset.banacc_id).trigger("change");
+        //     $("#rec_bank").val(document.getElementById('agent_value').dataset.bank_id).trigger("change");
+        // }
+
+        function check_payment() {
+            var payments_type = document.getElementById('payments_type').value;
+            document.getElementById('div-bank-account-2').hidden = payments_type == 4 ? false : true;
+            document.getElementById('div-bank').hidden = payments_type == 5 ? false : true;
+            document.getElementById('div-check-no').hidden = payments_type == 5 ? false : true;
+            document.getElementById('div-check-date').hidden = payments_type == 5 ? false : true;
+        }
+
+        function modal_show_receipt(rec_id) {
+            var formData = new FormData();
+            formData.append('action', 'preview');
+            formData.append('rec_id', rec_id);
+            $.ajax({
+                url: "pages/receipt/print.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    if (response != false) {
+                        $("#div-show-receipt").html(response);
+                    }
+                }
+            });
+        }
+        // ------------------------------------------------------------------
+        // End Function Receipt
 
         function download_image() {
             var img_name = document.getElementById('name_img').value;

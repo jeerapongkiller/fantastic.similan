@@ -22,11 +22,6 @@ class Invoice extends DB
                     COMP.id as comp_id, COMP.name as comp_name, COMP.tat_license as tat_license, COMP.telephone as comp_telephone, COMP.address as comp_address,
                     BOPA.id as bopa_id, BOPA.date_paid as date_paid, BOPA.total_paid as total_paid, BOPA.card_no as card_no, BOPA.photo as bopa_photo, BOPA.note as bopa_note, BOPA.payment_type_id as payment_type_id,
                     BOPAY.id as bopay_id, BOPAY.name as bopay_name, BOPAY.name_class as bopay_name_class, BOPAY.created_at as bopay_created,
-                    -- BP.id as bp_id, BP.travel_date as travel_date, BP.adult as bp_adult, BP.child as bp_child, BP.infant as bp_infant, BP.foc as bp_foc, BP.note as bp_note,
-                    -- BP.private_type as bp_private_type,
-                    -- BPR.id as bpr_id, BPR.rate_adult as rate_adult, BPR.rate_child as rate_child, BPR.rate_infant as rate_infant, BPR.rate_total as rate_total, 
-                    -- PROD.id as product_id, PROD.name as product_name,
-                    -- CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer, 
                     
                     BP.id as bp_id, BP.travel_date as travel_date, BP.note as note,
                     PROD.id as product_id, PROD.name as product_name,
@@ -59,7 +54,10 @@ class Invoice extends DB
                     COVER.id as cover_id, COVER.inv_date as inv_date, COVER.inv_full as inv_full,
                     BRCH.id as brch_id, BRCH.name as brch_name,
                     BANACC.id as banacc_id, BANACC.account_name as account_name, BANACC.account_no as account_no,
-                    BANK.id as bank_id, BANK.name as bank_name
+                    BANK.id as bank_id, BANK.name as bank_name,
+                    REC.id as rec_id, REC.rec_full as rec_full, REC.rec_date as date_rec, REC.cheque_no as cheque_no, 
+                    REC.cheque_date as cheque_date, REC.note as rec_note, REC.bank_account_id as rec_banacc_id, REC.bank_cheque_id as rec_cheque,
+                    PAYT.id as payt_id, PAYT.name as payt_name
                 FROM bookings BO
                 LEFT JOIN bookings_no BONO
                     ON BO.id = BONO.booking_id
@@ -74,10 +72,6 @@ class Invoice extends DB
                     AND BOPA.booking_payment_id = 4
                 LEFT JOIN booking_payment BOPAY
                     ON BOPA.booking_payment_id = BOPAY.id
-                -- LEFT JOIN booking_products BP
-                --     ON BO.id = BP.booking_id
-                -- LEFT JOIN booking_product_rates BPR
-                --     ON BP.id = BPR.booking_products_id
 
                 LEFT JOIN booking_products BP
                     ON BO.id = BP.booking_id
@@ -104,11 +98,6 @@ class Invoice extends DB
                     ON BTR.cars_category_id = CARC.id 
                 LEFT JOIN booking_extra_charge BEC
                     ON BO.id = BEC.booking_id
-                    
-                -- LEFT JOIN products PROD
-                --     ON BP.product_id = PROD.id
-                -- LEFT JOIN product_category CATE
-                --     ON BP.category_id = CATE.id
 
                 LEFT JOIN customers CUS
                     ON BO.id = CUS.booking_id
@@ -118,7 +107,6 @@ class Invoice extends DB
                     ON BT.id = BOMANGE.booking_transfer_id
                 LEFT JOIN order_transfer MANGET 
                     ON BOMANGE.order_id = MANGET.id
-                    AND MANGET.pickup = 1
                 LEFT JOIN cars CAR 
                     ON MANGET.car_id = CAR.id
                 LEFT JOIN booking_order_boat BORDB
@@ -143,6 +131,12 @@ class Invoice extends DB
                     ON INV.bank_account_id = BANACC.id
                 LEFT JOIN banks BANK
                     ON BANACC.bank_id = BANK.id
+
+                LEFT JOIN receipts REC
+                    ON COVER.id = REC.cover_id
+                LEFT JOIN payments_type PAYT
+                    ON REC.payment_id = PAYT.id
+
                 WHERE BO.is_deleted = 0
                 AND BP.id > 0
                 AND BSTA.id != 3
@@ -162,7 +156,7 @@ class Invoice extends DB
                 array_push($params, $agent);
             }
 
-            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BO.voucher_no_agent ASC, BT.pickup_type DESC, CATE.name DESC";
         }
 
         if (isset($type) && $type == "invoices") {
@@ -180,9 +174,9 @@ class Invoice extends DB
                 array_push($params, $cover_id);
             }
 
-            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BT.pickup_type DESC, CATE.name DESC";
+            $query .= " ORDER BY COMP.name ASC, BP.travel_date ASC, BO.voucher_no_agent ASC, BT.pickup_type DESC, CATE.name DESC";
         }
-
+        
         $statement = $this->connection->prepare($query);
         !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
         $statement->execute();

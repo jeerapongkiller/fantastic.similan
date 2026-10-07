@@ -48,12 +48,12 @@
     <style>
         .table-black {
             color: #FFFFFF;
-            background-color: #333;
+            background-color: #003285;
         }
 
         .table-black-2 {
             color: #FFFFFF;
-            background-color: #4f4e4e;
+            background-color: #0060ff;
         }
     </style>
 </head>
@@ -118,7 +118,7 @@
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         $(document).ready(function() {
-            var jqForm = $('#receipt-search-form'),
+            var // jqForm = $('#receipt-search-form'),
                 jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
@@ -186,20 +186,20 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
-            jqForm.on("submit", function(e) {
-                var serializedData = $(this).serialize();
-                $.ajax({
-                    url: "pages/receipt/function/search-agent.php",
-                    type: "POST",
-                    data: serializedData + "&action=search-invoice",
-                    success: function(response) {
-                        if (response != 'false') {
-                            $('#div-receipt-custom').html(response);
-                        }
-                    }
-                });
-                e.preventDefault();
-            });
+            // jqForm.on("submit", function(e) {
+            //     var serializedData = $(this).serialize();
+            //     $.ajax({
+            //         url: "pages/receipt/function/search-agent.php",
+            //         type: "POST",
+            //         data: serializedData + "&action=search-invoice",
+            //         success: function(response) {
+            //             if (response != 'false') {
+            //                 $('#div-receipt-custom').html(response);
+            //             }
+            //         }
+            //     });
+            //     e.preventDefault();
+            // });
 
             // jQuery Validation
             // --------------------------------------------------------------------
@@ -250,6 +250,7 @@
 
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
 
         function numberWithCommas(x) {
@@ -268,7 +269,11 @@
                 data: formData,
                 success: function(response) {
                     if (response != 'false') {
-                        $('#' + tabs).html(response);
+                        if (tabs !== 'custom') {
+                            $('#' + tabs).html(response);
+                        } else {
+                            $('#div-receipt-custom').html(response);
+                        }
                     }
                 }
             });
@@ -294,7 +299,6 @@
         }
 
         function modal_receipt(cover_id) {
-
             var array_booking = document.getElementById('array_booking').value;
             var array_extar = document.getElementById('array_extar').value;
             var array_rates = document.getElementById('array_rates').value;
@@ -335,8 +339,8 @@
                             document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
                             document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
                         } else {
-                            document.getElementById('tr-invoice').style.backgroundColor = '#333';
-                            document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
+                            document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+                            document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
                         }
 
                         discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);

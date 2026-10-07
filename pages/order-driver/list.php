@@ -636,7 +636,12 @@ foreach ($manages as $manage) {
                                                                 <td><?php echo $car_pickup[$id] ?></td>
                                                                 <td><?php echo $agent_name[$id]; ?></td>
                                                                 <td class="text-center"><?php echo !empty($voucher_no[$id]) ? $voucher_no[$id] : $book_full[$id]; ?></td>
-                                                                <td><?php echo (!empty($outside[$id][2])) ? $outside[$id][2] . ' (' . $zone_name[$id][2] . ')' : $hotel_name[$id][2] . ' (' . $zone_name[$id][2] . ')'; ?></td>
+                                                                <td>
+                                                                <?php 
+                                                                echo (!empty($outside[$id][1])) ? '<b>Pickup : </b>' . $outside[$id][1] . ' (' . $zone_name[$id][1] . ')<br>' : '<b>Pickup : </b>' . $hotel_name[$id][1] . ' (' . $zone_name[$id][1] . ')<br>';
+                                                                echo (!empty($outside[$id][2])) ? '<b>Dropoff : </b>' . $outside[$id][2] . ' (' . $zone_name[$id][2] . ')' : '<b>Dropoff : </b>' . $hotel_name[$id][2] . ' (' . $zone_name[$id][2] . ')';  
+                                                                ?>
+                                                                </td>
                                                                 <td><?php echo (!empty($room_no[$id][$retrun])) ? $room_no[$id][$retrun] : ''; ?></td>
                                                                 <td><?php echo !empty($telephone[$id][0]) ? $cus_name[$id][0] . ' <br>(' . $telephone[$id][0] . ')' : $cus_name[$id][0]; ?></td>
                                                                 <td class="text-center"><?php echo !empty($adult[$id]) ? array_sum($adult[$id]) : 0; ?></td>

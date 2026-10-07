@@ -29,7 +29,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
     $bookings = $bookObj->showlist($_SESSION["supplier"]["id"], 'all', 'all', 'all', 'all', $travel_date, '', '', '');
     if (!empty($bookings)) {
         foreach ($bookings as $booking) {
-            if ($booking['booksta_id'] != 3) {
+            if ($booking['booksta_id'] != 3 || $booking['booksta_id'] != 4) {
                 # --- get value booking --- #
                 // if (in_array($booking['mange_id'], $first_boat) == false && !empty($booking['boat_id'])) {
                 //     $first_boat[] = $booking['mange_id'];

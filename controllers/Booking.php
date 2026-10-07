@@ -2397,11 +2397,14 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function delete_booking_manage_transfer(int $mange_id, int $bt_id, int $id)
+    public function delete_booking_manage_transfer(int $id) // int $mange_id, int $bt_id, 
     {
-        $query = "DELETE FROM booking_order_transfer WHERE order_id = ? AND booking_transfer_id = ? AND id = ?";
+        // $query = "DELETE FROM booking_order_transfer WHERE order_id = ? AND booking_transfer_id = ? AND id = ?";
+        // $statement = $this->connection->prepare($query);
+        // $statement->bind_param("iii", $mange_id, $bt_id, $id);
+        $query = "DELETE FROM booking_order_transfer WHERE id = ?";
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("iii", $mange_id, $bt_id, $id);
+        $statement->bind_param("i", $id);
         $statement->execute();
         if ($statement->execute()) {
             $this->response = true;
@@ -2410,11 +2413,14 @@ class Booking extends DB
         return $this->response;
     }
 
-    public function delete_booking_manage_boat(int $mange_id, int $bo_id, int $id)
+    public function delete_booking_manage_boat(int $id) // int $mange_id, int $bo_id,
     {
-        $query = "DELETE FROM booking_order_boat WHERE manage_id = ? AND booking_id = ? AND id = ?";
+        // $query = "DELETE FROM booking_order_boat WHERE manage_id = ? AND booking_id = ? AND id = ?";
+        // $statement = $this->connection->prepare($query);
+        // $statement->bind_param("iii", $mange_id, $bo_id, $id);
+        $query = "DELETE FROM booking_order_boat WHERE id = ?";
         $statement = $this->connection->prepare($query);
-        $statement->bind_param("iii", $mange_id, $bo_id, $id);
+        $statement->bind_param("i", $id);
         $statement->execute();
         if ($statement->execute()) {
             $this->response = true;

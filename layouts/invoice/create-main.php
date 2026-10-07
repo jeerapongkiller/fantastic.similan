@@ -48,12 +48,12 @@
     <style>
         .table-black {
             color: #FFFFFF;
-            background-color: #333;
+            background-color: #003285;
         }
 
         .table-black-2 {
             color: #FFFFFF;
-            background-color: #4f4e4e;
+            background-color: #0060ff;
         }
     </style>
 </head>
@@ -112,7 +112,7 @@
     <!-- BEGIN: Page JS-->
     <script type="text/javascript">
         $(document).ready(function() {
-            var jqForm = $('#invoice-search-form'),
+            var // jqForm = $('#invoice-search-form'),
                 jqFormInv = $('#invoice-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
@@ -180,20 +180,20 @@
 
             // jQuery Validation
             // --------------------------------------------------------------------
-            jqForm.on("submit", function(e) {
-                var serializedData = $(this).serialize();
-                $.ajax({
-                    url: "pages/invoice/function/search-agent.php",
-                    type: "POST",
-                    data: serializedData + "&action=search-booking",
-                    success: function(response) {
-                        if (response != 'false') {
-                            $('#div-invoice-custom').html(response);
-                        }
-                    }
-                });
-                e.preventDefault();
-            });
+            // jqForm.on("submit", function(e) {
+            //     var serializedData = $(this).serialize();
+            //     $.ajax({
+            //         url: "pages/invoice/function/search-agent.php",
+            //         type: "POST",
+            //         data: serializedData + "&action=search-booking",
+            //         success: function(response) {
+            //             if (response != 'false') {
+            //                 $('#div-invoice-custom').html(response);
+            //             }
+            //         }
+            //     });
+            //     e.preventDefault();
+            // });
 
             if (jqFormInv.length) {
                 $.validator.addMethod("regex", function(value, element, regexp) {
@@ -252,6 +252,7 @@
 
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
 
         function checkbox(type) {
@@ -270,21 +271,27 @@
         }
 
         function search_start_date(tabs, travel_date) {
-            var formData = new FormData();
-            formData.append('action', 'search-booking');
-            formData.append('travel_date', travel_date);
-            $.ajax({
-                url: "pages/invoice/function/search-agent.php",
-                type: "POST",
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(response) {
-                    if (response != 'false') {
-                        $('#' + tabs).html(response);
+            if (travel_date !== '') {
+                var formData = new FormData();
+                formData.append('action', 'search-booking');
+                formData.append('travel_date', travel_date);
+                $.ajax({
+                    url: "pages/invoice/function/search-agent.php",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        if (response != 'false') {
+                            if (tabs !== 'custom') {
+                                $('#' + tabs).html(response);
+                            } else {
+                                $('#div-invoice-custom').html(response);
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         function modal_detail(agent_id, agent_name, travel_date) {
@@ -564,8 +571,8 @@
                 document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
                 document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
             } else {
-                document.getElementById('tr-invoice').style.backgroundColor = '#333';
-                document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
+                document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+                document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
             }
         }
     </script>

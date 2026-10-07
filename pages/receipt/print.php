@@ -213,14 +213,14 @@ if (isset($action) && !empty($id)) {
 ?>
     <style>
         .default-td td {
-            border: 1px solid #333;
+            border: 1px solid #003285;
             font-size: 14px;
             color: #000;
             padding: 5px 5px;
         }
 
         .default {
-            border: 1px solid #333;
+            border: 1px solid #003285;
             font-size: 14px;
             color: #000;
             padding: 5px 5px;
@@ -231,13 +231,13 @@ if (isset($action) && !empty($id)) {
         }
 
         #receipt-preview-vertical .table-black td {
-            background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>;
+            background-color: <?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>;
             color: #fff;
             padding: 10px 0;
         }
 
         #receipt-preview-vertical .table-black-2 td {
-            background-color: <?php echo ($vat[0] > 0) ? '#ff3f49' : '#4f4e4e'; ?>;
+            background-color: <?php echo ($vat[0] > 0) ? '#ff3f49' : '#0060ff'; ?>;
             color: #fff;
             padding: 5px 0;
         }
@@ -276,7 +276,7 @@ if (isset($action) && !empty($id)) {
                 </span>
                 <table width="100%" class="mt-50">
                     <tr>
-                        <td rowspan="2" class="text-center" bgcolor="<?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>" style="color: #fff; border-radius: 15px 0px 0px 0px;">
+                        <td rowspan="2" class="text-center" bgcolor="<?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>" style="color: #fff; border-radius: 15px 0px 0px 0px;">
                             <?php echo ($vat[0] > 0) ? 'ใบเสร็จรับเงิน / ใบกำกับภาษี <br> RECEIPT / TAX INVOICE' : 'ใบเสร็จรับเงิน <br> RECEIPT'; ?>
                         </td>
                         <td class="default text-center">
@@ -404,10 +404,11 @@ if (isset($action) && !empty($id)) {
                         $sum_total = $total[$bo_id[$i]][$r] + $sum_total;
                         // $customer = $category_cus[$bo_id[$i]][$r] == 1 ? ' (Thai)' : ' (Foreign)';
                         $customer = ($status[$i] == 2 || $status[$i] == 4) ? ' (' . $category_name[$bo_id[$i]][$r] . ')' . ' <b class="text-danger">(' . $status_name[$i] . ')</b>' : ' (' . $category_name[$bo_id[$i]][$r] . ')';
-                        if ($r == 0) { ?>
+                        if ($r == 0) {
+                            ?>
                             <tr class="default-td">
                                 <td class="text-center"><?php echo $no++; ?></td>
-                                <td class="text-center"><?php echo $inv_full[$i]; ?></td>
+                                <td class="text-center"><?php echo $inv_full[0]; ?></td>
                                 <td class="text-center" rowspan="<?php echo $rowspan; ?>"><?php echo date("d/m/Y", strtotime($travel_date[$i])); ?></td>
                                 <td rowspan="<?php echo $rowspan; ?>"><?php echo $cus_name[$i]; ?></td>
                                 <td><?php echo $product_name[$i] . $customer; ?></td>
@@ -424,7 +425,7 @@ if (isset($action) && !empty($id)) {
                             $customer = ' (' . $category_name[$bo_id[$i]][$r] . ')'; ?>
                             <tr class="default-td">
                                 <td class="text-center"><?php echo $no++; ?></td>
-                                <td class="text-center"><?php echo $inv_full[$i]; ?></td>
+                                <td class="text-center"><?php echo $inv_full[0]; ?></td>
                                 <td><?php echo $product_name[$i] . $customer; ?></td>
                                 <td class="text-center"><?php echo $adult[$bo_id[$i]][$r]; ?></td>
                                 <td class="text-center"><?php echo $child[$bo_id[$i]][$r]; ?></td>
@@ -499,7 +500,7 @@ if (isset($action) && !empty($id)) {
                         <?php echo $rec_note[0]; ?>
                     </p>
                 </td>
-                <?php if (!empty($discount)) { ?>
+                <?php if (!empty($discount) && (array_sum($discount) > 0)) { ?>
                     <td class="table-content text-center" colspan="3">
                         <dl class="row" style="margin-bottom: 0;">
                             <dt class="col-sm-8 text-right">
@@ -512,7 +513,7 @@ if (isset($action) && !empty($id)) {
                 <?php } ?>
             </tr>
 
-            <?php if (!empty($cot)) { ?>
+            <?php if (!empty($cot) && (array_sum($cot) > 0)) { ?>
                 <tr class="default-td">
                     <td class="text-center" colspan="3">
                         <dl class="row" style="margin-bottom: 0;">
@@ -554,7 +555,7 @@ if (isset($action) && !empty($id)) {
             <?php } ?>
 
             <tr class="default-td">
-                <td class="text-center" bgcolor="<?php echo ($vat[0] > 0) ? '#960007' : '#333'; ?>" style="color: #fff;" colspan="3">
+                <td class="text-center" bgcolor="<?php echo ($vat[0] > 0) ? '#960007' : '#003285'; ?>" style="color: #fff;" colspan="3">
                     <dl class="row" style="margin-bottom: 0;">
                         <dt class="col-sm-8 text-right">
                             <b>ยอดชำระ : </b>

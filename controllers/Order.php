@@ -564,6 +564,7 @@ class Order extends DB
                     ON booking_extra_charge.extra_charge_id = extra_charges.id
 
                 WHERE BO.id > 0
+                AND BO.is_deleted = 0
                 AND BO.booking_status_id != 3
                 AND BO.booking_status_id != 4
         ";
@@ -692,206 +693,6 @@ class Order extends DB
         return $data;
     }
 
-    // public function showlisttransfers($type, string $travel_date, $car, $programe, $status, $agent, $product, $voucher_no, $refcode, $name, $hotel)
-    // {
-    //     $bind_types = "";
-    //     $params = array();
-
-    //     $query = "SELECT BO.*,
-    //                 BONO.bo_full as book_full,
-    //                 BSTA.id as booksta_id, BSTA.name as booksta_name, BSTA.name_class as booksta_class, BSTA.button_class as booksta_button,
-    //                 BTYE.id as booktye_id, BTYE.name as booktye_name,
-    //                 COMP.id as comp_id, COMP.name as comp_name,
-    //                 BOPA.id as bopa_id, BOPA.total_paid as total_paid,
-    //                 CUS.id as cus_id, CUS.name as cus_name, CUS.telephone as telephone, CUS.head as cus_head, 
-    //                 BP.id as bp_id, BP.travel_date as travel_date, BP.note as note,
-    //                 PROD.id as product_id, PROD.name as product_name,
-    //                 CATE.id as category_id, CATE.name as category_name, CATE.transfer as category_transfer,
-    //                 BPR.id as bpr_id, BPR.adult as adult, BPR.child as child, BPR.infant as infant, BPR.foc as foc, 
-    //                 BPR.rates_adult as rates_adult, BPR.rates_child as rates_child, BPR.rates_infant as rates_infant, BPR.rates_private as rates_private, 
-    //                 BT.id as bt_id, BT.start_pickup as start_pickup, BT.end_pickup as end_pickup,
-    //                 BT.room_no as room_no, BT.note as bt_note, BT.hotel_pickup as outside, BT.hotel_dropoff as outside_dropoff,
-    //                 PICKUP.id as pickup_id, PICKUP.name_th as pickup_name,
-    //                 DROPOFF.id as dropoff_id, DROPOFF.name_th as dropoff_name,
-    //                 ZONE_P.id as zonep_id, ZONE_P.name_th as zonep_name, ZONE_P.provinces as province_id,
-    //                 ZONE_D.id as zoned_id, ZONE_D.name_th as zoned_name,
-    //                 BEC.id as bec_id, BEC.name as bec_name, BEC.adult as bec_adult, BEC.child as bec_child, BEC.infant as bec_infant, BEC.privates as bec_privates, BEC.type as bec_type,
-    //                 BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
-    //                 EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
-    //                 BOMANGE.id as bomange_id, BOMANGE.arrange as arrange, BOMANGE.tourist as tourist,
-    //                 MANGE.id as mange_id, MANGE.pickup as mange_pickup, MANGE.dropoff as mange_dropoff, MANGE.note as mange_note, MANGE.license as license, MANGE.seat as seat,
-    //                 CAR.id as car_id, CAR.name as car_name,
-    //                 MANGEB.id as mangeb_id,
-    //                 BOAT.id as boat_id, BOAT.name as boat_name, BOAT.refcode as boat_refcode
-    //             FROM bookings BO
-    //             LEFT JOIN bookings_no BONO
-    //                 ON BO.id = BONO.booking_id
-    //             LEFT JOIN booking_status BSTA
-    //                 ON BO.booking_status_id = BSTA.id
-    //             LEFT JOIN booking_type BTYE
-    //                 ON BO.booking_type_id = BTYE.id
-    //             LEFT JOIN companies COMP
-    //                 ON BO.company_id = COMP.id
-    //             LEFT JOIN booking_paid BOPA
-    //                 ON BO.id = BOPA.booking_id
-    //                 AND BOPA.booking_payment_id = 4
-    //             LEFT JOIN customers CUS
-    //                 ON BO.id = CUS.booking_id
-    //             LEFT JOIN nationalitys NATION
-    //                 ON CUS.nationality_id = NATION.id
-    //             LEFT JOIN booking_products BP
-    //                 ON BO.id = BP.booking_id
-    //             LEFT JOIN booking_product_rates BPR
-    //                 ON BP.id = BPR.booking_products_id
-    //             LEFT JOIN products PROD
-    //                 ON BP.product_id = PROD.id
-    //             LEFT JOIN product_category CATE
-    //                 ON BPR.category_id = CATE.id
-    //             LEFT JOIN booking_transfer BT
-    //                 ON BP.id = BT.booking_products_id
-    //             LEFT JOIN hotel PICKUP
-    //                 ON BT.hotel_pickup_id = PICKUP.id
-    //             LEFT JOIN hotel DROPOFF
-    //                 ON BT.hotel_dropoff_id = DROPOFF.id
-    //             LEFT JOIN zones ZONE_P
-    //                 ON BT.pickup_id = ZONE_P.id
-    //             LEFT JOIN zones ZONE_D
-    //                 ON BT.dropoff_id = ZONE_D.id
-    //             LEFT JOIN booking_extra_charge BEC
-    //                 ON BO.id = BEC.booking_id
-    //             LEFT JOIN extra_charges EXTRA
-    //                 ON BEC.extra_charge_id = EXTRA.id
-    //             LEFT JOIN booking_order_transfer BOMANGE
-    //                 ON BT.id = BOMANGE.booking_transfer_id
-    //             LEFT JOIN order_transfer MANGE 
-    //                 ON BOMANGE.order_id = MANGE.id
-    //             LEFT JOIN cars CAR
-    //                 ON MANGE.car_id = CAR.id
-    //             LEFT JOIN booking_order_boat BORDB
-    //                 ON BO.id = BORDB.booking_id
-    //             LEFT JOIN order_boat MANGEB 
-    //                 ON BORDB.manage_id = MANGEB.id
-    //             LEFT JOIN boats BOAT
-    //                 ON MANGEB.boat_id = BOAT.id
-    //             WHERE BO.id > 0
-    //             AND BO.booking_status_id != 3
-    //             AND BO.booking_status_id != 4
-    //             AND CATE.transfer > 0
-    //             AND BT.pickup_type = 1
-    //     ";
-
-    //     $query .= (!empty($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
-    //     $query .= (!empty($agent) && $agent != 'all') ? " AND COMP.id = " . $agent : "";
-    //     $query .= (!empty($product) && $product != 'all') ? " AND PROD.id = " . $product : "";
-    //     $query .= (!empty($voucher_no)) ? " AND BO.voucher_no_agent LIKE '%" . $voucher_no . "%' " : "";
-    //     $query .= (!empty($refcode)) ? " AND BONO.bo_full LIKE '%" . $refcode . "%' " : "";
-    //     $query .= (!empty($name)) ? " AND CUS.name LIKE '%" . $name . "%' " : "";
-    //     $query .= (!empty($hotel)) ? " AND BT.hotel_pickup LIKE '%" . $hotel . "%' " : "";
-
-    //     if (!empty($type) && $type == 'manage') {
-
-    //         $query .= " AND BP.is_deleted = 0 ";
-
-    //         if (isset($travel_date) && $travel_date != '0000-00-00') {
-    //             $query .= " AND BP.travel_date  = ?";
-    //             $bind_types .= "s";
-    //             array_push($params, $travel_date);
-    //         }
-    //         // if (isset($return) && $return > 0) {
-    //         //     $query .= " AND BT.return_type = ?";
-    //         //     $bind_types .= "i";
-    //         //     array_push($params, $return);
-    //         // }
-    //         // if (isset($programe) && $programe != 'all') {
-    //         //     $query .= " AND PROD.id  = ?";
-    //         //     $bind_types .= "i";
-    //         //     array_push($params, $programe);
-    //         // }
-    //         // $query .= " ORDER BY BP.travel_date DESC, PROD.id DESC, zones.id DESC, hotel.id DESC ";
-    //         $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, BT.pickup_id ASC, BT.start_pickup ASC, BT.hotel_pickup ASC ";
-    //     }
-
-    //     if (!empty($type) && $type == 'list') {
-    //         if (isset($travel_date) && $travel_date != '0000-00-00') {
-    //             $query .= " AND BP.travel_date  = ?";
-    //             $bind_types .= "s";
-    //             array_push($params, $travel_date);
-    //         }
-    //         // if (isset($programe) && $programe != 'all') {
-    //         //     $query .= " AND PROD.id  = ?";
-    //         //     $bind_types .= "i";
-    //         //     array_push($params, $programe);
-    //         // }
-    //     }
-
-    //     if (!empty($type) && $type == 'all') {
-
-    //         $query .= " AND BP.is_deleted = 0 ";
-
-    //         if (isset($travel_date) && $travel_date != '0000-00-00') {
-    //             $query .= " AND BP.travel_date  = ?";
-    //             $bind_types .= "s";
-    //             array_push($params, $travel_date);
-    //         }
-
-    //         if (isset($car) && $car != 'all') {
-    //             $query .= " AND MANGE.car_id  = ?";
-    //             $bind_types .= "i";
-    //             array_push($params, $car);
-    //         }
-    //         if (isset($programe) && $programe != 'all') {
-    //             $query .= " AND PROD.id  = ?";
-    //             $bind_types .= "i";
-    //             array_push($params, $programe);
-    //         }
-    //         $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, CATE.id ASC ";
-    //     }
-    //     echo $query;
-    //     $statement = $this->connection->prepare($query);
-    //     !empty($bind_types) ? $statement->bind_param($bind_types, ...$params) : '';
-    //     $statement->execute();
-    //     $result = $statement->get_result();
-    //     $data = $result->fetch_all(MYSQLI_ASSOC);
-
-    //     return $data;
-    // }
-
-    // public function show_manage_transfer(string $travel_date)
-    // {
-    //     $query = "SELECT manage.*,
-    //             BOMAN.arrange as arrange, BOMAN.booking_transfer_id as boman_bt,
-    //             CAR.id as car_id, CAR.name as car_name, CAR.car_registration as registration,
-    //             DRIVER.id as driver_id, DRIVER.name as driver_name, DRIVER.seat as driver_seat
-    //         FROM order_transfer manage
-    //         LEFT JOIN booking_order_transfer BOMAN
-    //             ON manage.id = BOMAN.order_id
-    //         LEFT JOIN cars CAR
-    //             ON manage.car_id = CAR.id
-    //         LEFT JOIN drivers DRIVER
-    //             ON manage.driver_id = DRIVER.id
-    //         WHERE manage.id > 0
-    //         AND manage.travel_date = ?
-    //     ";
-
-    //     $query .= " ORDER BY manage.pickup DESC,
-    //                 CASE
-    //                     WHEN CAR.name LIKE 'Phuket%' THEN 1
-    //                     WHEN CAR.name LIKE 'Khaolak%' THEN 2
-    //                     WHEN CAR.name LIKE 'Krabi%' THEN 3
-    //                     ELSE 4
-    //                 END,
-    //                 CAST(SUBSTRING(CAR.name, LOCATE(' ', CAR.name) + 1) AS UNSIGNED),
-    //                 manage.id ASC";
-
-    //     $statement = $this->connection->prepare($query);
-    //     $statement->bind_param("s", $travel_date);
-    //     $statement->execute();
-    //     $result = $statement->get_result();
-    //     $data = $result->fetch_all(MYSQLI_ASSOC);
-
-    //     return $data;
-    // }
-
     public function showlisttransfers($type, int $return, string $travel_date, $car, $programe, $status, $agent, $product, $voucher_no, $refcode, $name, $hotel)
     {
         $bind_types = "";
@@ -986,6 +787,7 @@ class Order extends DB
                 AND BO.booking_status_id != 4
                 AND CATE.transfer > 0
                 AND BT.pickup_type = 1
+                AND BO.is_deleted = 0
         ";
 
         $query .= (!empty($status) && $status != 'all') ? " AND BSTA.id = " . $status : "";
@@ -1016,7 +818,32 @@ class Order extends DB
             //     array_push($params, $programe);
             // }
             // $query .= " ORDER BY BP.travel_date DESC, PROD.id DESC, zones.id DESC, hotel.id DESC ";
-            $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, BT.pickup_id ASC, BT.start_pickup ASC, BT.hotel_pickup ASC ";
+            // $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC, BT.start_pickup ASC, BT.pickup_id ASC, BT.hotel_pickup ASC ";
+            $query .= " ORDER BY PROD.id DESC, BOMANGE.arrange ASC,
+                    CASE
+                        WHEN ZONE_P.id = 26 THEN 1
+                        WHEN ZONE_P.id = 2 THEN 2
+                        WHEN ZONE_P.id = 22 THEN 3
+                        WHEN ZONE_P.id = 1 THEN 4
+                        WHEN ZONE_P.id = 4 THEN 5
+                        WHEN ZONE_P.id = 5 THEN 6
+                        WHEN ZONE_P.id = 25 THEN 7
+                        WHEN ZONE_P.id = 27 THEN 8
+                        WHEN ZONE_P.id = 23 THEN 9
+                        WHEN ZONE_P.id = 30 THEN 10
+                        WHEN ZONE_P.id = 3 THEN 11
+                        WHEN ZONE_P.id = 6 THEN 12
+                        WHEN ZONE_P.id = 7 THEN 13
+                        WHEN ZONE_P.id = 8 THEN 14
+                        WHEN ZONE_P.id = 32 THEN 15
+                        WHEN ZONE_P.id = 24 THEN 16
+                        WHEN ZONE_P.id = 37 THEN 17
+                        WHEN ZONE_P.id = 9 THEN 18
+                        WHEN ZONE_P.id = 10 THEN 19
+                        WHEN ZONE_P.id = 29 THEN 20
+                        ELSE 21
+                    END,
+                    BT.start_pickup ASC, BT.pickup_id ASC, BT.hotel_pickup ASC";
         }
 
         if (!empty($type) && $type == 'list') {
@@ -1480,7 +1307,7 @@ class Order extends DB
                     BEC.rate_adult as bec_rate_adult, BEC.rate_child as bec_rate_child, BEC.rate_infant as bec_rate_infant, BEC.rate_private as bec_rate_private, 
                     EXTRA.id as extra_id, EXTRA.name as extra_name, EXTRA.unit as extra_unit,
                     BOMANGE.id as bomanage_id,
-                    MANGET.id as manget_id, MANGET.pickup as pickup, MANGET.dropoff as dropoff,
+                    MANGET.id as manget_id,
                     CAR.id as car_id, CAR.name as car_name,
                     BOOKER.id as booker_id, BOOKER.firstname as booker_fname, BOOKER.lastname as booker_lname,
                     BORDB.id as boman_id, BORDB.arrange as boman_arrange, 
@@ -1538,7 +1365,6 @@ class Order extends DB
                     ON BT.id = BOMANGE.booking_transfer_id
                 LEFT JOIN order_transfer MANGET 
                     ON BOMANGE.order_id = MANGET.id
-                    AND MANGET.pickup = 1
                 LEFT JOIN cars CAR 
                     ON MANGET.car_id = CAR.id
                 LEFT JOIN users BOOKER 
@@ -1598,7 +1424,7 @@ class Order extends DB
                 array_push($params, $boat);
             }
             // $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC"; // , CHECKIN.id ASC
-            $query .= " ORDER BY CATE.name DESC, COMP.name ASC, BO.voucher_no_agent ASC";
+            $query .= " ORDER BY BORDB.arrange ASC, CATE.name DESC, COMP.name ASC, BO.voucher_no_agent ASC";
         }
 
         if (!empty($type) && $type == 'manage') {
@@ -1615,7 +1441,8 @@ class Order extends DB
                 $bind_types .= "i";
                 array_push($params, $boat);
             }
-            $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC, COMP.name ASC, BO.voucher_no_agent ASC";
+            // $query .= " ORDER BY BT.pickup_type DESC, BORDB.arrange ASC, CATE.name DESC, COMP.name ASC, BO.voucher_no_agent ASC";
+            $query .= " ORDER BY BORDB.arrange ASC, CATE.name DESC, COMP.name ASC, BO.voucher_no_agent ASC";
         }
 
         if (!empty($type) && $type == 'agent') {
@@ -2299,6 +2126,7 @@ class Order extends DB
         $query .= (!empty($travel_date) && $travel_date != '') ? !empty(substr($travel_date, 14, 24)) ? " AND confirm_agent.travel_date BETWEEN '" . substr($travel_date, 0, 10) . "' AND '" . substr($travel_date, 14, 24) . "'" : " AND confirm_agent.travel_date = '" . $travel_date . "'" : "";
 
         $query .= " WHERE BO.id > 0
+                AND BO.is_deleted = 0
                 AND BO.booking_status_id != 3
                 AND BO.booking_status_id != 4
         ";
@@ -2383,6 +2211,7 @@ class Order extends DB
                 LEFT JOIN order_boat MANGE 
                     ON BOMANGE.manage_id = MANGE.id
                 WHERE BO.id > 0
+                AND BO.is_deleted = 0
                 AND BO.booking_status_id != 3
                 AND BO.booking_status_id != 4
         ";

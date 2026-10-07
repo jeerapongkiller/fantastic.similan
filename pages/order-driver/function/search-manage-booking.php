@@ -51,7 +51,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                 $booktye_name[$booking['id']] = !empty($booking['booktye_name']) ? $booking['booktye_name'] : '';
                 $hotel_name[$booking['id']] = !empty($booking['pickup_id']) ? $booking['pickup_name'] : $booking['outside'];
                 $hotel_dropoff[$booking['id']] = !empty($booking['dropoff_id']) ? $booking['dropoff_name'] : $booking['outside_dropoff'];
-                $note[$booking['id']] = !empty($booking['bp_note']) ? $booking['bp_note'] : '';
+                $note[$booking['id']] = !empty($booking['note']) ? $booking['note'] : '';
                 $start_pickup[$booking['id']] = !empty($booking['start_pickup']) && $booking['start_pickup'] != '00:00' ? $booking['start_pickup'] : '00:00';
                 $end_pickup[$booking['id']] = !empty($booking['end_pickup']) && $booking['end_pickup'] != '00:00' ? $booking['end_pickup'] : '00:00';
                 $zone_name[$booking['id']] = !empty($booking['zonep_name']) ? $booking['zonep_name'] : '';
@@ -176,7 +176,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                         <td><?php echo $zone_name[$id]; ?></td>
                                         <td><?php echo $hotel_name[$id]; ?></td>
                                         <td><span class="fw-bold"><?php echo $cus_name[$id]; ?></span></td>
-                                        <td class="text-center" id="toc-bookings<?php echo $bt_id[$id]; ?>"><?php echo !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0; ?></td>
+                                        <td class="text-center border-right border-left" id="toc-bookings<?php echo $bt_id[$id]; ?>"><?php echo !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0; ?></td>
                                         <td class="text-center"><?php echo !empty($adult[$id]) ? array_sum($adult[$id]) : 0; ?></td>
                                         <td class="text-center"><?php echo !empty($child[$id]) ? array_sum($child[$id]) : 0; ?></td>
                                         <td class="text-center"><?php echo !empty($infant[$id]) ? array_sum($infant[$id]) : 0; ?></td>
@@ -307,7 +307,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                             <td><?php echo $zone_name[$id]; ?></td>
                             <td><?php echo $return == 1 ? $hotel_name[$id] : $hotel_dropoff[$id]; ?></td>
                             <td><span class="fw-bold"><?php echo $cus_name[$id]; ?></span></td>
-                            <td class="text-center" id="toc-manage<?php echo $manage_bt[$manage_id][$c]; ?>"><?php echo !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0; ?></td>
+                            <td class="text-center border-right border-left" id="toc-manage<?php echo $manage_bt[$manage_id][$c]; ?>"><?php echo !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($adult[$id]) ? array_sum($adult[$id]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($child[$id]) ? array_sum($child[$id]) : 0; ?></td>
                             <td class="text-center"><?php echo !empty($infant[$id]) ? array_sum($infant[$id]) : 0; ?></td>

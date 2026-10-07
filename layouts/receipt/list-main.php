@@ -50,12 +50,12 @@
     <style>
         .table-black {
             color: #FFFFFF;
-            background-color: #333;
+            background-color: #003285;
         }
 
         .table-black-2 {
             color: #FFFFFF;
-            background-color: #4f4e4e;
+            background-color: #0060ff;
         }
     </style>
 </head>
@@ -132,6 +132,7 @@
                     bo_id.push(bo_arr[index].value);
                 }
             }
+            console.log(bo_id);
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -193,7 +194,7 @@
         }
 
         $(document).ready(function() {
-            var jqForm = $('#receipt-search-form'),
+            var // jqForm = $('#receipt-search-form'),
                 jqFormRec = $('#receipt-form'),
                 picker = $('#dob'),
                 dtPicker = $('#dob-bootstrap-val'),
@@ -261,20 +262,20 @@
 
             // Ajax Search
             // --------------------------------------------------------------------
-            jqForm.on("submit", function(e) {
-                var serializedData = $(this).serialize();
-                $.ajax({
-                    url: "pages/receipt/function/search-agent.php",
-                    type: "POST",
-                    data: serializedData + "&action=search-receipt",
-                    success: function(response) {
-                        if (response != false) {
-                            $("#div-invoice-custom").html(response);
-                        }
-                    }
-                });
-                e.preventDefault();
-            });
+            // jqForm.on("submit", function(e) {
+            //     var serializedData = $(this).serialize();
+            //     $.ajax({
+            //         url: "pages/receipt/function/search-agent.php",
+            //         type: "POST",
+            //         data: serializedData + "&action=search-receipt",
+            //         success: function(response) {
+            //             if (response != false) {
+            //                 $("#div-invoice-custom").html(response);
+            //             }
+            //         }
+            //     });
+            //     e.preventDefault();
+            // });
 
             // jQuery Validation
             // --------------------------------------------------------------------
@@ -327,6 +328,7 @@
 
             search_start_date('today', '<?php echo $today; ?>');
             search_start_date('tomorrow', '<?php echo $tomorrow; ?>');
+            search_start_date('custom', '<?php echo $get_date; ?>');
         });
 
         function numberWithCommas(x) {
@@ -345,7 +347,11 @@
                 data: formData,
                 success: function(response) {
                     if (response != 'false') {
-                        $('#' + tabs).html(response);
+                        if (tabs !== 'custom') {
+                            $('#' + tabs).html(response);
+                        } else {
+                            $('#div-invoice-custom').html(response);
+                        }
                     }
                 }
             });
@@ -370,23 +376,23 @@
             });
         }
 
-        function modal_show_receipt(rec_id) {
-            var formData = new FormData();
-            formData.append('action', 'preview');
-            formData.append('rec_id', rec_id);
-            $.ajax({
-                url: "pages/receipt/print.php",
-                type: "POST",
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(response) {
-                    if (response != false) {
-                        $("#div-show-receipt").html(response);
-                    }
-                }
-            });
-        }
+        // function modal_show_receipt(rec_id) {
+        //     var formData = new FormData();
+        //     formData.append('action', 'preview');
+        //     formData.append('rec_id', rec_id);
+        //     $.ajax({
+        //         url: "pages/receipt/print.php",
+        //         type: "POST",
+        //         processData: false,
+        //         contentType: false,
+        //         data: formData,
+        //         success: function(response) {
+        //             if (response != false) {
+        //                 $("#div-show-receipt").html(response);
+        //             }
+        //         }
+        //     });
+        // }
 
         function modal_receipt(rec_id) {
             $('#modal-show').modal('toggle');
@@ -442,9 +448,11 @@
                         document.getElementById('tr-invoice').style.backgroundColor = '#960007ff';
                         document.getElementById('tr-invoice-2').style.backgroundColor = '#ff3f49ff';
                     } else {
-                        document.getElementById('tr-invoice').style.backgroundColor = '#333';
-                        document.getElementById('tr-invoice-2').style.backgroundColor = '#4f4e4e';
+                        document.getElementById('tr-invoice').style.backgroundColor = '#003285';
+                        document.getElementById('tr-invoice-2').style.backgroundColor = '#0060ff';
                     }
+
+                    text_html += '<input type="hidden" name="bo_id[]" value="' + id + '">';
 
                     discount = res[id].discount !== '-' ? Number(discount + res[id].discount) : Number(discount);
                     cot = res[id].cot !== '-' ? Number(cot + res[id].cot) : Number(cot);
@@ -453,7 +461,6 @@
                         rowspan = res_rates[id].id.length;
                         for (let y = 0; y < res_rates[id].id.length; y++) {
                             if (y == 0) {
-
                                 var customer = res[id].status == 3 || res[id].status == 5 ? ' (' + res_rates[id].category_name[y] + ') ' + res[id].status_name : ' (' + res_rates[id].category_name[y] + ')';
                                 text_html += '<tr>' +
                                     '<td class="text-center">' + Number(no++) + '</td>' +
@@ -615,10 +622,6 @@
             $("#bank_account").val(document.getElementById('agent_value').dataset.banacc_id).trigger("change");
             $("#rec_bank").val(document.getElementById('agent_value').dataset.bank_id).trigger("change");
         }
-
-
-
-
 
         function modal_show_receipt(rec_id) {
             var formData = new FormData();

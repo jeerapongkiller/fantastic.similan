@@ -54,6 +54,18 @@ if (!empty($id) && $id > 0) {
     $quotation = $quotObj->get_data($id);
     $details = $quotObj->get_datas('*', 'quotation_detail', 'quotation_id = ' . $quotation['id']);
     $bank = $quotObj->get_datas('bank_account.*, banks.name as bank_name', 'bank_account LEFT JOIN banks ON banks.id = bank_account.bank_id', 'bank_account.id = ' . $quotation['bank_id']);
+
+    switch ($quotation['title']) {
+        case '1':
+            $title_text = 'ใบเสนอราคา';
+            break;
+        case '2':
+            $title_text = 'ใบแจ้งหนี้';
+            break;
+        case '3':
+            $title_text = 'ใบเสร็จรับเงิน';
+            break;
+    }
 } else {
     $quotation = [];
     $details = [];
@@ -79,7 +91,7 @@ if (!empty($id) && $id > 0) {
                             <p class="card-text mb-25 font-weight-bold"><?php echo $quotation['cus_name']; ?></p>
                         </div>
                         <div class="col-6">
-                            <h2 class="text-right mb-50 text-warning font-weight-bolder"><?php echo $quotation['title'] == 1 ? 'ใบเสนอราคา' : 'ใบแจ้งหนี้'; ?></h2>
+                            <h2 class="text-right mb-50 text-warning font-weight-bolder"><?php echo $title_text; ?></h2>
                             <hr>
                             <dl class="row mb-25">
                                 <dt class="col-sm-8 text-right text-warning font-weight-bolder">เลขที่:</dt>
@@ -117,9 +129,10 @@ if (!empty($id) && $id > 0) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($details)) {
-                                $amount = 0;
-                                $discount = 0;
+                            <?php 
+                            $amount = 0;
+                            $discount = 0;
+                            if (!empty($details)) {
                                 $no = 1;
                                 foreach ($details as $detail) {
                                     $discount += $detail['discount'];
@@ -180,10 +193,10 @@ if (!empty($id) && $id > 0) {
                         <div class="col-md-6 order-md-1 order-2 mt-md-0 mt-3">
                             <span class="text-warning font-weight-bolder">หมายเหตุ</span>
                             <br>
-                            <?php 
-                            echo 'กรณีทำการจอง กรุณาชำระเงินผ่านธนาคาร ' . $bank[0]['bank_name'] . ' <br>
+                            <?php
+                            echo (!empty($bank)) ? 'กรณีทำการจอง กรุณาชำระเงินผ่านธนาคาร ' . $bank[0]['bank_name'] . ' <br>
                             หมยเลขบัญชี ' . $bank[0]['account_no'] . ' <br>
-                            ชื่อบัญชี ' . $bank[0]['account_name'] . ' เท่านั้น'; ?>
+                            ชื่อบัญชี ' . $bank[0]['account_name'] . ' เท่านั้น' : ''; ?>
                         </div>
                         <div class="col-md-6 order-md-1 order-2 mt-md-0 mt-3 text-right">
                             <span>ในนาม Fantastic Similan Travel</span>

@@ -20,7 +20,7 @@ if (isset($_POST['action']) && $_POST['action'] == "search") {
                 $boats++;
             }
             # --- check booking order boat --- #
-            if ($value['transfers'] == 1 && $value['pickup_type'] == 1 && empty($value['transfer_id'])) {
+            if ($value['transfers'] == 1 && empty($value['transfer_id'])) {
                 $transfers++;
             }
         }

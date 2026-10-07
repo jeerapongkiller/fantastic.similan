@@ -52,20 +52,28 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                         <?php foreach ($rates as $key => $value) {
                             switch ($product_id) {
                                 case 12:
-                                    $rate_arr['rate_adult'] = ($category_id[$key] == 14) ? 1700 : 2100;
-                                    $rate_arr['rate_child'] = ($category_id[$key] == 14) ? 1200 : 1500;
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 14) ? 1800 : 2200;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 14) ? 1300 : 1600;
+                                    // $rate_arr['rate_adult'] = ($category_id[$key] == 14) ? 1700 : 2100;
+                                    // $rate_arr['rate_child'] = ($category_id[$key] == 14) ? 1200 : 1500;
                                     break;
                                 case 13:
-                                    $rate_arr['rate_adult'] = ($category_id[$key] == 16) ? 1600 : 2000;
-                                    $rate_arr['rate_child'] = ($category_id[$key] == 16) ? 1100 : 1400;
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 16) ? 1700 : 2100;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 16) ? 1200 : 1500;
+                                    // $rate_arr['rate_adult'] = ($category_id[$key] == 16) ? 1600 : 2000;
+                                    // $rate_arr['rate_child'] = ($category_id[$key] == 16) ? 1100 : 1400;
                                     break;
                                 case 14:
-                                    $rate_arr['rate_adult'] = ($category_id[$key] == 18) ? 2500 : 3000;
-                                    $rate_arr['rate_child'] = ($category_id[$key] == 18) ? 1700 : 2700;
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 18) ? 2600 : 3100;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 18) ? 1800 : 2800;
+                                    // $rate_arr['rate_adult'] = ($category_id[$key] == 18) ? 2500 : 3000;
+                                    // $rate_arr['rate_child'] = ($category_id[$key] == 18) ? 1700 : 2700;
                                     break;
                                 case 15:
-                                    $rate_arr['rate_adult'] = ($category_id[$key] == 20) ? 1500 : 1900;
-                                    $rate_arr['rate_child'] = ($category_id[$key] == 20) ? 1000 : 1300;
+                                    $rate_arr['rate_adult'] = ($category_id[$key] == 20) ? 1600 : 2000;
+                                    $rate_arr['rate_child'] = ($category_id[$key] == 20) ? 1100 : 1400;
+                                    // $rate_arr['rate_adult'] = ($category_id[$key] == 20) ? 1500 : 1900;
+                                    // $rate_arr['rate_child'] = ($category_id[$key] == 20) ? 1000 : 1300;
                                     break;
                             }
 
@@ -183,20 +191,28 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ca
                         <?php foreach ($categorys as $key => $category) {
                             switch ($product_id) {
                                 case 12:
-                                    $rate_arr['rate_adult'] = ($category['id'] == 14) ? 1700 : 2100;
-                                    $rate_arr['rate_child'] = ($category['id'] == 14) ? 1200 : 1500;
+                                    $rate_arr['rate_adult'] = ($category['id'] == 14) ? 1800 : 2200;
+                                    $rate_arr['rate_child'] = ($category['id'] == 14) ? 1300 : 1600;
+                                    // $rate_arr['rate_adult'] = ($category['id'] == 14) ? 1700 : 2100;
+                                    // $rate_arr['rate_child'] = ($category['id'] == 14) ? 1200 : 1500;
                                     break;
                                 case 13:
-                                    $rate_arr['rate_adult'] = ($category['id'] == 16) ? 1600 : 2000;
-                                    $rate_arr['rate_child'] = ($category['id'] == 16) ? 1100 : 1400;
+                                    $rate_arr['rate_adult'] = ($category['id'] == 16) ? 1700 : 2100;
+                                    $rate_arr['rate_child'] = ($category['id'] == 16) ? 1200 : 1500;
+                                    // $rate_arr['rate_adult'] = ($category['id'] == 16) ? 1600 : 2000;
+                                    // $rate_arr['rate_child'] = ($category['id'] == 16) ? 1100 : 1400;
                                     break;
                                 case 14:
-                                    $rate_arr['rate_adult'] = ($category['id'] == 18) ? 2500 : 3000;
-                                    $rate_arr['rate_child'] = ($category['id'] == 18) ? 1700 : 2700;
+                                    $rate_arr['rate_adult'] = ($category['id'] == 18) ? 2600 : 3100;
+                                    $rate_arr['rate_child'] = ($category['id'] == 18) ? 1800 : 2800;
+                                    // $rate_arr['rate_adult'] = ($category['id'] == 18) ? 2500 : 3000;
+                                    // $rate_arr['rate_child'] = ($category['id'] == 18) ? 1700 : 2700;
                                     break;
                                 case 15:
-                                    $rate_arr['rate_adult'] = ($category['id'] == 20) ? 1500 : 1900;
-                                    $rate_arr['rate_child'] = ($category['id'] == 20) ? 1000 : 1300;
+                                    $rate_arr['rate_adult'] = ($category['id'] == 20) ? 1600 : 2000;
+                                    $rate_arr['rate_child'] = ($category['id'] == 20) ? 1100 : 1400;
+                                    // $rate_arr['rate_adult'] = ($category['id'] == 20) ? 1500 : 1900;
+                                    // $rate_arr['rate_child'] = ($category['id'] == 20) ? 1000 : 1300;
                                     break;
                             }
                         ?>

@@ -56,7 +56,7 @@ if (!empty($bookings)) {
             // $cate_transfer[$booking['id']] = !empty($booking['category_transfer']) ? $booking['category_transfer'] : 0;
             $cus_name[$booking['id']][] = !empty($booking['cus_name']) ? $booking['cus_name'] : '';
             $sender[$booking['id']] = !empty($booking['sender']) ? $booking['sender'] : '';
-            $note[$booking['id']] = !empty($booking['bp_note']) ? $booking['bp_note'] : '';
+            $note[$booking['id']] = !empty($booking['note']) ? $booking['note'] : '';
             $bp_id[$booking['id']] = !empty($booking['bp_id']) ? $booking['bp_id'] : 0;
             $cot[$booking['id']] = !empty($booking['total_paid']) ? $booking['total_paid'] : 0;
             $book_full[$booking['id']] = !empty($booking['book_full']) ? $booking['book_full'] : '';

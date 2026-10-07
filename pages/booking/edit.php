@@ -102,10 +102,10 @@ if (!empty($_GET['id']) && $_GET['id'] > 0) {
                                             <input type="hidden" name="agent_id" value="<?php echo $agent_id; ?>">
                                             <input type="hidden" name="book_type_id" value="<?php echo $book_type; ?>">
                                             <input type="hidden" name="book_full" value="<?php echo $book_full; ?>">
-                                            <input type="hidden" name="mange_transfer_id" value="<?php echo $mange_transfer_id; ?>" /> <!-- manage transfer booking id -->
-                                            <input type="hidden" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
-                                            <input type="hidden" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
-                                            <input type="hidden" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
+                                            <input type="<?php echo $_SESSION["supplier"]["id"] == 1 ? 'text' : 'hidden'; ?>" name="mange_transfer_id" value="<?php echo $mange_transfer_id; ?>" /> <!-- manage transfer booking id -->
+                                            <input type="<?php echo $_SESSION["supplier"]["id"] == 1 ? 'text' : 'hidden'; ?>" name="mange_transfer" value="<?php echo $mange_transfer; ?>" /> <!-- manage transfer id -->
+                                            <input type="<?php echo $_SESSION["supplier"]["id"] == 1 ? 'text' : 'hidden'; ?>" name="mange_boat_id" value="<?php echo $mange_boat_id; ?>" /> <!-- manage boat booking id -->
+                                            <input type="<?php echo $_SESSION["supplier"]["id"] == 1 ? 'text' : 'hidden'; ?>" name="mange_boat" value="<?php echo $mange_boat; ?>" /> <!-- manage boat id -->
                                             <input type="hidden" name="confirm_id" value="<?php echo $confirm_id; ?>" /> <!-- confirm agent id -->
                                             <!-- <input type="hidden" id="pror_id" name="pror_id" value="" /> -->
                                             <!-- <input type="hidden" id="bopa_id" name="bopa_id" value="<?php echo $bopa_id; ?>"> -->

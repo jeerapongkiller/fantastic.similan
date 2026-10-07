@@ -190,7 +190,15 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && isset($_POST['tra
                                     <label class="custom-control-label" for="checkbox<?php echo $manage_bo[$c]; ?>"></label>
                                 </div>
                             </td>
-                            <td><span class="fw-bold"><?php echo $manage_category_name[$c]; ?></span></td>
+                            <td>
+                                <span class="fw-bold">
+                                    <?php if (!empty($category_name[$id])) {
+                                        for ($a = 0; $a < count($category_name[$id]); $a++) {
+                                            echo $a == 0 ? $category_name[$id][$a] : ', ' . $category_name[$id][$a];
+                                        }
+                                    } ?>
+                                </span>
+                            </td>
                             <td><?php echo !empty($manage_hotel_name[$c]) ? $manage_hotel_name[$c] : $manage_outside[$c]; ?></td>
                             <td><span class="fw-bold"><?php echo $manage_cus_name[$c]; ?></span></td>
                             <td class="text-center" id="toc-manage<?php echo $manage_bo[$c]; ?>"><?php echo !empty($tourist_array[$id]) ? array_sum($tourist_array[$id]) : 0; ?></td>
