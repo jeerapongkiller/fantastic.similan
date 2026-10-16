@@ -114,14 +114,13 @@ if (isset($_POST['action']) && $_POST['action'] == "search" && !empty($_POST['ty
         </div>
 
         <div class="col-md-4 col-sm-12">
-            <div class="text-right mb-50">
-                <a href="./?pages=order-driver/print-car&date=<?php echo urlencode($_POST['date']); ?>" target="_blank" class="btn btn-info btn-sm">Print</a>
-            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead class="table-primary">
                         <tr>
-                            <th class="text-center"></th>
+                            <th class="text-left align-middle">
+                                <a href="./?pages=order-driver/print-car&date=<?php echo urlencode($_POST['date']); ?>" target="_blank" class="btn btn-info btn-sm">Print</a>
+                            </th>
                             <th class="text-center">จำนวนคนทั้งหมด</th>
                         </tr>
                     </thead>
