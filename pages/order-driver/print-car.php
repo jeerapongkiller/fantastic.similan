@@ -22,6 +22,7 @@ if (!empty($bookings)) {
             $first_driver[] = $booking['mange_id'];
             $cars[$booking['mange_id']] = array(
                 'car' => !empty($booking['car_name']) ? $booking['car_name'] : '',
+                'license' => !empty($booking['license']) ? $booking['license'] : '',
                 'driver' => !empty($booking['driver_name']) ? $booking['driver_name'] : '',
                 'telephone' => !empty($booking['manage_telephone']) ? $booking['manage_telephone'] : '',
                 'adult' => 0,
@@ -55,9 +56,10 @@ $sum = array('adult' => 0, 'child' => 0, 'infant' => 0, 'foc' => 0);
         <thead>
             <tr>
                 <th class="text-center" width="5%">#</th>
-                <th width="22%">รถ</th>
-                <th width="25%">คนขับ</th>
-                <th width="18%">เบอร์โทรศัพท์</th>
+                <th width="18%">รถ</th>
+                <th width="14%">ป้ายทะเบียน</th>
+                <th width="20%">คนขับ</th>
+                <th width="13%">เบอร์โทรศัพท์</th>
                 <th class="text-center" width="6%">A</th>
                 <th class="text-center" width="6%">C</th>
                 <th class="text-center" width="6%">Inf</th>
@@ -79,6 +81,7 @@ $sum = array('adult' => 0, 'child' => 0, 'infant' => 0, 'foc' => 0);
                     <tr>
                         <td class="text-center"><?php echo $no; ?></td>
                         <td><?php echo htmlspecialchars($row['car'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars($row['license'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($row['driver'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($row['telephone'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td class="text-center"><?php echo $row['adult']; ?></td>
@@ -89,7 +92,7 @@ $sum = array('adult' => 0, 'child' => 0, 'infant' => 0, 'foc' => 0);
                     </tr>
                 <?php } ?>
                 <tr class="font-weight-bolder">
-                    <td colspan="4" class="text-right">รวม</td>
+                    <td colspan="5" class="text-right">รวม</td>
                     <td class="text-center"><?php echo $sum['adult']; ?></td>
                     <td class="text-center"><?php echo $sum['child']; ?></td>
                     <td class="text-center"><?php echo $sum['infant']; ?></td>
@@ -98,7 +101,7 @@ $sum = array('adult' => 0, 'child' => 0, 'infant' => 0, 'foc' => 0);
                 </tr>
             <?php } else { ?>
                 <tr>
-                    <td colspan="9" class="text-center">ไม่มีข้อมูลรถในวันนี้</td>
+                    <td colspan="10" class="text-center">ไม่มีข้อมูลรถในวันนี้</td>
                 </tr>
             <?php } ?>
         </tbody>
