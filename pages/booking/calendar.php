@@ -4,8 +4,6 @@ require_once 'controllers/Booking.php';
 $bookObj = new Booking();
 $today = date("Y-m-d");
 
-$arr_travel = array();
-$arr_prod = array();
 $programed = $bookObj->get_values(
     'booking_product_rates.id, booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
     'booking_products LEFT JOIN booking_product_rates ON booking_products.id = booking_product_rates.booking_products_id',
@@ -13,24 +11,38 @@ $programed = $bookObj->get_values(
     1
 );
 
+// Total pax per travel date per product: $calendar_pax[date][product_id] = pax
+$calendar_pax = array();
 if (!empty($programed)) {
-    $arr_id = array();
     foreach ($programed as $programe) {
         $date = $programe['travel_date'];
-        $prod = $programe['product_id'];
-        $id = $programe['id'];
-        if (!in_array($date, $arr_travel)) {
-            $arr_travel[] = $date;
-            $travel_date[] = $date;
+        $prod = (int) $programe['product_id'];
+        if (!isset($calendar_pax[$date][$prod])) {
+            $calendar_pax[$date][$prod] = 0;
         }
-        if (!isset($arr_prod[$date])) {
-            $arr_prod[$date] = array();
+        $calendar_pax[$date][$prod] += (int) $programe['adult'] + (int) $programe['child'] + (int) $programe['infant'] + (int) $programe['foc'];
+    }
+}
+
+// Fixed program order + color (same in every day cell): PK red | KL orange | KB green | no transfer blue
+$program_fixed = array(12 => 'danger', 13 => 'warning', 14 => 'success', 15 => 'info');
+$program_extra_colors = array('secondary', 'primary', 'dark');
+
+$products = $bookObj->show_product();
+$calendar_programs = array();
+foreach ($program_fixed as $fixed_id => $fixed_color) {
+    foreach ($products as $product) {
+        if ((int) $product['id'] == $fixed_id) {
+            $calendar_programs[] = array('id' => $fixed_id, 'name' => $product['name'], 'color' => $fixed_color);
         }
-        if (!in_array($prod, $arr_prod[$date])) {
-            $arr_prod[$date][] = $prod;
-            $product_id[$date][] = $prod;
-        }
-        $tourist[$date][$prod][] = $programe['adult'] + $programe['child'] + $programe['infant'] + $programe['foc'];
+    }
+}
+$extra_no = 0;
+foreach ($products as $product) {
+    if (!isset($program_fixed[(int) $product['id']])) {
+        $color = $program_extra_colors[$extra_no % count($program_extra_colors)];
+        $extra_no++;
+        $calendar_programs[] = array('id' => (int) $product['id'], 'name' => $product['name'], 'color' => $color);
     }
 }
 ?>
@@ -57,37 +69,12 @@ if (!empty($programed)) {
                                         <label class="custom-control-label" for="select-all">View All</label>
                                     </div>
                                     <div class="calendar-events-filter">
-                                        <?php
-                                        $col = 0;
-                                        $programed = $bookObj->show_product();
-                                        foreach ($programed as $programe) {
-                                            $col++;
-                                            switch ($col) {
-                                                case '1':
-                                                    $color = 'danger';
-                                                    break;
-                                                case '2':
-                                                    $color = 'warning';
-                                                    break;
-                                                case '3':
-                                                    $color = 'success';
-                                                    break;
-                                                case '4':
-                                                    $color = 'info';
-                                                    break;
-                                                case '5':
-                                                    $color = 'secondary';
-                                                    break;
-                                                default:
-                                                    $color = 'primary';
-                                                    break;
-                                            } ?>
-                                            <div class="custom-control custom-control-<?php echo $color; ?> custom-checkbox mb-1">
-                                                <input type="checkbox" class="custom-control-input input-filter" id="<?php echo $programe['id'] ?>" data-value="<?php echo $programe['id'] ?>" checked />
-                                                <label class="custom-control-label" for="<?php echo $programe['id'] ?>"><?php echo $programe['name'] ?></label>
+                                        <?php foreach ($calendar_programs as $program) { ?>
+                                            <div class="custom-control custom-control-<?php echo $program['color']; ?> custom-checkbox mb-1">
+                                                <input type="checkbox" class="custom-control-input input-filter" id="<?php echo $program['id']; ?>" data-value="<?php echo $program['id']; ?>" checked />
+                                                <label class="custom-control-label" for="<?php echo $program['id']; ?>"><?php echo htmlspecialchars($program['name'], ENT_QUOTES, 'UTF-8'); ?></label>
                                             </div>
-                                        <?php }
-                                        ?>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>

@@ -59,6 +59,40 @@
         .fc-list-event-time {
             display: none;
         }
+
+        /* Day cell: total pax in the middle + pax per program below */
+        .booking__calendar-day {
+            text-align: center;
+            white-space: normal;
+        }
+
+        .booking__calendar-total {
+            font-size: 1.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: #5e5873;
+        }
+
+        .dark-layout .booking__calendar-total {
+            color: #d0d2d6;
+        }
+
+        .booking__calendar-programs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 0.25rem;
+        }
+
+        .booking__calendar-pax {
+            min-width: 28px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <!-- END: Head-->
@@ -99,7 +133,6 @@
     <script src="app-assets/vendors/js/forms/cleave/cleave.min.js"></script>
     <script src="app-assets/vendors/js/forms/cleave/addons/cleave-phone.us.js"></script>
     <script src="app-assets/vendors/js/forms/repeater/jquery.repeater.min.js"></script>
-    <script src="app-assets/js/scripts/pages/app-calendar.js"></script>
     <!-- END: Page Vendor JS-->
 
     <!-- BEGIN Sweetalert2 JS -->
@@ -127,35 +160,102 @@
             });
 
         /**
-         * App Calendar Events
+         * Booking Calendar: one event per day = total pax + pax per program (fixed order/color)
          */
-        var date = new Date();
-        var nextDay = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-        // prettier-ignore
-        var nextMonth = date.getMonth() === 11 ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1);
-        // prettier-ignore
-        var prevMonth = date.getMonth() === 11 ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1);
+        const calendarPax = <?php echo json_encode($calendar_pax, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+        const calendarPrograms = <?php echo json_encode($calendar_programs, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
-        var events = [
-            <?php if (!empty($travel_date)) {
-                for ($i = 0; $i < count($travel_date); $i++) {
-                    for ($a = 0; $a < count($product_id[$travel_date[$i]]); $a++) {
-                        $name = $bookObj->get_values('name', 'products', 'id = ' . $product_id[$travel_date[$i]][$a], 0)['name'];
-            ?> {
-                            url: '',
-                            title: '<?php echo array_sum($tourist[$travel_date[$i]][$product_id[$travel_date[$i]][$a]]); ?>',
-                            start: '<?php echo $travel_date[$i]; ?>',
-                            end: '<?php echo $travel_date[$i]; ?>',
-                            allDay: true,
-                            extendedProps: {
-                                calendar: '<?php echo $product_id[$travel_date[$i]][$a]; ?>',
-                                htmlContent: '<span><?php echo array_sum($tourist[$travel_date[$i]][$product_id[$travel_date[$i]][$a]]); ?></span>'
-                            }
-                        },
-            <?php }
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const selectAll = $('.select-all');
+            const calEventFilter = $('.calendar-events-filter');
+            const filterInput = $('.input-filter');
+
+            function escapeHtml(text) {
+                return $('<div>').text(text).html();
+            }
+
+            function selectedPrograms() {
+                return $('.calendar-events-filter input:checked').map(function() {
+                    return String($(this).attr('data-value'));
+                }).get();
+            }
+
+            function fetchEvents(info, successCallback) {
+                const selected = selectedPrograms();
+                const dayEvents = [];
+
+                $.each(calendarPax, function(travelDate, paxByProgram) {
+                    let total = 0;
+                    let boxes = '';
+                    calendarPrograms.forEach(function(program) {
+                        const pax = paxByProgram[program.id];
+                        if (pax === undefined || selected.indexOf(String(program.id)) === -1) {
+                            return;
+                        }
+                        total += pax;
+                        boxes += '<span class="booking__calendar-pax bg-' + program.color + '" title="' + escapeHtml(program.name) + '">' + pax + '</span>';
+                    });
+                    if (boxes === '') {
+                        return;
+                    }
+                    dayEvents.push({
+                        start: travelDate,
+                        allDay: true,
+                        backgroundColor: 'transparent',
+                        borderColor: 'transparent',
+                        extendedProps: {
+                            htmlContent: '<div class="booking__calendar-day"><div class="booking__calendar-total">' + total + '</div><div class="booking__calendar-programs">' + boxes + '</div></div>'
+                        }
+                    });
+                });
+
+                successCallback(dayEvents);
+            }
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: fetchEvents,
+                contentHeight: 'auto',
+                dayMaxEvents: false,
+                customButtons: {
+                    sidebarToggle: {
+                        text: 'Sidebar'
+                    }
+                },
+                headerToolbar: {
+                    start: 'sidebarToggle, prev,next, title',
+                    end: 'dayGridMonth,listMonth'
+                },
+                direction: $('html').data('textdirection') == 'rtl' ? 'rtl' : 'ltr',
+                initialDate: new Date(),
+                navLinks: true,
+                eventContent: function(arg) {
+                    return {
+                        html: arg.event.extendedProps.htmlContent
+                    };
                 }
-            } ?>
-        ];
+            });
+
+            calendar.render();
+
+            $('.fc-sidebarToggle-button')
+                .empty()
+                .append(feather.icons['menu'].toSvg({
+                    class: 'ficon'
+                }));
+
+            // Select all & filter functionality
+            selectAll.on('change', function() {
+                calEventFilter.find('input').prop('checked', $(this).prop('checked'));
+                calendar.refetchEvents();
+            });
+
+            filterInput.on('change', function() {
+                selectAll.prop('checked', $('.input-filter:checked').length === calEventFilter.find('input').length);
+                calendar.refetchEvents();
+            });
+        });
     </script>
     <!-- END: Page JS-->
 
