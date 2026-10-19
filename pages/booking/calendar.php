@@ -4,10 +4,15 @@ require_once 'controllers/Booking.php';
 $bookObj = new Booking();
 $today = date("Y-m-d");
 
+// Same filter as booking/list summary: only existing bookings, skip canceled (3 Canceled, 4 Canceled Charge) and deleted ones (except supplier 1)
+$programed_where = 'booking_products.id > 0 AND booking_products.travel_date >= "' . $today . '" AND bookings.booking_status_id NOT IN (3, 4)';
+if ($_SESSION["supplier"]["id"] != 1) {
+    $programed_where .= ' AND bookings.is_deleted = 0';
+}
 $programed = $bookObj->get_values(
     'booking_product_rates.id, booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
-    'booking_products LEFT JOIN booking_product_rates ON booking_products.id = booking_product_rates.booking_products_id',
-    'booking_products.id > 0 AND booking_products.travel_date >= "' . $today . '" ORDER BY booking_products.travel_date ASC',
+    'bookings INNER JOIN booking_products ON bookings.id = booking_products.booking_id INNER JOIN booking_product_rates ON booking_products.id = booking_product_rates.booking_products_id',
+    $programed_where . ' ORDER BY booking_products.travel_date ASC',
     1
 );
 
@@ -26,25 +31,19 @@ if (!empty($programed)) {
 
 // Fixed program order + color (same in every day cell): PK red | KL orange | KB green | no transfer blue
 $program_fixed = array(12 => 'danger', 13 => 'warning', 14 => 'success', 15 => 'info');
-$program_extra_colors = array('secondary', 'primary', 'dark');
+// Short filter labels for fixed programs
+$program_fixed_names = array(12 => 'Phuket', 13 => 'Khaolak', 14 => 'Krabi', 15 => 'No Transfer');
 
 $products = $bookObj->show_product();
 $calendar_programs = array();
 foreach ($program_fixed as $fixed_id => $fixed_color) {
     foreach ($products as $product) {
         if ((int) $product['id'] == $fixed_id) {
-            $calendar_programs[] = array('id' => $fixed_id, 'name' => $product['name'], 'color' => $fixed_color);
+            $calendar_programs[] = array('id' => $fixed_id, 'name' => $program_fixed_names[$fixed_id], 'color' => $fixed_color, 'fixed' => true);
         }
     }
 }
-$extra_no = 0;
-foreach ($products as $product) {
-    if (!isset($program_fixed[(int) $product['id']])) {
-        $color = $program_extra_colors[$extra_no % count($program_extra_colors)];
-        $extra_no++;
-        $calendar_programs[] = array('id' => (int) $product['id'], 'name' => $product['name'], 'color' => $color);
-    }
-}
+// Other programs (e.g. Private Surin island trip) are not shown in the calendar
 ?>
 <div class="app-content content ">
     <div class="content-overlay"></div>

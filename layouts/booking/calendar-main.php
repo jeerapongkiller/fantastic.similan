@@ -189,9 +189,16 @@
                     let total = 0;
                     let boxes = '';
                     calendarPrograms.forEach(function(program) {
-                        const pax = paxByProgram[program.id];
-                        if (pax === undefined || selected.indexOf(String(program.id)) === -1) {
+                        if (selected.indexOf(String(program.id)) === -1) {
                             return;
+                        }
+                        // Fixed programs (PK/KL/KB/no transfer) always show a box, 0 when no pax
+                        let pax = paxByProgram[program.id];
+                        if (pax === undefined) {
+                            if (!program.fixed) {
+                                return;
+                            }
+                            pax = 0;
                         }
                         total += pax;
                         boxes += '<span class="booking__calendar-pax bg-' + program.color + '" title="' + escapeHtml(program.name) + '">' + pax + '</span>';
