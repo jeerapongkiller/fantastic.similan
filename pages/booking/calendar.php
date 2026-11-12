@@ -16,12 +16,25 @@ $programed = $bookObj->get_values(
     1
 );
 
-// Total pax per travel date per product: $calendar_pax[date][product_id] = pax
+$products = $bookObj->show_product();
+
+// Private boat programs (name contains "private", e.g. Private Surin) are grouped into one "private" box
+$private_ids = array();
+foreach ($products as $product) {
+    if (stripos($product['name'], 'private') !== false) {
+        $private_ids[] = (int) $product['id'];
+    }
+}
+
+// Total pax per travel date per product: $calendar_pax[date][product_id | 'private'] = pax
 $calendar_pax = array();
 if (!empty($programed)) {
     foreach ($programed as $programe) {
         $date = $programe['travel_date'];
         $prod = (int) $programe['product_id'];
+        if (in_array($prod, $private_ids, true)) {
+            $prod = 'private';
+        }
         if (!isset($calendar_pax[$date][$prod])) {
             $calendar_pax[$date][$prod] = 0;
         }
@@ -34,7 +47,6 @@ $program_fixed = array(12 => 'danger', 13 => 'warning', 14 => 'success', 15 => '
 // Short filter labels for fixed programs
 $program_fixed_names = array(12 => 'Phuket', 13 => 'Khaolak', 14 => 'Krabi', 15 => 'No Transfer');
 
-$products = $bookObj->show_product();
 $calendar_programs = array();
 foreach ($program_fixed as $fixed_id => $fixed_color) {
     foreach ($products as $product) {
@@ -43,7 +55,11 @@ foreach ($program_fixed as $fixed_id => $fixed_color) {
         }
     }
 }
-// Other programs (e.g. Private Surin island trip) are not shown in the calendar
+// Private boat box (purple) as the last box
+if (!empty($private_ids)) {
+    $calendar_programs[] = array('id' => 'private', 'name' => 'Private', 'color' => 'primary', 'fixed' => true);
+}
+// Other programs are not shown in the calendar
 ?>
 <div class="app-content content ">
     <div class="content-overlay"></div>
