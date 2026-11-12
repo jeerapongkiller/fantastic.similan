@@ -10,7 +10,7 @@ if ($_SESSION["supplier"]["id"] != 1) {
     $programed_where .= ' AND bookings.is_deleted = 0';
 }
 $programed = $bookObj->get_values(
-    'booking_product_rates.id, booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
+    'booking_product_rates.id, bookings.booking_type_id, booking_products.travel_date, booking_products.product_id, booking_product_rates.adult, booking_product_rates.child, booking_product_rates.infant, booking_product_rates.foc',
     'bookings INNER JOIN booking_products ON bookings.id = booking_products.booking_id INNER JOIN booking_product_rates ON booking_products.id = booking_product_rates.booking_products_id',
     $programed_where . ' ORDER BY booking_products.travel_date ASC',
     1
@@ -18,27 +18,22 @@ $programed = $bookObj->get_values(
 
 $products = $bookObj->show_product();
 
-// Private boat programs (name contains "private", e.g. Private Surin) are grouped into one "private" box
-$private_ids = array();
-foreach ($products as $product) {
-    if (stripos($product['name'], 'private') !== false) {
-        $private_ids[] = (int) $product['id'];
-    }
-}
-
-// Total pax per travel date per product: $calendar_pax[date][product_id | 'private'] = pax
+// Pax per travel date per product, split by booking type (same rule as booking/list summary: 1 Join, 2 Private)
+// $calendar_pax[date][product_id] = ['join' => pax, 'private' => pax]
 $calendar_pax = array();
 if (!empty($programed)) {
     foreach ($programed as $programe) {
         $date = $programe['travel_date'];
         $prod = (int) $programe['product_id'];
-        if (in_array($prod, $private_ids, true)) {
-            $prod = 'private';
-        }
         if (!isset($calendar_pax[$date][$prod])) {
-            $calendar_pax[$date][$prod] = 0;
+            $calendar_pax[$date][$prod] = array('join' => 0, 'private' => 0);
         }
-        $calendar_pax[$date][$prod] += (int) $programe['adult'] + (int) $programe['child'] + (int) $programe['infant'] + (int) $programe['foc'];
+        $pax = (int) $programe['adult'] + (int) $programe['child'] + (int) $programe['infant'] + (int) $programe['foc'];
+        if ((int) $programe['booking_type_id'] == 2) {
+            $calendar_pax[$date][$prod]['private'] += $pax;
+        } elseif ((int) $programe['booking_type_id'] == 1) {
+            $calendar_pax[$date][$prod]['join'] += $pax;
+        }
     }
 }
 
@@ -54,10 +49,6 @@ foreach ($program_fixed as $fixed_id => $fixed_color) {
             $calendar_programs[] = array('id' => $fixed_id, 'name' => $program_fixed_names[$fixed_id], 'color' => $fixed_color, 'fixed' => true);
         }
     }
-}
-// Private boat box (purple) as the last box
-if (!empty($private_ids)) {
-    $calendar_programs[] = array('id' => 'private', 'name' => 'Private', 'color' => 'primary', 'fixed' => true);
 }
 // Other programs are not shown in the calendar
 ?>

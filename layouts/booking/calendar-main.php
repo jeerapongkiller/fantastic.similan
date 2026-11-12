@@ -186,23 +186,26 @@
                 const dayEvents = [];
 
                 $.each(calendarPax, function(travelDate, paxByProgram) {
-                    let total = 0;
+                    let totalJoin = 0;
+                    let totalPrivate = 0;
                     let boxes = '';
                     calendarPrograms.forEach(function(program) {
                         if (selected.indexOf(String(program.id)) === -1) {
                             return;
                         }
                         // Fixed programs (PK/KL/KB/no transfer) always show a box, 0 when no pax
-                        let pax = paxByProgram[program.id];
-                        if (pax === undefined) {
-                            if (!program.fixed) {
-                                return;
-                            }
-                            pax = 0;
+                        const paxType = paxByProgram[program.id];
+                        if (paxType === undefined && !program.fixed) {
+                            return;
                         }
-                        total += pax;
-                        boxes += '<span class="booking__calendar-pax bg-' + program.color + '" title="' + escapeHtml(program.name) + '">' + pax + '</span>';
+                        const join = paxType ? paxType.join : 0;
+                        const priv = paxType ? paxType.private : 0;
+                        totalJoin += join;
+                        totalPrivate += priv;
+                        // Program box = join + private (same as booking/list per-program total)
+                        boxes += '<span class="booking__calendar-pax bg-' + program.color + '" title="' + escapeHtml(program.name) + ' (Join ' + join + ' / Private ' + priv + ')">' + (join + priv) + '</span>';
                     });
+                    const total = totalJoin + '/' + totalPrivate;
                     if (boxes === '') {
                         return;
                     }
